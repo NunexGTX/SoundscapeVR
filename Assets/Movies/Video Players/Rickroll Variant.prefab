@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5251858633431209725
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1977919362349294066, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.1765
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.26395
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859579934796589490, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5522376987326980427, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: m_Name
+      value: Rickroll Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482613733091483346, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: inputAction.m_Name
+      value: Input
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482613733091483346, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: inputAction.m_SingletonActionBindings.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482613733091483346, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: inputAction.m_SingletonActionBindings.Array.data[0].m_Id
+      value: 83262f72-515a-4214-854f-19b3075d0874
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482613733091483346, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: inputAction.m_SingletonActionBindings.Array.data[0].m_Action
+      value: Input
+      objectReference: {fileID: 0}
+    - target: {fileID: 8285074875026773123, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: videoFileName
+      value: Never Gonna Give You Up but its a 360 video.mp4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 89e6141ba1db25850898b617532c1116, type: 3}
