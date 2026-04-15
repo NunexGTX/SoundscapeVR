@@ -5,6 +5,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
 {
     public GameObject video360;
     public int RoomLayerIndex = 6; //Room layer
+    //deixa null em vr
+    //em flat screen, não importa trancar o jogador
     public PlayerControl player;
 
     public void start360Video()

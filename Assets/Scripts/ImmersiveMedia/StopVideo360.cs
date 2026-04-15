@@ -4,10 +4,10 @@ using UnityEngine.InputSystem.Utilities; //Call needs it
 
 public class StopVideo360 : MonoBehaviour
 {
-    private System.IDisposable _listener;
     public PlayerControl player;
+    [SerializeField] private InputActionReference inputAction;
 
-    void endVideo()
+    void endVideo(InputAction.CallbackContext context)
     {
         Debug.Log("Stopping Video");
         //Change scene skybox and reactivate the scene
@@ -24,20 +24,11 @@ public class StopVideo360 : MonoBehaviour
     void OnEnable()
     {
         // Hook into the global event
-        _listener = InputSystem.onAnyButtonPress
-            .Call(ctrl =>
-            {
-                if(ctrl.name.ToLower().Contains("leftbutton") 
-                    || ctrl.name.ToLower().Contains("trigger"))
-                    endVideo();
-                Debug.Log($"Button {ctrl.name} was pressed");
-            } 
-            );
+        inputAction.action.performed += endVideo;
     }
 
     void OnDisable()
     {
-        // You MUST dispose the listener to prevent memory leaks
-        _listener?.Dispose();
+        inputAction.action.performed -= endVideo;
     }
 }

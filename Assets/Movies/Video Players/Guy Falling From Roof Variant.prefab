@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Guy Falling From Roof Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 6482613733091483346, guid: 89e6141ba1db25850898b617532c1116, type: 3}
+      propertyPath: inputAction
+      value: 
+      objectReference: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f, type: 3}
     - target: {fileID: 8285074875026773123, guid: 89e6141ba1db25850898b617532c1116, type: 3}
       propertyPath: videoFileName
       value: FALLING FROM BUILDING in 360 4k - H265 4K.mp4
