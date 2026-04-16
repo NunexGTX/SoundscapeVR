@@ -1,0 +1,78 @@
+:root {
+    opacity: 1;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/LiberationSans.ttf?fileID=12800000&guid=e3265ab4bf004d28a9537516768c1c75&type=3#LiberationSans");
+    -unity-text-align: upper-left;
+    font-size: 18px;
+    background-color: rgb(177, 205, 209);
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.buttonStyle {
+    opacity: 1;
+    background-color: rgb(227, 229, 255);
+    background-size: 56% 100%;
+    -unity-background-scale-mode: scale-to-fit;
+    width: 85%;
+    left: auto;
+    align-self: center;
+    padding-top: 9px;
+    margin-top: 14px;
+    margin-bottom: 9px;
+    align-items: auto;
+    justify-content: flex-start;
+    align-content: auto;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+    height: 42px;
+}
+
+.radioStyle {
+    padding-top: 19px;
+    margin-top: 9px;
+    margin-right: 9px;
+    margin-bottom: 9px;
+    margin-left: 9px;
+    padding-right: 13px;
+    padding-bottom: 13px;
+    padding-left: 13px;
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    border-bottom-left-radius: 22px;
+    background-color: rgb(227, 229, 254);
+    width: 90%;
+    height: auto;
+    -unity-text-align: upper-left;
+    align-self: center;
+    flex-direction: row;
+    -unity-font-style: normal;
+    letter-spacing: 0;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+.headerStyle {
+    font-size: 20px;
+    -unity-font-style: bold;
+    padding-left: 2px;
+    align-self: flex-start;
+    left: 5%;
+}
+
+.backgroundStyle {
+    flex-grow: 1;
+}
+
+.unity-button:hover {
+    background-color: rgb(0, 255, 0);
+    scale: 1.1;
+}
+
+.unity-button {
+}

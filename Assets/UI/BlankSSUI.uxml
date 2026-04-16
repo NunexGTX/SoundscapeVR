@@ -1,0 +1,13 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:Label text="Soundscape Selection" class="headerStyle"/>
+        <ui:ScrollView scroll-deceleration-rate="-0.03" style="height: 373px; cursor: url(&quot;project://database/Assets/HUD/Crosshairs/OccaSoftware/Crosshairs/Art/Textures/Crosshair_06.png?fileID=2800000&amp;guid=b889ef0124f73fa4298de5e962dac98b&amp;type=3#Crosshair_06&quot;);">
+            <ui:Button text="Return to Main Menu" name="returnBtn" class="buttonStyle" style="left: auto; align-self: center; margin-left: 4px;"/>
+            <ui:Button text="Rickroll" name="rickrollBtn" class="buttonStyle"/>
+            <ui:Button text="Falling Video" name="fallingBtn" class="buttonStyle"/>
+            <ui:Button text="Bunny Hole" name="bunnyBtn" class="buttonStyle"/>
+            <ui:Button text="Chernobyl Video" name="chernobylBtn" class="buttonStyle" style="padding-bottom: 8px; margin-bottom: 13px;"/>
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>

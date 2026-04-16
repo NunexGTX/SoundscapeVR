@@ -1,0 +1,16 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3"/>
+    <ui:VisualElement data-source="" data-source-path="" class="backgroundStyle">
+        <ui:ScrollView scroll-deceleration-rate="-0.03">
+            <ui:Label text="General Configuration" class="headerStyle"/>
+            <ui:Button text="Return to Main Menu" name="returnBtn" class="buttonStyle" style="left: auto; align-self: flex-start;"/>
+            <ui:TextField label="Server Address" placeholder-text="192.168.1.2" hide-placeholder-on-focus="true"/>
+            <ui:DropdownField label="Binaural Audio Target" choices="WIP"/>
+            <ui:Toggle label="VR Mode" value="false" toggle-on-label-click="true" text="" name="vrToggle">
+                <Bindings>
+                    <ui:DataBinding property="value" data-source-path="IsInVr" data-source="project://database/Assets/ScriptableObjects/VrStateData.asset?fileID=11400000&amp;guid=26e8613f074c8004192a57c57732439f&amp;type=2#VrStateData" binding-mode="TwoWay"/>
+                </Bindings>
+            </ui:Toggle>
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>
