@@ -1,5 +1,7 @@
 #from google.oauth2 import service_account
 #from googleapiclient.discovery import build
+import tkinter as tk
+from tkinter import filedialog
 
 def startMessage():
     print("*** Google Forms - Question info and IDs gatherer ***")
@@ -58,4 +60,30 @@ def setupInstructions():
     
 
 startMessage()
+
+def selectFile(fileName, filetype, filetypename):
+    root = tk.Tk()
+    root.withdraw()
+
+    file_path = filedialog.askopenfilename(
+        title="Select your "+fileName,
+        filetypes=[(filetypename, "*"+filetype), ("All files", "*.*")]
+    )
+
+    root.destroy()
+
+    if file_path:
+        return file_path
+    else:
+        print("No file selected.")
+
+while True:
+    credentialsJson = selectFile("credentials.json",".json","json files")
+    if credentialsJson:
+        break
+
+print("Google Forms API credentials at: ",credentialsJson)
+print()
+FormID = input("Your Google Form ID: ")
+print()
 
