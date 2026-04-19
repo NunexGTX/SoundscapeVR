@@ -8,12 +8,21 @@ public class GoogleForm : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        responseURL = "https://docs.google.com/forms/d/e/"+formID+"/formResponse";
+        responseURL = "https://docs.google.com/forms/d/e/" + formID + "/formResponse";
     }
 
-    // Update is called once per frame
-    void Update()
+    public void submitForm()
     {
-        
+
+    }
+
+    private void gatherFormEntries()
+    {
+
+    }
+    
+    private string GFormPOSTRequest()
+    {
+        return "";
     }
 }
