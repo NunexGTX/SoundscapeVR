@@ -1,7 +1,9 @@
-#from google.oauth2 import service_account
-#from googleapiclient.discovery import build
 import tkinter as tk
 from tkinter import filedialog
+import csv
+#Google API
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
 def startMessage():
     print("*** Google Forms - Question info and IDs gatherer ***")
@@ -87,3 +89,79 @@ print()
 FormID = input("Your Google Form ID: ")
 print()
 
+API_Scopes = ['https://www.googleapis.com/auth/forms.body.readonly'] #This will allow to read the details of the form via the API
+
+'''This authenticates us to the Google API
+Since we are using a service account (kinda like a fake one) that should have access to the form if all steps were followed
+Then we don't need to log in in the browser'''
+def authenticate(credentialsJson, scopes):
+    token = service_account.Credentials.from_service_account_file(
+        credentialsJson,
+        scopes=scopes
+    )
+    return token
+
+token = authenticate(credentialsJson, API_Scopes)
+
+def QuestionsGatherer():
+    #The the form's raw data
+    formData = FormsContentRetriever(FormID,token)
+
+    #Gather the Questions
+    Title = formData.get('info', {}).get('title')
+    Questions = []
+
+    items = formData.get('items', [])
+    for item in items:
+        # Check if the item is a question (ignores layout elements like images/headers)
+        if 'questionItem' in item:
+            q_id = item.get('itemId')
+            q_name = item.get('title')
+            # Extract type (e.g., CHOICE, TEXT, etc.)
+            q_type = item['questionItem']['question'].get('choiceQuestion', {}).get('type', 'TEXT') #Sees if the question is classified as a choice question or a text question
+            
+            # If it's not a choice question, differentiates between Text and Scale
+            if 'textQuestion' in item['questionItem']['question']:
+                if 'paragraph' in item['questionItem']['question']['textQuestion']:
+                    q_type = 'PARAGRAPH'
+                else:
+                    q_type = "TEXT"
+            elif 'scaleQuestion' in item['questionItem']['question']:
+                q_type = "SCALE"
+            #We'll only implement these since these are the ones we needs, overtime we might implment more question types
+            
+            Questions.append([q_id,q_type,q_name])
+
+    #Print the Questions
+    showQuestions(Title,Questions)
+    #Save questions to a .csv
+    saveQuestionstoCSV(Title,Questions)
+
+
+def FormsContentRetriever(formID, token):
+    service = build('forms', 'v1', credentials=token)
+    formData = service.forms().get(formId=formID).execute()
+    print("Form Data: ",formData)
+    print()
+    return formData
+
+def showQuestions(title, questions):
+    print(f"GForm: {title}\n")
+    print(f"{'ID':<15} | {'Type':<20} | {'Question Name'}") #:<15 and :<20 are a fast way to insert multiple space characters
+    print("-" * 60) #Prints 60 dashes
+
+    for question in questions:
+        q_id = question[0]
+        q_type = question[1]
+        q_name = question[2]
+
+        print(f"{q_id:<15} | {q_type:<20} | {q_name}") #Formats these and prints them on the console
+
+def saveQuestionstoCSV(form_title, questions):
+    print("Saving the data to ./GFormQuestions_{form_title}.csv")
+    with open(f"GFormQuestions_{form_title}.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["ID","Type","Question Name"])
+        writer.writerows(questions)
+
+QuestionsGatherer()
