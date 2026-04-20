@@ -3,6 +3,8 @@ using UnityEngine;
 public class FormEntry : MonoBehaviour
 {
     public string entryID;
+    public string questionType;
+    public string questionName;
     private string value;
 
     public void formEntryValue(string newValue){

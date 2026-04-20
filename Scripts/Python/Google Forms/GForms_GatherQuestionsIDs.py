@@ -51,7 +51,7 @@ def setupInstructions():
             print("  23. - Paste the service account email > set role to 'Viewer' > click 'Send'")
             print()
             print("#2 - How to get the Google Forms ID")
-            print("   1. - Open your form either in Viewer or in Edit View")
+            print("   1. - Open your form in Edit View")
             print("   2. - Get its link, you'll notice that its something like 'https://docs.google.com/forms/d/e/[FormID]/...'")
             print("   3. - Write down that FormID")
             break
@@ -115,7 +115,7 @@ def QuestionsGatherer():
     for item in items:
         # Check if the item is a question (ignores layout elements like images/headers)
         if 'questionItem' in item:
-            q_id = item.get('itemId')
+            q_id = "entry." + str(int(item['questionItem']['question'].get('questionId'),16))
             q_name = item.get('title')
             # Extract type (e.g., CHOICE, TEXT, etc.)
             q_type = item['questionItem']['question'].get('choiceQuestion', {}).get('type', 'TEXT') #Sees if the question is classified as a choice question or a text question
