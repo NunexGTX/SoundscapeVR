@@ -2041,6 +2041,7 @@ MonoBehaviour:
   RoomLayerIndex: 6
   player: {fileID: 1398928843}
   mainMenu: {fileID: 812061678}
+  buttonTemplate: {fileID: 9197481963319205126, guid: adadaadf3e4f34a42b9f098589546f40, type: 3}
 --- !u!1 &1684408936
 GameObject:
   m_ObjectHideFlags: 0

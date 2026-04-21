@@ -33,7 +33,7 @@ public class XRSwitcher : MonoBehaviour
         vrCamera.SetActive(false);
         crosshairCanvas.SetActive(true);
         VRSwitcher.DisableXR();
-        FixOptions();
+        //FixOptions();
         vrStateData.IsInVr = false;
         EditorUtility.SetDirty(vrStateData);
     }

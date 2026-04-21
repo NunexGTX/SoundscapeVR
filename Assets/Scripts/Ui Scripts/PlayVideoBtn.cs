@@ -1,3 +1,7 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -10,54 +14,48 @@ public class PlayVideoBtn : MonoBehaviour
     public int RoomLayerIndex = 6; //Room layer
     public PlayerControl player;
     [SerializeField] private GameObject mainMenu;
-    private Button rickrollBtn;
-    private Button fallingBtn;
-    private Button chernobylBtn;
-    private Button bunnyBtn;
     private Button returnBtn;
+    public VisualTreeAsset buttonTemplate; 
+    private ScrollView scrollView;
+    private ArrayList buttons = new();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-
-        rickrollBtn = root.Q<Button>("rickrollBtn"); 
-        fallingBtn = root.Q<Button>("fallingBtn"); 
-        chernobylBtn = root.Q<Button>("chernobylBtn"); 
-        bunnyBtn = root.Q<Button>("bunnyBtn"); 
+        scrollView = root.Q<ScrollView>("scrollList");
         returnBtn = root.Q<Button>("returnBtn");
+        var videos = new List<TestSoundscape> 
+        {
+            new("Rickroll", rickrollVideo360), 
+            new("Falling", fallingVideo360), 
+            new("Chernobyl", chernobylVideo360), 
+            new("Big Bunny Hole", bunnyVideo360)
+        };
 
-        rickrollBtn.clicked += PlayRickRoll;
-        fallingBtn.clicked += PlayFalling;
-        chernobylBtn.clicked += PlayChernobyl;
-        bunnyBtn.clicked += PlayBunny;
+        foreach(TestSoundscape soundscape in videos)
+        {
+            System.Action action = () => PlayVideo(soundscape.video360);
+            VisualElement vElement = buttonTemplate.Instantiate();
+            Button button = vElement.Q<Button>("button");
+
+            button.text = soundscape.title;
+            ButtonHandler handler = new(button);
+            handler.SetAction(action);
+            buttons.Add(handler);
+            scrollView.Add(vElement);
+        }
+
         returnBtn.clicked += Return;
     }
 
     void OnDisable()
     {
-        rickrollBtn.clicked -= PlayRickRoll;
-        fallingBtn.clicked -= PlayFalling;
-        chernobylBtn.clicked -= PlayChernobyl;
-        bunnyBtn.clicked -= PlayBunny;
         returnBtn.clicked -= Return;
-    }
-
-    private void PlayRickRoll()
-    {
-        start360Video(rickrollVideo360);
-    }
-    private void PlayFalling()
-    {
-        start360Video(fallingVideo360);
-    }
-    private void PlayChernobyl()
-    {
-        start360Video(chernobylVideo360);
-    }
-    private void PlayBunny()
-    {
-        start360Video(bunnyVideo360);
+        foreach(ButtonHandler handler in buttons)
+        {
+            handler.Clear();
+        }
     }
 
     private void Return()
@@ -66,24 +64,15 @@ public class PlayVideoBtn : MonoBehaviour
         gameObject.SetActive(false);
     }
     
-    private void start360Video(GameObject video)
+    private void PlayVideo(GameObject video360)
     {
         if(player != null && player.IsDisabled()) return;
-        //Deselect room from culling (not render)
         Camera.main.cullingMask &= ~(1 << RoomLayerIndex);
 
-        //lock non vr player position (not implemented)
-        lockScreenPlayer();
-
-        //Start video playback
-        video.GetComponent<StopVideo360>().player = player;
-        Instantiate(video);
-    }
-    
-    //Locks the non vr player in place
-    void lockScreenPlayer()
-    {
         if(player != null)
             player.ActivatePlayer(false);
+
+        video360.GetComponent<StopVideo360>().player = player;
+        Instantiate(video360);
     }
 }
