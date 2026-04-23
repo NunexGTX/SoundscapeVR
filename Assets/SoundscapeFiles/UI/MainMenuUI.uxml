@@ -1,0 +1,11 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:ScrollView scroll-deceleration-rate="-0.03" style="align-items: flex-start; justify-content: center; align-self: auto;">
+            <ui:Button text="Guided Questionnaire" name="questBtn" class="buttonStyle"/>
+            <ui:Button text="Choose Soundscape" name="ssBtn" class="buttonStyle"/>
+            <ui:Button text="Configuration" name="configBtn" class="buttonStyle"/>
+            <ui:Button text="Exit" name="exitBtn" class="buttonStyle"/>
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>
