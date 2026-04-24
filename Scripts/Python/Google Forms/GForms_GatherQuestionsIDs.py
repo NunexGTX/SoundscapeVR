@@ -147,7 +147,7 @@ def FormsContentRetriever(formID, token):
 
 def showQuestions(title, questions):
     print(f"GForm: {title}\n")
-    print(f"{'ID':<15} | {'Type':<20} | {'Question Name'}") #:<15 and :<20 are a fast way to insert multiple space characters
+    print(f"{'ID':<20} | {'Type':<20} | {'Question Name'}") #:<15 and :<20 are a fast way to insert multiple space characters
     print("-" * 60) #Prints 60 dashes
 
     for question in questions:
@@ -155,7 +155,7 @@ def showQuestions(title, questions):
         q_type = question[1]
         q_name = question[2]
 
-        print(f"{q_id:<15} | {q_type:<20} | {q_name}") #Formats these and prints them on the console
+        print(f"{q_id:<20} | {q_type:<20} | {q_name}") #Formats these and prints them on the console
 
 def saveQuestionstoCSV(form_title, questions):
     print("Saving the data to ./GFormQuestions_{form_title}.csv")
