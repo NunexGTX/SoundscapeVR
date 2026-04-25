@@ -1,17 +1,35 @@
 using System;
+using UnityEngine;
+using UnityEngine.Audio;
 
-public class WorldAudioSource
+public class WorldAudioSource: MonoBehaviour
 {
-    private AudioSource audioSource;
-    private Guid uuid;
+    public AudioSource audioSource;
+    public Guid uuid;
+    public bool playing = true;
+    public bool debug = true;
 
     public SoundscapeWrapper soundscapeWrapper;
+    public SoundscapeLibrary library;
+    public VrStateData vrStateData;
 
-    public void DeleteSound(){}
-
-    public WorldAudioSource(AudioSource src, Guid audioId)
+    void Start()
     {
-        this.audioSource = src;
-        this.uuid = audioId;
+        gameObject.GetComponent<MeshRenderer>().enabled = debug;
+        UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
+        IAudioGenerator gen = library.GetClipForAudio(audioSource.GetAudioId());
+        if(gen == null) return;
+        src.generator = gen;
+        src.time = 0;
+        if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
+        {
+            src.spatializePostEffects = false;
+            src.spatialize = false;
+            src.spatialBlend = 0;
+        }
+        if (playing && debug)
+        {
+            src.Play();
+        }
     }
 }

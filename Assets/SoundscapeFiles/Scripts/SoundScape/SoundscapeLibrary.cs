@@ -1,17 +1,49 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Unity.Mathematics;
+using Unity.Tutorials.Core.Editor;
+using Unity.XR.CoreUtils;
 using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.Networking;
 
 public class SoundscapeLibrary: MonoBehaviour
 {
     public AudioList audioList;
     public SoundscapeList soundscapeList;
+
+    private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
     
-    void Start()
+    public void Start()
     {
-        audioList = AudioList.ReadFromJson();
-        soundscapeList = SoundscapeList.ReadFromJson();
+        soundscapeList = SoundscapeList.ReadFromJson(GetSoundscapeFilePath());
+        audioList = AudioList.ReadFromJson(GetAudioFilePath());
+        foreach(Audio audio in audioList.GetAudios())
+        {
+            StartCoroutine(LoadTexture(audio));
+            StartCoroutine(LoadAudioClip(audio));
+        }
         //Debug.Log(audioList.Print());
+    }
+    public void SaveSoundscape(Soundscape updatedSoundscape)
+    {
+        soundscapeList.UpdateList(updatedSoundscape);
+
+        string json = JsonUtility.ToJson(soundscapeList, true);
+        string fullPath = GetSoundscapeFilePath();
+        
+        try
+        {
+            File.WriteAllText(fullPath, json);
+            Debug.Log($"Soundscape '{updatedSoundscape.title}' saved successfully to {fullPath}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to save soundscape JSON: {e.Message}");
+        }
     }
 
     public AudioSource CreateSourceAt(Audio audio, Vector3 spherePosition)
@@ -34,37 +66,154 @@ public class SoundscapeLibrary: MonoBehaviour
             // Standard PC StreamingAssets path
             return Path.Combine(Application.streamingAssetsPath, filePath);
         #elif UNITY_ANDROID
-            // This points to the root of the "Internal Shared Storage" 
-            // visible when you plug the Quest into a PC.
             string rootPath = "/storage/emulated/0/SoundscapeVr";
-            
-            // Ensure the directory exists so the app doesn't crash
-            if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
-            
-            return Path.Combine(rootPath, filePath);
+            return androidStorage.GetPersistentPath();
         #else
             return Path.Combine(Application.streamingAssetsPath, filePath);
         #endif
     }
     
-    public static string GetConfigPath(string fileName)
+    public static string GetSoundscapeFilePath()
     {
-        string filePath = "configs/" + fileName;
+        return Path.Combine(GetPersistentPath(), SOUNDSCAPE_PATH);
+    }
+    public static string GetAudioFilePath()
+    {
+        return Path.Combine(GetPersistentPath(), "audios.json");
+    }
 
-        #if UNITY_EDITOR || UNITY_STANDALONE_WIN
-            // Standard PC StreamingAssets path
-            return Path.Combine(Application.streamingAssetsPath, filePath);
-        #elif UNITY_ANDROID
-            // This points to the root of the "Internal Shared Storage" 
-            // visible when you plug the Quest into a PC.
-            string rootPath = "/storage/emulated/0/SoundscapeVr";
-            
-            // Ensure the directory exists so the app doesn't crash
-            if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
-            
-            return Path.Combine(rootPath, filePath);
-        #else
-            return Path.Combine(Application.streamingAssetsPath, filePath);
-        #endif
+    private static string GetPersistentPath()
+    {
+        string folderName = "configs";
+        string rootPath = Path.Combine(Application.persistentDataPath, folderName);
+        if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+        return rootPath;
+    }
+    
+    public IEnumerator LoadAudioClip(Audio audioData)
+    {
+        UnityEngine.AudioType type = audioData.fileType switch
+        {
+            "wav" => UnityEngine.AudioType.WAV,
+            "ogg" => UnityEngine.AudioType.OGGVORBIS,
+            _ => UnityEngine.AudioType.MPEG    
+        };
+        // Use the path stored in your audio object
+        Debug.Log("Reading audio clip at: " + GetStreamingPath(audioData.fileName));
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(GetStreamingPath(audioData.fileName), type))
+        {
+            // Start the request and wait
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
+                audioData.SetClip(downloadedClip);
+                Debug.Log($"Successfully loaded: {audioData.name}");
+            }
+            else
+            {
+                Debug.LogError($"Error loading {audioData.fileName}: {www.error}");
+            }
+        }
+    }
+
+    private IEnumerator LoadTexture(Audio audio)
+    {
+        if(audio.imagePath.IsNullOrEmpty())
+                yield break;
+        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(audio.GetRealAudioPath()))
+        {
+            yield return uwr.SendWebRequest();
+
+            if (uwr.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Image load failed: " + uwr.error);
+                yield break;
+            }
+
+            // 1. Get the texture and fix seams
+            Texture2D loadedTexture = DownloadHandlerTexture.GetContent(uwr);
+            loadedTexture.wrapMode = TextureWrapMode.Clamp;
+            audio.SetTexture(loadedTexture);
+        }
+    }
+    public static Vector3 WorldToSphere(Vector3 worldCoords)
+    {
+        float x = worldCoords.x;
+        float y = worldCoords.y;
+        float z = worldCoords.z;
+
+        float r = math.sqrt(x * x + y * y + z * z);
+        if (r < 0.001f) return Vector3.zero;
+
+        // zenith (elevation): angle from horizon (-pi/2 to pi/2)
+        float zenith = math.asin(y / r);
+        // azimuth: angle on XZ plane. Atan2(z, x) makes +X zero.
+        float azimuth = math.atan2(z, x);
+
+        return new Vector3(r, zenith, azimuth);
+    }
+
+    public static Vector3 SphereToWorld(Vector3 sphereCoords)
+    {
+        float r = sphereCoords.x;
+        float zenith = sphereCoords.y; // elevation
+        float azimuth = sphereCoords.z;
+
+        // Standard conversion for Y-up:
+        // x = r * cos(elevation) * cos(azimuth)
+        // y = r * sin(elevation)
+        // z = r * cos(elevation) * sin(azimuth)
+        
+        float cosZenith = math.cos(zenith);
+        
+        float x = r * cosZenith * math.cos(azimuth);
+        float y = r * math.sin(zenith);
+        float z = r * cosZenith * math.sin(azimuth);
+
+        return new Vector3(x, y, z);
+    }
+    public static float DistanceInSphere(Vector3 sphere1, Vector3 sphere2)
+    {
+        float r1 = sphere1.x;
+        float zen1 = sphere1.y; // Elevation
+        float azi1 = sphere1.z; // Azimuth
+
+        float r2 = sphere2.x;
+        float zen2 = sphere2.y;
+        float azi2 = sphere2.z;
+
+        // 1. Calculate the cosine of the angle between the two vectors (dot product of unit vectors)
+        // cos(angle) = sin(phi1)sin(phi2) + cos(phi1)cos(phi2)cos(theta1 - theta2)
+        float cosAngle = (math.sin(zen1) * math.sin(zen2)) + 
+                        (math.cos(zen1) * math.cos(zen2) * math.cos(azi1 - azi2));
+
+        // 2. Use the Law of Cosines to find the Euclidean distance
+        // d^2 = r1^2 + r2^2 - 2 * r1 * r2 * cos(angle)
+        float distSq = (r1 * r1) + (r2 * r2) - (2 * r1 * r2 * cosAngle);
+
+        // 3. Return the square root, ensuring we don't sqrt a tiny negative due to float precision
+        return math.sqrt(math.max(0, distSq));
+    }
+
+    public IAudioGenerator GetClipForAudio(string audioId)
+    {
+        foreach(Audio audio in audioList.GetAudios())
+        {
+            if (audio.id.Equals(audioId))
+            {
+                return audio.GetClip();
+            }
+        }
+        return null;
+    }
+
+    public string GetAudioType(string audioId)
+    {
+        foreach(Audio audio in audioList.GetAudios())
+        {
+            if(audio.id.Equals(audioId)) return audio.type;
+        }
+        return "";
     }
 }

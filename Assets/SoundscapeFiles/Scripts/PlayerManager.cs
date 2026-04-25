@@ -24,6 +24,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private CharacterController flatCollider;
     [SerializeField] private GravityProvider vrGravity;
     [SerializeField] private List<int> cameraHideMask = new();
+    //what to mask if debugging
+    [SerializeField] private List<int> debugCameraHideMask = new();
 
     public void Start()
     {
@@ -83,8 +85,18 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    private int GetCameraMask()
+    private int GetCameraMask(bool debug)
     {
+        if (debug)
+        {
+            int debugMask = 0;
+            foreach(int mask in debugCameraHideMask)
+            {
+                int layerMask = 1 << mask;
+                debugMask |= layerMask;
+            }
+            return debugMask;
+        } 
         int resMask = 0;
         foreach(int mask in cameraHideMask)
         {
@@ -97,12 +109,12 @@ public class PlayerManager : MonoBehaviour
     public void ShowCameraLayers()
     {
         //show stuff
-        Camera.main.cullingMask |= GetCameraMask();
+        Camera.main.cullingMask |= GetCameraMask(false);
     }
-    public void HideCameraLayers()
+    public void HideCameraLayers(bool debug)
     {
         //hide stuff
-        Camera.main.cullingMask &= ~GetCameraMask();
+        Camera.main.cullingMask &= ~GetCameraMask(debug);
 
     }
 }

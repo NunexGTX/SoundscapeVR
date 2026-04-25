@@ -1,0 +1,7 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <ui:Button text="" name="button" double-click-selects-word="false" triple-click-selects-line="false" class="buttonStyle" style="width: 80%; min-width: 80%; max-width: 90%; height: initial; aspect-ratio: 1; -unity-text-align: lower-center; white-space: normal; text-overflow: clip; align-items: center;">
+        <ui:Image source="project://database/Assets/SoundscapeFiles/Materials/cravo.png?fileID=2800000&amp;guid=14347192edc0e544abfefae7af9ea5b5&amp;type=3#cravo" tint-color="rgb(255, 255, 255)" scale-mode="ScaleToFit" name="btnImage" style="height: auto; width: 100%; margin-bottom: 22px; padding-bottom: -8px;"/>
+        <ui:Label text="Label" enable-rich-text="true" double-click-selects-word="false" triple-click-selects-line="false" name="btnLabel" style="align-items: auto; align-self: center; height: auto; width: 100%; white-space: pre-wrap;"/>
+    </ui:Button>
+</ui:UXML>
