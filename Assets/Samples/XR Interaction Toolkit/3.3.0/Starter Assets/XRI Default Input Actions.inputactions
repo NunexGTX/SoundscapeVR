@@ -1113,8 +1113,8 @@
                 },
                 {
                     "name": "",
-                    "id": "78c828b5-a743-4d51-b990-6188c2377d37",
-                    "path": "<Mouse>/leftButton",
+                    "id": "248a4b1b-7c60-493a-b02f-f3b8e715c16c",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -1966,6 +1966,17 @@
                     "action": "Thumbstick",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e2d30658-14c6-4f3a-bff6-1183bbf84bcb",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Thumbstick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -1995,7 +2006,7 @@
                     "name": "Activate",
                     "type": "Button",
                     "id": "41976d89-60de-4deb-bff9-16b4af96b290",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -2029,7 +2040,7 @@
                 },
                 {
                     "name": "UI Scroll",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "c283b939-751f-426e-8462-142a529993e3",
                     "expectedControlType": "Vector2",
                     "processors": "InvertVector2(invertY=false)",
@@ -2151,6 +2162,17 @@
                 },
                 {
                     "name": "",
+                    "id": "446abefe-746a-425a-9d65-5b67455e2084",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "dd433817-216c-46b9-8dd3-f3a4ea1767b9",
                     "path": "<XRController>{RightHand}/{Grip}",
                     "interactions": "",
@@ -2208,6 +2230,17 @@
                     "name": "",
                     "id": "fa59aed1-ae0b-4074-a58c-294b85f46228",
                     "path": "<XRController>{RightHand}/{TriggerButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Activate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3f5c3572-cdbf-4f7c-b43a-6dae67ed63d5",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -2338,9 +2371,20 @@
                 },
                 {
                     "name": "",
-                    "id": "af6fd279-2f48-4f51-8e9d-29b0b9d926f8",
-                    "path": "<XRController>{RightHand}/{Primary2DAxis}",
+                    "id": "927a4e4e-1b40-4e89-a214-3b26b9615bd9",
+                    "path": "<Mouse>/scroll",
                     "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7b49c5af-c9ec-4a6d-b307-98fb10b3e1a2",
+                    "path": "<XRController>{RightHand}/{Primary2DAxis}",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=2,sweepBehavior=2)",
                     "processors": "",
                     "groups": "",
                     "action": "UI Scroll",
@@ -2446,7 +2490,7 @@
                     "name": "Grab Move",
                     "type": "Button",
                     "id": "cfb29d37-3db0-4e5d-a73b-7d48a19e279e",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -2492,17 +2536,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Turn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "022046aa-be71-4288-859d-6dd42844f6e6",
-                    "path": "<XRController>{RightHand}/{Primary2DAxis}",
-                    "interactions": "",
-                    "processors": "StickDeadzone",
-                    "groups": "",
-                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -2,14 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal.Internal;
+using System.Linq;
+using UnityEngine.Networking;
+using System.Collections;
 
 [System.Serializable]
 public class AudioList
 {
-    private List<Audio> sounds;
+    public List<Audio> sounds;
     public AudioList(){sounds = new();}
+    public IEnumerable<Audio> GetAudios()
+    {
+        // Combines both into a single stream of Soundscape objects
+        return sounds.Cast<Audio>();
+    }
+    
 
     public Audio TryGetAudioById(string audioId)
     {
@@ -21,16 +28,19 @@ public class AudioList
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public static AudioList ReadFromJson()
+    public static AudioList ReadFromJson(string path)
     {
-        string path = SoundscapeLibrary.GetConfigPath("audios.json");
         if (File.Exists(path))
         {
+            Debug.Log("Found Audio configuration file.");
             string json = File.ReadAllText(path);
             return JsonUtility.FromJson<AudioList>(json);
         }
+        Debug.Log("Could not find Audio configuration file.");
         return new();
     }
+
+    
     public string Print()
     {
         return JsonUtility.ToJson(this);
