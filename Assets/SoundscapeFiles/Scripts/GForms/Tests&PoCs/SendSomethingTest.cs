@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-
+/*
 public class SendSomethingTest : MonoBehaviour
 {
     private GoogleForm googleForm;
@@ -32,4 +32,4 @@ public class SendSomethingTest : MonoBehaviour
 
         googleForm.submitForm();
     }
-}
+}*/

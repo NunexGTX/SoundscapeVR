@@ -1,7 +1,4 @@
 using UnityEngine;
-using UnityEngine.Video;
-using System.IO;
-using System;
 using System.Collections;
 using UnityEngine.Networking;
 

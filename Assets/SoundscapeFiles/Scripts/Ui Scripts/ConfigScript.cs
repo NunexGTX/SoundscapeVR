@@ -1,8 +1,7 @@
-using NUnit.Framework.Internal;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class ConfigBtn : MonoBehaviour
+public class ConfigScript : MonoBehaviour
 {
     public PlayerManager XRSwitcher;
     [SerializeField] private GameObject mainMenu;

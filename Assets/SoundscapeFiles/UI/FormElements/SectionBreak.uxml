@@ -1,0 +1,8 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/radioBtnEleStyle.uss?fileID=7433441132597879392&amp;guid=8d25a6dd1577fdd4392be89b940f8c5a&amp;type=3#radioBtnEleStyle"/>
+    <ui:VisualElement style="flex-grow: 1; margin-top: 14px; margin-right: 14px; margin-bottom: 14px; margin-left: 14px;">
+        <ui:Label text="Title" name="title" style="font-size: 24px; -unity-font-style: bold;"/>
+        <ui:Label text="Description" focusable="false" name="description"/>
+    </ui:VisualElement>
+</ui:UXML>

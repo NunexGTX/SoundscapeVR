@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FormEntry : MonoBehaviour
+public class FormEntry
 {
     public string entryID;
     public string questionType;

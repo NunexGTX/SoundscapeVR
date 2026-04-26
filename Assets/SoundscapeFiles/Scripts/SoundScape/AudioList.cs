@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.Networking;
-using System.Collections;
 
 [System.Serializable]
 public class AudioList

@@ -1,6 +1,3 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities; //Call needs it
 /*
 public class StopVideo360 : MonoBehaviour
 {

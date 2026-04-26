@@ -1,9 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class PlayVideoBtn : MonoBehaviour
+public class SoundscapeScript : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private SoundscapeWrapper ssWrapper;

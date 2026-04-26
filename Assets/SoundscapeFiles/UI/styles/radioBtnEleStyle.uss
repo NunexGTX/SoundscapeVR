@@ -1,0 +1,17 @@
+:root {
+}
+
+.unity-base-field__label {
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.unity-label {
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.unity-radio-button__text {
+    margin-right: 16%;
+    margin-left: 8px;
+}

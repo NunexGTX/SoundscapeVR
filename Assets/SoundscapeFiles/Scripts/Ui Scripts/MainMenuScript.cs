@@ -8,13 +8,16 @@ public class UiTestClick : MonoBehaviour
     
     [SerializeField] private GameObject soundscapeMenu;
     [SerializeField] private GameObject editMenu;
+    [SerializeField] private GameObject formMenu;
     private enum MenuType
     {
         MAIN,
         CONFIG,
         SOUNDSCAPE,
-        EDIT
+        EDIT,
+        FORM
     }
+    private Button formBtn;
     private Button ssBtn;
     private Button editBtn;
     private Button configBtn;
@@ -24,6 +27,7 @@ public class UiTestClick : MonoBehaviour
     void OnEnable()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+        formBtn = root.Q<Button>("formBtn"); 
         ssBtn = root.Q<Button>("ssBtn"); 
         configBtn = root.Q<Button>("configBtn"); 
         Button questBtn = root.Q<Button>("questBtn"); 
@@ -31,6 +35,7 @@ public class UiTestClick : MonoBehaviour
         editBtn = root.Q<Button>("editSsBtn"); 
 
         ssBtn.clicked += GoToSS;
+        formBtn.clicked += GoToForm;
         configBtn.clicked += GoToConfig;
         editBtn.clicked += GoToEdit;
         exitBtn.clicked += OnQuitClicked;
@@ -49,6 +54,11 @@ public class UiTestClick : MonoBehaviour
         GoTo(MenuType.SOUNDSCAPE);
     }
     
+    private void GoToForm()
+    {
+        GoTo(MenuType.FORM);
+    }
+    
     private void GoToConfig()
     {
         GoTo(MenuType.CONFIG);
@@ -64,6 +74,7 @@ public class UiTestClick : MonoBehaviour
         configMenu.SetActive(false);
         soundscapeMenu.SetActive(false);
         editMenu.SetActive(false);
+        formMenu.SetActive(false);
         switch (targetMenu)
         {
             case MenuType.CONFIG:
@@ -74,6 +85,9 @@ public class UiTestClick : MonoBehaviour
                 break;
             case MenuType.EDIT:
                 editMenu.SetActive(true);
+                break;
+            case MenuType.FORM:
+                formMenu.SetActive(true);
                 break;
         }
         gameObject.SetActive(false);

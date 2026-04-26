@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using System.Collections;
-using Unity.Multiplayer.Center.Common;
 
 public class GoogleForm : MonoBehaviour
 {
@@ -18,27 +17,16 @@ public class GoogleForm : MonoBehaviour
     }
 
     //When all necessary values have been assigned, we call this to gather all the FormDatas of the GForms children to prepare and send the post request
-    public void submitForm()
+    public void submitForm(Dictionary<string, string> entries)
     {
-        gatherFormEntries();
-        StartCoroutine(GFormPOSTRequest());
+        StartCoroutine(GFormPOSTRequest(entries));
     }
 
-    private void gatherFormEntries()
-    {
-        FormEntry[] FormFields = GetComponentsInChildren<FormEntry>();
-
-        foreach (FormEntry form_entry in FormFields)
-        {
-            AnsweredQuestions.Add(form_entry.entryID, form_entry.getValue());
-        }
-    }
-
-    IEnumerator GFormPOSTRequest()
+    IEnumerator GFormPOSTRequest(Dictionary<string, string> entries)
     {
         WWWForm GFormSend = new WWWForm(); //This will build the POST Request's json
 
-        foreach (KeyValuePair<string, string> entry in AnsweredQuestions)
+        foreach (KeyValuePair<string, string> entry in entries)
         {
             GFormSend.AddField(entry.Key, entry.Value);
         }

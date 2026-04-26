@@ -1,10 +1,7 @@
-using UnityEngine;
-using TMPro;
-using UnityEngine.UIElements;
-
 /**
 This is a class that allows to retrieve the value and send it to the form entry data holder because we can't send the inserted text with the native unity actions directly 
 OnValueChange and OnEndEdit do not provide something like this*/
+/*
 public class TextboxValueSender : MonoBehaviour
 {
     private TMP_InputField formTextField;
@@ -24,4 +21,4 @@ public class TextboxValueSender : MonoBehaviour
     {
         formEntry.formEntryValue(getInputFieldText());
     }
-}
+}*/

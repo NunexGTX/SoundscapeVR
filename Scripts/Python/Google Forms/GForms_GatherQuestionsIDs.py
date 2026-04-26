@@ -116,11 +116,13 @@ def QuestionsGatherer():
 
     resultDict = {}
     #Gather the Questions
-    Title = formData.get('info', {}).get('documentTitle')
+    Title = formData.get('info', {}).get('title')
+    description = formData.get('info', {}).get('description')
     uri: str = formData.get("responderUri")
     formId = uri.replace("https://docs.google.com/forms/d/e/", "").replace("/viewform", "")
     resultDict["formTitle"] = Title
     resultDict["formViewId"] = formId
+    resultDict["description"] = description
     Questions = []
 
     items = formData.get('items', [])
@@ -146,18 +148,31 @@ def QuestionsGatherer():
                 continue
 
             #after determining type, we get any extra information that may be relevant
-            q_extra = ""
+            q_extra = []
             if(_choiceQuestion):
-                q_extra = _choiceQuestion["options"]
+                q_extra = [entry["value"] for entry in _choiceQuestion["options"]]
             elif(q_type == "SCALE"):
-                q_extra = question["scaleQuestion"]
+                scaler = question["scaleQuestion"]
+                q_extra = [str(scaler["low"]), str(scaler["high"])]
+                if(scaler["lowLabel"]):
+                    q_extra.extend([scaler["lowLabel"], scaler["highLabel"]])
+
             itemDict: dict = {
                 "id": q_id,
                 "type": q_type,
-                "question": q_name,
+                "description": q_name,
                 "extra": q_extra
             }
             Questions.append(itemDict)
+        elif 'textItem' in item or 'pageBreakItem' in item:
+            itemDict: dict = {
+                "id": item.get("title", ""),
+                "type": "TITLE" if 'textItem' in item else "BREAK",
+                "description": item.get("description", ""),
+                "extra": ""
+            }
+            Questions.append(itemDict)
+
     resultDict["questions"] = Questions
     #Print the Questions
     showQuestionsJson(resultDict)

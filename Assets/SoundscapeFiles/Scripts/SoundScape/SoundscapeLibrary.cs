@@ -1,11 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Unity.Mathematics;
 using Unity.Tutorials.Core.Editor;
-using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Networking;
@@ -14,6 +11,8 @@ public class SoundscapeLibrary: MonoBehaviour
 {
     public AudioList audioList;
     public SoundscapeList soundscapeList;
+    public Form form;
+
 
     private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
     
@@ -21,6 +20,8 @@ public class SoundscapeLibrary: MonoBehaviour
     {
         soundscapeList = SoundscapeList.ReadFromJson(GetSoundscapeFilePath());
         audioList = AudioList.ReadFromJson(GetAudioFilePath());
+        ReadFormFromJson(GetFormFilePath());
+
         foreach(Audio audio in audioList.GetAudios())
         {
             StartCoroutine(LoadTexture(audio));
@@ -82,10 +83,36 @@ public class SoundscapeLibrary: MonoBehaviour
         return Path.Combine(GetPersistentPath(), "audios.json");
     }
 
+    private void ReadFormFromJson(string path)
+    {
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            form = JsonUtility.FromJson<Form>(json);
+        }
+        else
+        {
+            Debug.LogWarning($"Could not find questionnaire_config.json in path {path}. Please ensure it exists to use the questionnaire.");
+            form = null;
+        }
+    }
+
+    public static string GetFormFilePath()
+    {
+        return GetPersistentPath("configs/questionnaire_config.json");
+    }
+
     private static string GetPersistentPath()
     {
         string folderName = "configs";
         string rootPath = Path.Combine(Application.persistentDataPath, folderName);
+        if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+        return rootPath;
+    }
+
+    private static string GetPersistentPath(string path)
+    {
+        string rootPath = Path.Combine(Application.persistentDataPath, path);
         if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
         return rootPath;
     }
