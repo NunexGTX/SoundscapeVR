@@ -56,14 +56,14 @@ public class VideoSoundscape : Soundscape
             VideoPlayer360 v360 = go.AddComponent<VideoPlayer360>();
             v360.videoFileName = SoundscapeLibrary.GetStreamingPath(encompassingPath);
             v360.Video360Material = new Material(Shader.Find("Skybox/Panoramic"));
-            return go;
         } else
         {
             videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
             videoPlayer.targetCamera = Camera.main;
             videoPlayer.url = SoundscapeLibrary.GetStreamingPath(staticPath);
-            return go;
         }
+        videoPlayer.Prepare();
+        return go;
 
     }
 }

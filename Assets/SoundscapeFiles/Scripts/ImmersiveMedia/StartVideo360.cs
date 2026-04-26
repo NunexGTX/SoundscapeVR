@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.Video;
-
+/*
 public class NewMonoBehaviourScript : MonoBehaviour
 {
     public GameObject video360;
@@ -28,4 +28,4 @@ public class NewMonoBehaviourScript : MonoBehaviour
         if(player != null)
             player.ActivatePlayer(false);
     }
-}
+}*/

@@ -16,6 +16,7 @@ public class ConfigBtn : MonoBehaviour
 
         VRToggle = root.Q<Toggle>("vrToggle"); 
         returnBtn = root.Q<Button>("returnBtn");
+        //TouchScreenKeyboard.Open();
 
         VRToggle.RegisterValueChangedCallback(DoToggleVr);
         returnBtn.clicked += Return;

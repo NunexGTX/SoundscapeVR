@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 import csv
+import json.encoder
 #Google API
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -86,7 +87,13 @@ while True:
 
 print("Google Forms API credentials at: ",credentialsJson)
 print()
-FormID = input("Your Google Form ID: ")
+FormID = ""
+with open(credentialsJson, "r") as f:
+    loadedCreds = json.loads(f.read())
+    if(not loadedCreds.get("formId")):
+        FormID = input("Your Google Form ID: ")
+    else:
+        FormID = loadedCreds["formId"]
 print()
 
 API_Scopes = ['https://www.googleapis.com/auth/forms.body.readonly'] #This will allow to read the details of the form via the API
@@ -107,35 +114,55 @@ def QuestionsGatherer():
     #The the form's raw data
     formData = FormsContentRetriever(FormID,token)
 
+    resultDict = {}
     #Gather the Questions
-    Title = formData.get('info', {}).get('title')
+    Title = formData.get('info', {}).get('documentTitle')
+    uri: str = formData.get("responderUri")
+    formId = uri.replace("https://docs.google.com/forms/d/e/", "").replace("/viewform", "")
+    resultDict["formTitle"] = Title
+    resultDict["formViewId"] = formId
     Questions = []
 
     items = formData.get('items', [])
     for item in items:
         # Check if the item is a question (ignores layout elements like images/headers)
         if 'questionItem' in item:
-            q_id = "entry." + str(int(item['questionItem']['question'].get('questionId'),16)) #Temos de converter o entry id de hexadecimal para int para podermos responder com o post request
-            q_name = item.get('title')
-            # Extract type (e.g., CHOICE, TEXT, etc.)
-            q_type = item['questionItem']['question'].get('choiceQuestion', {}).get('type', 'TEXT') #Sees if the question is classified as a choice question or a text question
-            
-            # If it's not a choice question, differentiates between Text and Scale
-            if 'textQuestion' in item['questionItem']['question']:
-                if 'paragraph' in item['questionItem']['question']['textQuestion']:
-                    q_type = 'PARAGRAPH'
-                else:
-                    q_type = "TEXT"
-            elif 'scaleQuestion' in item['questionItem']['question']:
-                q_type = "SCALE"
-            #We'll only implement these since these are the ones we needs, overtime we might implment more question types
-            
-            Questions.append([q_id,q_type,q_name])
+            question = item['questionItem']['question']
+            q_id = "entry." + str(int(question.get('questionId'),16)) #Temos de converter o entry id de hexadecimal para int para podermos responder com o post request
+            q_name = item.get('title', "Untitled Question")
+            _choiceQuestion: dict = question.get('choiceQuestion', {})
 
+            # get type of question
+            if 'textQuestion' in question:
+                if 'paragraph' in question['textQuestion']:
+                    q_type = 'PARAGRAPH'
+                else: 
+                    q_type = 'TEXT'
+            elif 'scaleQuestion' in question:
+                q_type = "SCALE"
+            elif 'choiceQuestion' in question:
+                q_type = _choiceQuestion['type']
+            else:
+                continue
+
+            #after determining type, we get any extra information that may be relevant
+            q_extra = ""
+            if(_choiceQuestion):
+                q_extra = _choiceQuestion["options"]
+            elif(q_type == "SCALE"):
+                q_extra = question["scaleQuestion"]
+            itemDict: dict = {
+                "id": q_id,
+                "type": q_type,
+                "question": q_name,
+                "extra": q_extra
+            }
+            Questions.append(itemDict)
+    resultDict["questions"] = Questions
     #Print the Questions
-    showQuestions(Title,Questions)
+    showQuestionsJson(resultDict)
     #Save questions to a .csv
-    saveQuestionstoCSV(Title,Questions)
+    saveQuestionstoJSON(resultDict)
 
 
 def FormsContentRetriever(formID, token):
@@ -144,6 +171,10 @@ def FormsContentRetriever(formID, token):
     print("Form Data: ",formData)
     print()
     return formData
+
+def showQuestionsJson(formDict: dict):
+    print(f"GForm: {formDict["formTitle"]}\n")
+    print(json.dumps(formDict, indent=4))
 
 def showQuestions(title, questions):
     print(f"GForm: {title}\n")
@@ -163,5 +194,14 @@ def saveQuestionstoCSV(form_title, questions):
         writer = csv.writer(f)
         writer.writerow(["ID","Type","Question Name"])
         writer.writerows(questions)
+
+def saveQuestionstoJSON(jsonDict: dict):
+    choice: str = ""
+    while(choice != "y" and choice != "n"):
+        choice = input("Attempt to write to streaming assets? [Y/n] ").strip().lower()
+    file_name = "./Assets/StreamingAssets/configs/questionnaire_config.json" if choice.lower() == "y" else "./questionnaire_config.json"
+    print(f"Saving the data to {file_name}")
+    with open(file_name, "w", newline="") as f:
+        f.write(json.dumps(jsonDict, indent=4))
 
 QuestionsGatherer()

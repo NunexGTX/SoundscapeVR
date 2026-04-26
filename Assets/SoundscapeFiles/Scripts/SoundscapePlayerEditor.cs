@@ -174,6 +174,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     {
         if(currentState != State.AdjustPlace) return;
         Vector2 scrollValue = context.ReadValue<Vector2>();
+        Debug.Log(scrollValue);
         float scrollY = scrollValue.y;
         Vector3 sphereCoords = currentAudioAsSource.GetSpherePosition();
         Vector3 newCoords = new()

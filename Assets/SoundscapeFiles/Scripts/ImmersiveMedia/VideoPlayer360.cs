@@ -23,7 +23,6 @@ public class VideoPlayer360 : MonoBehaviour
 
         //Wait for promise for video player to get prepared to play
         videoPlayer.prepareCompleted += OnVideoPrepared;
-        videoPlayer.Prepare();
     }
 
     void OnVideoPrepared(VideoPlayer source)

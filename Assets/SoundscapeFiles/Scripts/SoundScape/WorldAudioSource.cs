@@ -27,7 +27,7 @@ public class WorldAudioSource: MonoBehaviour
             src.spatialize = false;
             src.spatialBlend = 0;
         }
-        if (playing && debug)
+        if (playing)
         {
             src.Play();
         }

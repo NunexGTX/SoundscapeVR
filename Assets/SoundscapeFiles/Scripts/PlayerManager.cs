@@ -79,7 +79,7 @@ public class PlayerManager : MonoBehaviour
             player.transform.position = position;
             vrPlayer.transform.position = position;
 
-            Quaternion rotation = Quaternion.Euler(0, 0, 0);
+            Quaternion rotation = Quaternion.Euler(0, 90, 0);
             player.transform.rotation = rotation;
             vrPlayer.transform.rotation = rotation;
         }

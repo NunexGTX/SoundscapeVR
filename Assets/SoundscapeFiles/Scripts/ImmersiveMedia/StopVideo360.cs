@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities; //Call needs it
-
+/*
 public class StopVideo360 : MonoBehaviour
 {
     public PlayerManager player;
@@ -31,3 +31,4 @@ public class StopVideo360 : MonoBehaviour
         inputAction.action.performed -= endVideo;
     }
 }
+*/
