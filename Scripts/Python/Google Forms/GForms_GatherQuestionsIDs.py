@@ -115,7 +115,7 @@ def QuestionsGatherer():
     for item in items:
         # Check if the item is a question (ignores layout elements like images/headers)
         if 'questionItem' in item:
-            q_id = "entry." + str(int(item['questionItem']['question'].get('questionId'),16))
+            q_id = "entry." + str(int(item['questionItem']['question'].get('questionId'),16)) #Temos de converter o entry id de hexadecimal para int para podermos responder com o post request
             q_name = item.get('title')
             # Extract type (e.g., CHOICE, TEXT, etc.)
             q_type = item['questionItem']['question'].get('choiceQuestion', {}).get('type', 'TEXT') #Sees if the question is classified as a choice question or a text question
