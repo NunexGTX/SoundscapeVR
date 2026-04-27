@@ -28,10 +28,13 @@ public class SoundscapeWrapper: MonoBehaviour
         leaveSoundscapeAction.action.performed -= StopSoundscape;
     }
 
-    public void SaveCurrentSoundscape()
+    private void SaveCurrentSoundscape()
     {
-        if(edited)
+        if (edited && currentSoundscape != null)
+        {
             soundscapeLibrary.SaveSoundscape(currentSoundscape);
+            edited = false;            
+        }
     }
 
     private void EditSoundscape(AudioSource src, bool add)
@@ -80,23 +83,25 @@ public class SoundscapeWrapper: MonoBehaviour
         Guid srcId = Guid.NewGuid();
         GameObject go = Instantiate(audioSourceObject);
         go.transform.position = SoundscapeLibrary.SphereToWorld(src.GetSpherePosition());
-        go.GetComponent<WorldAudioSource>().uuid = srcId;
-        go.GetComponent<WorldAudioSource>().audioSource = src;
-        go.GetComponent<WorldAudioSource>().playing = play;
-        go.GetComponent<WorldAudioSource>().debug = debug;
-        go.GetComponent<WorldAudioSource>().soundscapeWrapper = this;
-        go.GetComponent<WorldAudioSource>().library = soundscapeLibrary;
+        WorldAudioSource worldSrc = go.GetComponent<WorldAudioSource>();
+        worldSrc.uuid = srcId;
+        worldSrc.audioSource = src;
+        worldSrc.playing = play;
+        worldSrc.debug = debug;
+        worldSrc.soundscapeWrapper = this;
+        worldSrc.library = soundscapeLibrary;
+        worldSrc.playbackType = vrStateData.GetCurrentAudio();
         placedAudios.Add(srcId, go);
         go.SetActive(true);
         if(newSource) EditSoundscape(src, true);
     }
 
-    public void StartSoundscape(bool debug)
+    public void StartSoundscape(bool editing)
     {
-        if (!debug)
+        if (!editing)
         {
             playerManager.SetPlayerMovement(false);
-            playerManager.HideCameraLayers(debug);
+            playerManager.HideCameraLayers(editing);
             
             ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());
             if(ssVisual != null)
@@ -106,7 +111,7 @@ public class SoundscapeWrapper: MonoBehaviour
         }
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
         {
-            PlaceAudioSource(src, true, debug);
+            PlaceAudioSource(src, true, editing);
         }
     }
 
@@ -117,6 +122,7 @@ public class SoundscapeWrapper: MonoBehaviour
 
     public void StopSoundscape()
     {
+        SaveCurrentSoundscape();
         playerManager.SetPlayerMovement(true);
         playerManager.ShowCameraLayers();
         if (videoPlaying)

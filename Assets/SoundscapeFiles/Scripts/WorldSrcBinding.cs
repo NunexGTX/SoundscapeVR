@@ -1,4 +1,9 @@
-/*
+
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+
+//class to automatically bind audio sources to be selectable in XR
 public class WorldSrcBinding : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -12,7 +17,7 @@ public class WorldSrcBinding : MonoBehaviour
         gameObject.GetComponent<XRSimpleInteractable>().activated.RemoveAllListeners();
     }
 
-    private void SelectSelf(ActivateEventArgs context)
+    public void SelectSelf(ActivateEventArgs context)
     {
         GameObject.Find("PlayerManager").GetComponent<SoundscapePlayerEditor>().SelectAudioSource(gameObject);
     }
@@ -23,4 +28,3 @@ public class WorldSrcBinding : MonoBehaviour
         
     }
 }
-*/

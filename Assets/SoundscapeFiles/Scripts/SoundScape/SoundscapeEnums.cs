@@ -6,10 +6,15 @@ public enum VisualType
     NONE = 0
 }
 
-public enum AudioType
+public enum AudioSourceType
 {
     BINAURAL,
     ENCOMPASSING,
-    BOTH,
     NONE
+}
+public enum AudioListeningType
+{
+    BINAURAL = 1,
+    ENCOMPASSING = 2,
+    NONE = 0
 }

@@ -91,7 +91,6 @@ public class EditScript : MonoBehaviour
     {
         mainMenu.SetActive(true);
         gameObject.SetActive(false);
-        ssWrapper.SaveCurrentSoundscape();
         ssWrapper.StopSoundscape();
         editorPlayer.LeaveEdit();
     }

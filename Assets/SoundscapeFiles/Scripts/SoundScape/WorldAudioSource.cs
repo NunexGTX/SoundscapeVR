@@ -12,24 +12,30 @@ public class WorldAudioSource: MonoBehaviour
     public SoundscapeWrapper soundscapeWrapper;
     public SoundscapeLibrary library;
     public VrStateData vrStateData;
+    public AudioListeningType playbackType;
 
-    void Start()
+    void OnEnable()
     {
-        gameObject.GetComponent<MeshRenderer>().enabled = debug;
-        UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
-        IAudioGenerator gen = library.GetClipForAudio(audioSource.GetAudioId());
-        if(gen == null) return;
-        src.generator = gen;
-        src.time = 0;
-        if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
+        if (playbackType.Equals(AudioListeningType.BINAURAL))
         {
-            src.spatializePostEffects = false;
-            src.spatialize = false;
-            src.spatialBlend = 0;
-        }
-        if (playing)
-        {
-            src.Play();
-        }
+            gameObject.GetComponent<MeshRenderer>().enabled = debug;
+            UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
+            IAudioGenerator gen = library.GetClipForAudio(audioSource.GetAudioId());
+            if(gen == null) return;
+            src.generator = gen;
+            src.time = 0;
+            if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
+            {
+                src.spatializePostEffects = false;
+                src.spatialize = false;
+                src.spatialBlend = 0;
+            }
+            if (playing)
+            {
+                src.Play();
+            }
+            return;
+        } 
+        //TODO: reaper DAW logic here.
     }
 }

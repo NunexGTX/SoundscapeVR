@@ -1,3 +1,4 @@
+using System;
 using Unity.Properties;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ public class VrStateData : ScriptableObject
     bool vrEnabled = false;
     [SerializeField, DontCreateProperty]
     VisualType currentVisual = VisualType.ENCOMPASSING;
+    [SerializeField, DontCreateProperty]
+    AudioListeningType currentAudioSelection = AudioListeningType.BINAURAL;
 
     [CreateProperty]
     public bool IsInVr
@@ -23,8 +26,21 @@ public class VrStateData : ScriptableObject
         set => currentVisual = (VisualType) value;
     }
 
+
+    [CreateProperty]
+    public int CurrentAudioChoice
+    {
+        get => (int)currentAudioSelection;
+        set => currentAudioSelection = (AudioListeningType) value;
+    }
+
     public VisualType GetCurrentVisuals()
     {
         return currentVisual;
+    }
+
+    public AudioListeningType GetCurrentAudio()
+    {
+        return currentAudioSelection;
     }
 }

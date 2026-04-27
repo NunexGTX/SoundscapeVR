@@ -1,7 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
     <ui:VisualElement data-source="" data-source-path="" class="backgroundStyle">
-        <ui:ScrollView scroll-deceleration-rate="-0.03">
+        <ui:ScrollView scroll-deceleration-rate="-0.03" horizontal-scroller-visibility="Hidden">
             <ui:Label text="General Configuration" class="headerStyle"/>
             <ui:Button text="Return to Main Menu" name="returnBtn" class="buttonStyle" style="left: auto; align-self: flex-start;"/>
             <ui:TextField label="Server Address" placeholder-text="192.168.1.2" hide-placeholder-on-focus="true"/>

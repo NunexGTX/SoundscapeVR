@@ -188,7 +188,7 @@ def FormsContentRetriever(formID, token):
     return formData
 
 def showQuestionsJson(formDict: dict):
-    print(f"GForm: {formDict["formTitle"]}\n")
+    print(f"GForm: {formDict['formTitle']}\n")
     print(json.dumps(formDict, indent=4))
 
 def showQuestions(title, questions):

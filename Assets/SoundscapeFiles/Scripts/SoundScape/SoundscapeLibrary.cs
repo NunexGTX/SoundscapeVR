@@ -76,11 +76,11 @@ public class SoundscapeLibrary: MonoBehaviour
     
     public static string GetSoundscapeFilePath()
     {
-        return Path.Combine(GetPersistentPath(), SOUNDSCAPE_PATH);
+        return GetPersistentConfigPath(SOUNDSCAPE_PATH);
     }
     public static string GetAudioFilePath()
     {
-        return Path.Combine(GetPersistentPath(), "audios.json");
+        return GetStreamingPath("configs/audios.json");
     }
 
     private void ReadFormFromJson(string path)
@@ -99,15 +99,15 @@ public class SoundscapeLibrary: MonoBehaviour
 
     public static string GetFormFilePath()
     {
-        return GetPersistentPath("configs/questionnaire_config.json");
+        return GetStreamingPath("configs/questionnaire_config.json");
     }
 
-    private static string GetPersistentPath()
+    private static string GetPersistentConfigPath(string fileName)
     {
         string folderName = "configs";
         string rootPath = Path.Combine(Application.persistentDataPath, folderName);
         if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
-        return rootPath;
+        return Path.Combine(rootPath, fileName);
     }
 
     private static string GetPersistentPath(string path)
@@ -178,14 +178,17 @@ public class SoundscapeLibrary: MonoBehaviour
         // azimuth: angle on XZ plane. Atan2(z, x) makes +X zero.
         float azimuth = math.atan2(z, x);
 
-        return new Vector3(r, zenith, azimuth);
+        return new Vector3(r, zenith*Mathf.Rad2Deg, azimuth*Mathf.Rad2Deg);
     }
 
     public static Vector3 SphereToWorld(Vector3 sphereCoords)
     {
+        //azimuth 0 forward
+        //azimuth -90 is right, 90 is left
+        //latitude 90 is up, -90 is down
         float r = sphereCoords.x;
-        float zenith = sphereCoords.y; // elevation
-        float azimuth = sphereCoords.z;
+        float zenith = sphereCoords.y*Mathf.Deg2Rad; // elevation
+        float azimuth = sphereCoords.z*Mathf.Deg2Rad;
 
         // Standard conversion for Y-up:
         // x = r * cos(elevation) * cos(azimuth)

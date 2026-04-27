@@ -73,13 +73,12 @@ public class PlayerManager : MonoBehaviour
             
         } else
         {
+            Debug.Log("Setting orientation and position...");
             Vector3 position = new(0, 0, 0);
             player.transform.position = position;
             vrPlayer.transform.position = position;
-
-            Quaternion rotation = Quaternion.Euler(0, 90, 0);
-            player.transform.rotation = rotation;
-            vrPlayer.transform.rotation = rotation;
+            player.transform.rotation = Quaternion.Euler(0, 90, 0);
+            vrPlayer.transform.rotation = Quaternion.Euler(0, 90, 0);
         }
     }
 
