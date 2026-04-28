@@ -163,14 +163,14 @@ MonoBehaviour:
   m_EnableTouchInput: 1
   m_EnableGamepadInput: 1
   m_EnableJoystickInput: 1
-  m_PointAction: {fileID: 2869410428622933342, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  m_LeftClickAction: {fileID: 1855836014308820768, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  m_MiddleClickAction: {fileID: -6289560987278519447, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  m_RightClickAction: {fileID: -2562941478296515153, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  m_ScrollWheelAction: {fileID: 5825226938762934180, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  m_NavigateAction: {fileID: -7967456002180160679, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  m_SubmitAction: {fileID: 3994978066732806534, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  m_CancelAction: {fileID: 2387711382375263438, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  m_PointAction: {fileID: 2869410428622933342, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  m_LeftClickAction: {fileID: 1855836014308820768, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  m_MiddleClickAction: {fileID: -6289560987278519447, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  m_RightClickAction: {fileID: -2562941478296515153, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  m_ScrollWheelAction: {fileID: 5825226938762934180, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  m_NavigateAction: {fileID: -7967456002180160679, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  m_SubmitAction: {fileID: 3994978066732806534, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  m_CancelAction: {fileID: 2387711382375263438, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   m_EnableBuiltinActionsAsFallback: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
@@ -1670,9 +1670,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundscapePlayerEditor
   soundscapeWrapper: {fileID: 1891192193}
-  TriggerAction: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  cancelAction: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  scrollAction: {fileID: -6756787485274679044, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  TriggerAction: {fileID: 83097790271614945, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  cancelAction: {fileID: 187161793506945269, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  scrollAction: {fileID: -6756787485274679044, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   aimingSphere: {fileID: 468564577}
   audioSourcePlacerObject: {fileID: 4017158347209711136, guid: 7994b6627bcf14f458477dc662f6548a, type: 3}
   placingMaterial: {fileID: 2100000, guid: 82c97886f55849f46bb8d8b491654bf4, type: 2}
@@ -2044,6 +2044,30 @@ PrefabInstance:
       propertyPath: m_EnableTurnAround
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 583340563854170035, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_LeftHandTurnInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -7374733323251553461, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 583340563854170035, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_RightHandTurnInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -8525429354371678379, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 866406836232131125, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_JumpInput.m_InputActionReferenceValue
+      value: 
+      objectReference: {fileID: -3875704489234743591, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 866406836232131125, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_JumpInput.m_InputActionReferencePerformed
+      value: 
+      objectReference: {fileID: -3875704489234743591, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 1299148066965166079, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_AimFlagsAction.m_Reference
+      value: 
+      objectReference: {fileID: 3270634481770055383, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 1367778769795980796, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_AimFlagsAction.m_Reference
+      value: 
+      objectReference: {fileID: -6595512345416212934, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_AllowHoveredActivate
       value: 1
@@ -2052,6 +2076,34 @@ PrefabInstance:
       propertyPath: m_InteractionLayers.m_Bits
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_UIScrollInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: 2464016903823916871, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_SelectInput.m_InputActionReferenceValue
+      value: 
+      objectReference: {fileID: 6558622148059887818, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_UIPressInput.m_InputActionReferenceValue
+      value: 
+      objectReference: {fileID: 71106601250685021, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_ActivateInput.m_InputActionReferenceValue
+      value: 
+      objectReference: {fileID: -4289430672226363583, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_SelectInput.m_InputActionReferencePerformed
+      value: 
+      objectReference: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_UIPressInput.m_InputActionReferencePerformed
+      value: 
+      objectReference: {fileID: -6395602842196007441, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_ActivateInput.m_InputActionReferencePerformed
+      value: 
+      objectReference: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 1808601201609793989, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2184,10 +2236,34 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 46
       objectReference: {fileID: 0}
+    - target: {fileID: 2368631517992226211, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_ManipulationInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -8811388872089202044, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_Move
+      value: 
+      objectReference: {fileID: -8198699208435500284, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_Turn
+      value: 
+      objectReference: {fileID: -6493913391331992944, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_SnapTurn
       value: 
-      objectReference: {fileID: -8525429354371678379, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+      objectReference: {fileID: -8525429354371678379, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_UIScroll
+      value: 
+      objectReference: {fileID: -6756787485274679044, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_TeleportMode
+      value: 
+      objectReference: {fileID: -8061240218431744966, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_TeleportModeCancel
+      value: 
+      objectReference: {fileID: 2307464322626738743, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_SmoothMotionEnabled
       value: 1
@@ -2204,6 +2280,42 @@ PrefabInstance:
       propertyPath: m_RayInteractorChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3325226854019162143, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_GripInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -1758520528963094988, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 3325226854019162143, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_StickInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -8666952849799569744, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 3325226854019162143, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_TriggerInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: 7904272356298805229, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 3435865013543954137, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_Move
+      value: 
+      objectReference: {fileID: 6972639530819350904, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 3435865013543954137, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_Turn
+      value: 
+      objectReference: {fileID: 1010738217276881514, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 3435865013543954137, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_SnapTurn
+      value: 
+      objectReference: {fileID: -7374733323251553461, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 3435865013543954137, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_UIScroll
+      value: 
+      objectReference: {fileID: 2464016903823916871, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 3435865013543954137, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_TeleportMode
+      value: 
+      objectReference: {fileID: 1263111715868034790, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 3435865013543954137, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_TeleportModeCancel
+      value: 
+      objectReference: {fileID: 737890489006591557, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 3435865013543954137, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_UIScrollingEnabled
       value: 1
@@ -2216,6 +2328,14 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3752030747713321391, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_LeftHandTurnInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: 1010738217276881514, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 3752030747713321391, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_RightHandTurnInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -6493913391331992944, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 4295892835532738850, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_ExcludeLayers.m_Bits
       value: 128
@@ -2228,6 +2348,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4742167713901417276, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_ManipulationInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -440298646266941818, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 4750419573833148750, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -2356,6 +2480,50 @@ PrefabInstance:
       propertyPath: m_UIScrollInput.m_InputActionReference
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5484926215961174697, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_RotateManipulationInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -5913262927076077117, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 5484926215961174697, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_DirectionalManipulationInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -440298646266941818, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 5926619085886742361, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_PositionInput.m_Reference
+      value: 
+      objectReference: {fileID: -3326005586356538449, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 5926619085886742361, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_RotationInput.m_Reference
+      value: 
+      objectReference: {fileID: 5101698808175986029, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 5926619085886742361, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_TrackingStateInput.m_Reference
+      value: 
+      objectReference: {fileID: -1277054153949319361, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 6283329559392337895, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_HapticOutput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -8222252007134549311, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 6387318401906081087, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_GripInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: 6558622148059887818, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 6387318401906081087, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_StickInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -60998027439631388, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 6387318401906081087, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_TriggerInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -4289430672226363583, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 7917674757885691568, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_RotateManipulationInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -7363382999065477798, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 7917674757885691568, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_DirectionalManipulationInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -8811388872089202044, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 7917674758246323946, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -2372,6 +2540,14 @@ PrefabInstance:
       propertyPath: m_CullingMask.m_Bits
       value: 4294967295
       objectReference: {fileID: 0}
+    - target: {fileID: 8053059486601427065, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_LeftHandMoveInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: 6972639530819350904, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 8053059486601427065, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_RightHandMoveInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -8198699208435500284, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 8629926924687228403, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_EnableNearCasting
       value: 1
@@ -2384,6 +2560,22 @@ PrefabInstance:
       propertyPath: m_InteractionLayers.m_Bits
       value: 12
       objectReference: {fileID: 0}
+    - target: {fileID: 8629926924687228403, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_SelectInput.m_InputActionReferenceValue
+      value: 
+      objectReference: {fileID: -1758520528963094988, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 8629926924687228403, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_ActivateInput.m_InputActionReferenceValue
+      value: 
+      objectReference: {fileID: 7904272356298805229, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 8629926924687228403, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_SelectInput.m_InputActionReferencePerformed
+      value: 
+      objectReference: {fileID: 187161793506945269, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+    - target: {fileID: 8629926924687228403, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_ActivateInput.m_InputActionReferencePerformed
+      value: 
+      objectReference: {fileID: 83097790271614945, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 8806329115733545877, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_Name
       value: XR Origin Hands (XR Rig)
@@ -3390,7 +3582,7 @@ MonoBehaviour:
   vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   audioSourceObject: {fileID: 1728820851829268507, guid: b7b851fdf3be6ff4ca7f8c7a2db404d7, type: 3}
   soundscapeLibrary: {fileID: 1891192195}
-  leaveSoundscapeAction: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  leaveSoundscapeAction: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
 --- !u!4 &1891192194
 Transform:
   m_ObjectHideFlags: 0
