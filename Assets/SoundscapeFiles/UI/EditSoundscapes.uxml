@@ -6,7 +6,9 @@
             <ui:VisualElement name="soundscapes" style="flex-grow: 1; height: auto; max-height: 50%;">
                 <ui:Label text="Soundscapes"/>
                 <ui:VisualElement style="flex-grow: 1;">
-                    <ui:ScrollView name="soundscapeList"/>
+                    <ui:ScrollView name="soundscapeList" style="min-width: 100%; max-height: 40%;">
+                        <ui:Button text="" icon-image="project://database/Assets/Resources/plus-symbol-button.png?fileID=2800000&amp;guid=358e54b0cb326de47a55236b41a9d280&amp;type=3#plus-symbol-button" style="width: auto; height: 15%; max-width: 20%; max-height: initial; aspect-ratio: 1; align-self: center; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                    </ui:ScrollView>
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="audios" style="flex-grow: 1; height: auto; opacity: 1; background-color: rgb(117, 152, 154); margin-top: 9px; margin-right: 9px; margin-bottom: 9px; margin-left: 9px; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">

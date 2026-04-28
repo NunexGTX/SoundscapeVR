@@ -33,7 +33,7 @@ public class EditScript : MonoBehaviour
         var videos = library.soundscapeList.GetSoundscapes();
         List<Audio> sounds = library.audioList.GetAudios().ToList();
 
-        
+        /*
         foreach(Soundscape soundscape in videos)
         {
             //create button
@@ -68,7 +68,7 @@ public class EditScript : MonoBehaviour
             txt.text = audio.name;
             if(audio.HasImage()) icon.image = audio.GetImage();
             libraryList.Add(vElement);
-        }
+        }*/
     }
     
     void OnDisable()
