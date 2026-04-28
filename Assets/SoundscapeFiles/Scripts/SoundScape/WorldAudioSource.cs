@@ -33,6 +33,7 @@ public class WorldAudioSource: MonoBehaviour
             if (playing)
             {
                 src.Play();
+                Debug.Log("Playing");
             }
             return;
         } 

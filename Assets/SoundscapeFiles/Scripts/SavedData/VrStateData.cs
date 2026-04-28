@@ -10,7 +10,7 @@ public class VrStateData : ScriptableObject
     [SerializeField, DontCreateProperty]
     VisualType currentVisual = VisualType.ENCOMPASSING;
     [SerializeField, DontCreateProperty]
-    AudioListeningType currentAudioSelection = AudioListeningType.BINAURAL;
+    AudioListeningType currentAudio = AudioListeningType.BINAURAL;
 
     [CreateProperty]
     public bool IsInVr
@@ -30,8 +30,8 @@ public class VrStateData : ScriptableObject
     [CreateProperty]
     public int CurrentAudioChoice
     {
-        get => (int)currentAudioSelection;
-        set => currentAudioSelection = (AudioListeningType) value;
+        get => (int)currentAudio;
+        set => currentAudio = (AudioListeningType) value;
     }
 
     public VisualType GetCurrentVisuals()
@@ -41,6 +41,6 @@ public class VrStateData : ScriptableObject
 
     public AudioListeningType GetCurrentAudio()
     {
-        return currentAudioSelection;
+        return currentAudio;
     }
 }
