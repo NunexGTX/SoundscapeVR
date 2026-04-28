@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -17,7 +18,9 @@ public class SoundscapePlayerEditor: MonoBehaviour
     public Material defaultMaterial;
     public Material deletingMaterial;
     [SerializeField] private float scrollStep = 0.2f;
+    [SerializeField] private GameObject distanceTextAsset;
     private GameObject currentPlacingObject;
+    private GameObject currentTextAsset = null;
 
     private Audio currentSelectedAudio;
     private AudioSource currentAudioAsSource;
@@ -47,12 +50,13 @@ public class SoundscapePlayerEditor: MonoBehaviour
     }
 
     //Called by edit UI, when clicking on an audio source
-    public void SelectAudio(Audio audio)
+    public bool SelectAudio(Audio audio)
     {
-        if(!soundscapeWrapper.HasSoundscape()) return;
+        if(!soundscapeWrapper.HasSoundscape()) return false;
         currentSelectedAudio = audio;
         currentState = State.TryPlace;
         aimingSphere.SetActive(true);
+        return true;
     }
 
     public void FirstPlaceAudio(ActivateEventArgs eventArgs)
@@ -83,6 +87,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         //change state
         currentState = State.AdjustPlace;
         aimingSphere.SetActive(false);
+        DistanceFeedback(worldPos);
     }
 
     private void CreatePlaceholderPlacer(Vector3 worldPos)
@@ -120,6 +125,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         Destroy(currentPlacingObject);
         soundscapeWrapper.PlaceAudioSource(currentAudioAsSource, true, true, true);
         currentState = State.Standby;
+        DestroyTextAsset();
     }
 
     //called by the world source objects
@@ -154,7 +160,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(currentState == State.Standby) return;
         currentState = State.Standby;
         currentAudioAsSource = null;
-        currentSelectedAudio = null;
+        //currentSelectedAudio = null;
         if(currentSelectedAudioSource != null)
         {
             currentSelectedAudioSource.GetComponent<MeshRenderer>().material = defaultMaterial;        
@@ -166,6 +172,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
             currentPlacingObject = null;
         }
         aimingSphere.SetActive(false);
+        DestroyTextAsset();
     }
 
     //called to scroll the audio position
@@ -187,10 +194,27 @@ public class SoundscapePlayerEditor: MonoBehaviour
         Destroy(currentPlacingObject);
         CreatePlaceholderPlacer(worldPos);
         currentAudioAsSource.WithNewPosition(newCoords);
+        DistanceFeedback(worldPos);
     }
 
     public void LeaveEdit()
     {
         CancelState();
+    }
+
+    private void DestroyTextAsset()
+    {
+        if(currentTextAsset != null)
+        {
+            Destroy(currentTextAsset);
+            currentTextAsset = null;
+        }
+    }
+
+    private void DistanceFeedback(Vector3 worldPos)
+    {
+        if(currentTextAsset == null)
+            currentTextAsset = Instantiate(distanceTextAsset);
+        currentTextAsset.GetComponent<DistText>().SetAndPlace(worldPos);
     }
 }

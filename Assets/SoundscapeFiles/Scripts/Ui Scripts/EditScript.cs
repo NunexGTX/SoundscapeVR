@@ -15,25 +15,33 @@ public class EditScript : MonoBehaviour
     [SerializeField] private VisualTreeAsset ssButtonTemplate;
     
     private Button returnBtn;
-    private ScrollView soundscapeList;
-    private ScrollView libraryList;
+    private VisualElement soundscapeList;
+    private VisualElement libraryList;
     private ArrayList ssButtons = new();
     private ArrayList libraryButtons = new();
+    private Button createSsButton;
+    private Label ssLabel;
+    private Label audioLabel;
 
     void OnEnable()
     {
         //TODO: separate SS list logic so we dont have to remake this ui everytime a SS is changed/added.
         //bonus points if it only regenerates when one is added.
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-        soundscapeList = root.Q<ScrollView>("soundscapeList");
-        libraryList = root.Q<ScrollView>("libraryList");
+        soundscapeList = root.Q<VisualElement>("soundscapeList");
+        libraryList = root.Q<VisualElement>("libraryList");
         returnBtn = root.Q<Button>("returnBtn");
+        createSsButton = root.Q<Button>("newSs");
+        ssLabel = root.Q<Label>("selectedSoundscape");
+        audioLabel = root.Q<Label>("selectedAudio");
+
         returnBtn.clicked += Return;
+        createSsButton.clicked += CreateSoundscape;
 
         var videos = library.soundscapeList.GetSoundscapes();
         List<Audio> sounds = library.audioList.GetAudios().ToList();
 
-        /*
+        
         foreach(Soundscape soundscape in videos)
         {
             //create button
@@ -50,6 +58,7 @@ public class EditScript : MonoBehaviour
             ssButtons.Add(handler);
             soundscapeList.Add(vElement);
         }
+        createSsButton.BringToFront();
 
         foreach(Audio audio in sounds)
         {
@@ -68,12 +77,13 @@ public class EditScript : MonoBehaviour
             txt.text = audio.name;
             if(audio.HasImage()) icon.image = audio.GetImage();
             libraryList.Add(vElement);
-        }*/
+        }
     }
     
     void OnDisable()
     {
         returnBtn.clicked -= Return;
+        createSsButton.clicked -= CreateSoundscape;
         foreach(ButtonHandler handler in ssButtons)
         {
             handler.Clear();
@@ -94,15 +104,20 @@ public class EditScript : MonoBehaviour
         ssWrapper.StopSoundscape();
         editorPlayer.LeaveEdit();
     }
+
+    private void CreateSoundscape(){}
     private void SetSoundscape(Soundscape soundscape)
     {
         ssWrapper.SetAndStartSoundscape(soundscape, true);
+        ssLabel.text = $"Selected Soundscape: {soundscape.title}";
+        audioLabel.text = "";
         Debug.Log("Selected soundscape: " + soundscape.title);
     }
 
     private void SelectAudio(Audio audio)
     {
-        editorPlayer.SelectAudio(audio);
+        if(!editorPlayer.SelectAudio(audio)) return;
+        audioLabel.text = $"Selected Audio: {audio.name}";
         Debug.Log("Selected audio: " + audio.id);
     }
 }

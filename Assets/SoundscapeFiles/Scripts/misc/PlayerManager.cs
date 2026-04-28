@@ -21,9 +21,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private CharacterController vrCollider;
     [SerializeField] private CharacterController flatCollider;
     [SerializeField] private GravityProvider vrGravity;
-    [SerializeField] private List<int> cameraHideMask = new();
+    [SerializeField] private LayerMask cameraHideMask = new();
     //what to mask if debugging
-    [SerializeField] private List<int> debugCameraHideMask = new();
+    [SerializeField] private LayerMask debugCameraHideMask = new();
 
     public void Start()
     {
@@ -82,25 +82,19 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public Camera GetCurrentCamera()
+    {
+        if(vrStateData.IsInVr) return vrCamera.GetComponent<Camera>();
+        return playerCamera.GetComponent<Camera>();
+    }
+
     private int GetCameraMask(bool debug)
     {
         if (debug)
         {
-            int debugMask = 0;
-            foreach(int mask in debugCameraHideMask)
-            {
-                int layerMask = 1 << mask;
-                debugMask |= layerMask;
-            }
-            return debugMask;
+            return debugCameraHideMask;
         } 
-        int resMask = 0;
-        foreach(int mask in cameraHideMask)
-        {
-            int layerMask = 1 << mask;
-            resMask |= layerMask;
-        }
-        return resMask;
+        return cameraHideMask;
     }
 
     public void ShowCameraLayers()

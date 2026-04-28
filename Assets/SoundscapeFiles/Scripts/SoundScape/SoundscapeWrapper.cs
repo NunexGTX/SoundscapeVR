@@ -14,6 +14,7 @@ public class SoundscapeWrapper: MonoBehaviour
     private bool videoPlaying = false;
     private bool edited = false;
     private Dictionary<Guid, GameObject> placedAudios = new();
+    private bool editing = false;
     [SerializeField] private InputActionReference leaveSoundscapeAction;
 
 
@@ -96,12 +97,13 @@ public class SoundscapeWrapper: MonoBehaviour
         if(newSource) EditSoundscape(src, true);
     }
 
-    public void StartSoundscape(bool editing)
+    public void StartSoundscape(bool debug)
     {
-        if (!editing)
+        playerManager.HideCameraLayers(debug);
+        editing = debug;
+        if (!debug)
         {
             playerManager.SetPlayerMovement(false);
-            playerManager.HideCameraLayers(editing);
             
             ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());
             if(ssVisual != null)
@@ -111,17 +113,19 @@ public class SoundscapeWrapper: MonoBehaviour
         }
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
         {
-            PlaceAudioSource(src, true, editing);
+            PlaceAudioSource(src, true, debug);
         }
     }
 
     private void StopSoundscape(InputAction.CallbackContext context)
     {
+        if(editing) return;
         StopSoundscape();
     }
 
     public void StopSoundscape()
     {
+        editing = false;
         SaveCurrentSoundscape();
         playerManager.SetPlayerMovement(true);
         playerManager.ShowCameraLayers();
