@@ -2,27 +2,22 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using System.Collections;
+using System;
 
 public class GoogleForm : MonoBehaviour
 {
-    public string formID;
-    private string responseURL;
-
-    Dictionary<string, string> AnsweredQuestions = new Dictionary<string, string>();
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        responseURL = "https://docs.google.com/forms/d/e/" + formID + "/formResponse";
-    }
+    public static string formID = "";
+    private Func<string> responseURL = () => {
+        return "https://docs.google.com/forms/d/e/" + formID + "/formResponse";
+    };
 
     //When all necessary values have been assigned, we call this to gather all the FormDatas of the GForms children to prepare and send the post request
-    public void submitForm(Dictionary<string, string> entries)
+    public void submitForm(FormAnswersHolder answers)
     {
-        StartCoroutine(GFormPOSTRequest(entries));
+        StartCoroutine(GFormPOSTRequest(answers.GetAnswerList()));
     }
 
-    IEnumerator GFormPOSTRequest(Dictionary<string, string> entries)
+    IEnumerator GFormPOSTRequest(List<KeyValuePair<string, string>> entries)
     {
         WWWForm GFormSend = new WWWForm(); //This will build the POST Request's json
 
@@ -32,7 +27,7 @@ public class GoogleForm : MonoBehaviour
         }
 
         // Create the POST request
-        using (UnityWebRequest www = UnityWebRequest.Post(responseURL, GFormSend))
+        using (UnityWebRequest www = UnityWebRequest.Post(responseURL.Invoke(), GFormSend))
         {
             yield return www.SendWebRequest();
 

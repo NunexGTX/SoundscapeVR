@@ -15,5 +15,6 @@ public class FormElement
     public string id;
     public string type;
     public string description;
+    public bool required = false;
     public List<string> extra;
 }

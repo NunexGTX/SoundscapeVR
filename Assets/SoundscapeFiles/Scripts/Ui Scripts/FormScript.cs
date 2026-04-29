@@ -16,12 +16,15 @@ public class FormScript : MonoBehaviour
     [SerializeField] private VisualTreeAsset checkboxContainerElement;
     [SerializeField] private VisualTreeAsset checkboxElement;
     [SerializeField] private VisualTreeAsset dropdownElement;
+    [SerializeField] private GoogleForm formSubmiter;
     private Button returnBtn;
     private VisualElement formRoot;
     private List<List<FormElement>> formSections = new();
     private string formTitle = "";
     private string formDesc= "";
     private int formPosition = -1;
+    private List<Action> unbindingActions = new();
+    private FormAnswersHolder answersHolder;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
@@ -39,6 +42,8 @@ public class FormScript : MonoBehaviour
         nextBtn.clicked += NextSection;
         Label title = root.Q<Label>("formTitle");
         title.text = library.form.formTitle;
+        answersHolder = new();
+        unbindingActions = new();
     }
 
     void OnDisable()
@@ -48,6 +53,7 @@ public class FormScript : MonoBehaviour
 
     private void Return()
     {
+        RemoveSection();
         mainMenu.SetActive(true);
         gameObject.SetActive(false);
     }
@@ -55,10 +61,14 @@ public class FormScript : MonoBehaviour
     private void NextSection()
     {
         if(formSections.Count == formPosition) return;
-        if(formPosition >= formSections.Count - 1) return;
+        if(!answersHolder.AreRequiredComplete(formPosition)) return;
+        if(formPosition >= formSections.Count - 1)
+        {
+            SubmitForm();
+            return;
+        }
         formPosition++;
-        for(int i = formRoot.childCount - 1; i >= 0; i--)
-            formRoot.RemoveAt(i);
+        RemoveSection();
         BuildFormSection();
     }
 
@@ -67,9 +77,29 @@ public class FormScript : MonoBehaviour
         if(formSections.Count < 1) return;
         if(formPosition < 0) return;
         formPosition--;
+        RemoveSection();
+        BuildFormSection();
+    }
+
+    private void SubmitForm()
+    {
+        if(!answersHolder.AreRequiredComplete()) return;
+        RemoveSection();
+        
+        VisualElement introduction = labelElement.Instantiate();
+        introduction.Q<Label>("title").text = formTitle;
+        introduction.Q<Label>("description").text = "Form has been submited. Thanks for participating.";
+        formRoot.Add(introduction);
+        if(formSubmiter != null) formSubmiter.submitForm(answersHolder);
+    }
+
+    private void RemoveSection()
+    {
+        foreach(Action unregister in unbindingActions)
+            unregister.Invoke();
         for(int i = formRoot.childCount - 1; i >= 0; i--)
             formRoot.RemoveAt(i);
-        BuildFormSection();
+        unbindingActions = new();
     }
 
     private void BuildFormSection()
@@ -91,6 +121,12 @@ public class FormScript : MonoBehaviour
                 string question = ele.description;
                 string id = ele.id;
                 List<string> extras = ele.extra;
+                if (ele.required)
+                {
+                    Debug.Log("Found a required one");
+                    answersHolder.RegisterRequiredQuestion(formPosition, id);
+                    question += "*";
+                }
                 switch (type)
                 {
                     case FormElement.DROP_DOWN:
@@ -101,25 +137,46 @@ public class FormScript : MonoBehaviour
                         {
                             dropdownField.choices = extras;
                         }
+                        if(answersHolder.IsQuestionAnswered(id))
+                            dropdownField.value = answersHolder.GetSingleAnswer(id);
                         formRoot.Add(dropdown);
+
+                        EventCallback<ChangeEvent<string>> fillField = (ChangeEvent<string> evt) => {answersHolder.AddSingleAnswer(id, evt.newValue);};
+                        dropdownField.RegisterValueChangedCallback(fillField);
+                        unbindingActions.Add(() => {dropdownField.UnregisterCallback(fillField);});
                         break;
                     case FormElement.CHECKBOX:
                         if(extras.Count > 0)
                         {
                             VisualElement container = checkboxContainerElement.Instantiate();
                             container.Q<Label>("questionLabel").text = question;
+                            List<string> prevValues = answersHolder.GetRepeatableAnswers(id);
                             foreach(string value in extras)
                             {
                                 VisualElement check = checkboxElement.Instantiate();
                                 check.Q<Label>("optionLabel").text = value;
                                 container.Add(check);
+                                Toggle toggle = check.Q<Toggle>("Toggle");
+                                if(prevValues.Contains(value)) toggle.value = true;
+                                
+                                EventCallback<ChangeEvent<bool>> checkCallback = (ChangeEvent<bool> evt) => {answersHolder.ToggleRepeatableAnswer(id, value, evt.newValue);};
+                                toggle.RegisterValueChangedCallback(checkCallback);
+                                unbindingActions.Add(() => {toggle.UnregisterCallback(checkCallback);});
                             }
                             formRoot.Add(container);
                         }
                         break;
                     case FormElement.PARAGRAPH:
                         VisualElement paragraphInput = textInputElement.Instantiate();
-                        paragraphInput.Q<TextField>("input").label = question;
+                        TextField field = paragraphInput.Q<TextField>("input");
+                        field.label = question;
+                        if(answersHolder.IsQuestionAnswered(id))
+                            field.value = answersHolder.GetSingleAnswer(id);
+
+                        EventCallback<ChangeEvent<string>> paragraphCallback = (ChangeEvent<string> evt) => {answersHolder.AddSingleAnswer(id, evt.newValue);};
+                        field.RegisterValueChangedCallback(paragraphCallback);
+                        unbindingActions.Add(() => {field.UnregisterCallback(paragraphCallback);});
+
                         formRoot.Add(paragraphInput);
                         break;
                     case FormElement.RADIO:
@@ -130,14 +187,21 @@ public class FormScript : MonoBehaviour
                         {
                             radioGroup.choices = extras;
                         }
+                        if(answersHolder.IsQuestionAnswered(id))
+                            radioGroup.value = extras.IndexOf(answersHolder.GetSingleAnswer(id));
+
+                        EventCallback<ChangeEvent<int>> radioCallback = (ChangeEvent<int> evt) => {answersHolder.AddSingleAnswer(id, extras[evt.newValue]);};
+                        radioGroup.RegisterValueChangedCallback(radioCallback);
+                        unbindingActions.Add(() => {radioGroup.UnregisterCallback(radioCallback);});
+
                         formRoot.Add(radio);
                         break;
                     case FormElement.SCALE:
-                        VisualElement scale = scaleElement.Instantiate();
-                        RadioButtonGroup scaleGroup = scale.Q<RadioButtonGroup>("scale");
-                        scaleGroup.label = question;
                         if(extras.Count > 0)
                         {
+                            VisualElement scale = scaleElement.Instantiate();
+                            RadioButtonGroup scaleGroup = scale.Q<RadioButtonGroup>("scale");
+                            scaleGroup.label = question;
                             int min = int.Parse(extras[0]);
                             int max = int.Parse(extras[1]);
                             List<string> choices = new();
@@ -151,12 +215,29 @@ public class FormScript : MonoBehaviour
                                     choices.Add($"{i}");
                             }
                             scaleGroup.choices = choices;
+                            if(answersHolder.IsQuestionAnswered(id))
+                                scaleGroup.value = int.Parse(answersHolder.GetSingleAnswer(id)) - min;
+
+                            //TODO
+                            EventCallback<ChangeEvent<int>> scaleCallback = (ChangeEvent<int> evt) => {answersHolder.AddSingleAnswer(id, (min + evt.newValue).ToString());};
+                            scaleGroup.RegisterValueChangedCallback(scaleCallback);
+                            unbindingActions.Add(() => {scaleGroup.UnregisterCallback(scaleCallback);});
+
+                            formRoot.Add(scale);
                         }
-                        formRoot.Add(scale);
                         break;
                     case FormElement.TEXT:
                         VisualElement textInput = textInputElement.Instantiate();
-                        textInput.Q<TextField>("input").label = question;
+                        TextField textField = textInput.Q<TextField>("input");
+                        textField.label = question;
+                        if(answersHolder.IsQuestionAnswered(id))
+                            textField.value = answersHolder.GetSingleAnswer(id);
+
+                        //TODO
+                        EventCallback<ChangeEvent<string>> textCallback = (ChangeEvent<string> evt) => {answersHolder.AddSingleAnswer(id, evt.newValue);};
+                        textField.RegisterValueChangedCallback(textCallback);
+                        unbindingActions.Add(() => {textField.UnregisterCallback(textCallback);});
+
                         formRoot.Add(textInput);
                         break;
                     default:

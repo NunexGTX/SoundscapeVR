@@ -89,6 +89,7 @@ public class SoundscapeLibrary: MonoBehaviour
         {
             string json = File.ReadAllText(path);
             form = JsonUtility.FromJson<Form>(json);
+            GoogleForm.formID = form.formViewId;
         }
         else
         {

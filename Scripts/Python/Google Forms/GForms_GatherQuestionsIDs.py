@@ -129,10 +129,12 @@ def QuestionsGatherer():
     for item in items:
         # Check if the item is a question (ignores layout elements like images/headers)
         if 'questionItem' in item:
-            question = item['questionItem']['question']
-            q_id = "entry." + str(int(question.get('questionId'),16)) #Temos de converter o entry id de hexadecimal para int para podermos responder com o post request
+            question: dict = item['questionItem']['question']
+            q_id = "entry." + str(int(question['questionId'],16)) #Temos de converter o entry id de hexadecimal para int para podermos responder com o post request
             q_name = item.get('title', "Untitled Question")
             _choiceQuestion: dict = question.get('choiceQuestion', {})
+            print(type(question))
+            q_required = question.get('required', "false")
 
             # get type of question
             if 'textQuestion' in question:
@@ -160,6 +162,7 @@ def QuestionsGatherer():
             itemDict: dict = {
                 "id": q_id,
                 "type": q_type,
+                "_required": q_required,
                 "description": q_name,
                 "extra": q_extra
             }
