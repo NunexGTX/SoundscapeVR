@@ -218,7 +218,6 @@ public class FormScript : MonoBehaviour
                             if(answersHolder.IsQuestionAnswered(id))
                                 scaleGroup.value = int.Parse(answersHolder.GetSingleAnswer(id)) - min;
 
-                            //TODO
                             EventCallback<ChangeEvent<int>> scaleCallback = (ChangeEvent<int> evt) => {answersHolder.AddSingleAnswer(id, (min + evt.newValue).ToString());};
                             scaleGroup.RegisterValueChangedCallback(scaleCallback);
                             unbindingActions.Add(() => {scaleGroup.UnregisterCallback(scaleCallback);});
@@ -233,7 +232,6 @@ public class FormScript : MonoBehaviour
                         if(answersHolder.IsQuestionAnswered(id))
                             textField.value = answersHolder.GetSingleAnswer(id);
 
-                        //TODO
                         EventCallback<ChangeEvent<string>> textCallback = (ChangeEvent<string> evt) => {answersHolder.AddSingleAnswer(id, evt.newValue);};
                         textField.RegisterValueChangedCallback(textCallback);
                         unbindingActions.Add(() => {textField.UnregisterCallback(textCallback);});

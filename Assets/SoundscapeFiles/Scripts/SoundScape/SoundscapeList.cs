@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using System.Linq;
+using System;
 
 [System.Serializable]
 public class SoundscapeList
@@ -52,5 +53,13 @@ public class SoundscapeList
             else
                 imageSoundscapes.Add(iSoundscape);
         }
+    }
+
+    public void RemoveSoundscape(string soundscapeTitle)
+    {
+        int videoDeletions = videoSoundscapes.RemoveAll((vss) => vss.title.Equals(soundscapeTitle));
+        int imageDeletions = imageSoundscapes.RemoveAll((vss) => vss.title.Equals(soundscapeTitle));
+        if(videoDeletions < 1 && imageDeletions < 1)
+            Debug.LogWarning($"Warning: Failed to find soundscape to delete: {soundscapeTitle}");
     }
 }

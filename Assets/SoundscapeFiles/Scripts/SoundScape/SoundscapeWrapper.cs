@@ -52,6 +52,8 @@ public class SoundscapeWrapper: MonoBehaviour
         //local copy and library should be synced
     }
 
+    public void MarkEdited(){edited = true;}
+
     public void SetSoundscape(Soundscape ss)
     {
         StopSoundscape();
@@ -105,12 +107,18 @@ public class SoundscapeWrapper: MonoBehaviour
         {
             playerManager.SetPlayerMovement(false);
             
+            currentSoundscape.OnVisualsLoaded(() => StartSoundSources(debug));
             ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());
             if(ssVisual != null)
-            {
                 videoPlaying = true;
-            }
+            return;
         }
+        StartSoundSources(debug);
+
+    }
+
+    private void StartSoundSources(bool debug)
+    {
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
         {
             PlaceAudioSource(src, true, debug);
@@ -123,6 +131,9 @@ public class SoundscapeWrapper: MonoBehaviour
         StopSoundscape();
     }
 
+    public void StopSoundscape(string title)
+    {if(title.Equals(currentSoundscape.title)) StopSoundscape();}
+
     public void StopSoundscape()
     {
         editing = false;
@@ -131,6 +142,7 @@ public class SoundscapeWrapper: MonoBehaviour
         playerManager.ShowCameraLayers();
         if (videoPlaying)
         {
+            currentSoundscape.ClearVisualsBinding();
             if(ssVisual != null) 
             {
                 Destroy(ssVisual);

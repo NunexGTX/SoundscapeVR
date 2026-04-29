@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 public class ButtonHandler
 {
     private Button button;
+    public string id;
     private System.Action _currentAction;
 
     public ButtonHandler(Button btn)

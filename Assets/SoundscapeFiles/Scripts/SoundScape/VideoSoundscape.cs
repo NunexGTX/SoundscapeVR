@@ -5,14 +5,8 @@ using UnityEngine.Video;
 [System.Serializable]
 public class VideoSoundscape : Soundscape
 {
-    [SerializeField] private string staticPath = null;
-    [SerializeField] private string encompassingPath = null;
-
-    public VideoSoundscape(List<AudioSource> srcs, string title, string staticPath, string encompassingPath) : base(srcs, title)
-    {
-        this.staticPath = staticPath;
-        this.encompassingPath = encompassingPath;
-    }
+    public VideoSoundscape(string title, int time, string staticPath, string encompassingPath) : this(new(), title, time, staticPath, encompassingPath){}
+    protected VideoSoundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath) : base(srcs, title, time, staticPath, encompassingPath){}
     
 
     public override VisualType GetSupportedVisual()
@@ -33,7 +27,7 @@ public class VideoSoundscape : Soundscape
     }
     public override Soundscape Copy()
     {
-        return new VideoSoundscape(audioSources, title, staticPath, encompassingPath);
+        return new VideoSoundscape(audioSources, title, timeSeconds, staticPath, encompassingPath);
     }
 
     public override GameObject TryGetVisuals(VisualType visualType)
@@ -43,10 +37,12 @@ public class VideoSoundscape : Soundscape
         return null;
     }
 
+    private VideoPlayer videoPlayer = null;
+
     private GameObject GetVideo(VisualType visualType)
     {
         GameObject go = new GameObject(VIDEO_GO_NAME);
-        VideoPlayer videoPlayer = go.AddComponent<VideoPlayer>();
+        videoPlayer = go.AddComponent<VideoPlayer>();
         videoPlayer.source = VideoSource.Url;
         videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
         if(visualType == VisualType.ENCOMPASSING)
@@ -61,8 +57,20 @@ public class VideoSoundscape : Soundscape
             videoPlayer.targetCamera = Camera.main;
             videoPlayer.url = SoundscapeLibrary.GetStreamingPath(staticPath);
         }
+        videoPlayer.prepareCompleted += OnVideoPrepared;
         videoPlayer.Prepare();
         return go;
-
     }
+
+    private void OnVideoPrepared(VideoPlayer player)
+    {
+        onVisualsLoaded.Invoke();
+    }
+
+    public override void ClearVisualsBinding()
+    {
+        base.ClearVisualsBinding();
+        videoPlayer.prepareCompleted -= OnVideoPrepared;
+    }
+
 }

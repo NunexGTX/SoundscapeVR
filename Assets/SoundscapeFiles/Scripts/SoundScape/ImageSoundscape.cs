@@ -5,15 +5,8 @@ using UnityEngine.UI;
 [System.Serializable]
 public class ImageSoundscape : Soundscape
 {
-    [SerializeField] private string staticPath = null;
-    [SerializeField] private string encompassingPath = null;
-
-    public ImageSoundscape(List<AudioSource> srcs, string title, string staticPath, string encompassingPath) : base(srcs, title)
-    {
-        this.staticPath = staticPath;
-        this.encompassingPath = encompassingPath;
-    }
-    
+    public ImageSoundscape(string title, int time, string staticPath, string encompassingPath) : this(new(), title, time, staticPath, encompassingPath){}
+    protected ImageSoundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath) : base(srcs, title, time, staticPath, encompassingPath){}
 
     public override VisualType GetSupportedVisual()
     {
@@ -33,7 +26,7 @@ public class ImageSoundscape : Soundscape
     }
     public override Soundscape Copy()
     {
-        return new ImageSoundscape(audioSources, title, staticPath, encompassingPath);
+        return new ImageSoundscape(audioSources, title, timeSeconds, staticPath, encompassingPath);
     }
 
     public override GameObject TryGetVisuals(VisualType visualType)
@@ -48,8 +41,9 @@ public class ImageSoundscape : Soundscape
         GameObject go = new GameObject(VIDEO_GO_NAME);
         if(visualType == VisualType.ENCOMPASSING)
         {
-            Image360 i360 = go.AddComponent<Image360>();
+            ImageEncompassingDisplay i360 = go.AddComponent<ImageEncompassingDisplay>();
             i360.imagePath = SoundscapeLibrary.GetStreamingPath(encompassingPath);
+            i360.onImagePrepared = onVisualsLoaded;
             return go;
         } else
         {
@@ -59,6 +53,7 @@ public class ImageSoundscape : Soundscape
             canvas.worldCamera = Camera.main;
             canvas.planeDistance = 1; // Distance from camera (Near Plane)
 
+            //TODO verify this needs to be here and what it does.
             go.AddComponent<CanvasScaler>();
             go.AddComponent<GraphicRaycaster>();
 
@@ -73,9 +68,10 @@ public class ImageSoundscape : Soundscape
             rect.sizeDelta = Vector2.zero;
 
             // 4. Attach the loader script
-            StaticImageDisplay loader = go.AddComponent<StaticImageDisplay>();
+            ImageStaticDisplay loader = go.AddComponent<ImageStaticDisplay>();
             loader.imagePath = SoundscapeLibrary.GetStreamingPath(staticPath);
-
+            loader.onImagePrepared = onVisualsLoaded;
+            
             return go;
         }
 

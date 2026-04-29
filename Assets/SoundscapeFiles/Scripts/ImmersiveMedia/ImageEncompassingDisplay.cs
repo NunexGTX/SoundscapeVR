@@ -1,18 +1,21 @@
-using UnityEngine;
+using System;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.Networking;
 
-public class Image360 : MonoBehaviour
+public class ImageEncompassingDisplay : MonoBehaviour
 {    
     public string imagePath;
     private Material defaultSkybox;
     private Material skyboxMaterial;
     private Texture2D loadedTexture;
+    public Action onImagePrepared = null;
 
     void Start()
     {
         defaultSkybox = RenderSettings.skybox;
         StartCoroutine(LoadAndApply());
+
     }
     
     private IEnumerator LoadAndApply()
@@ -36,7 +39,7 @@ public class Image360 : MonoBehaviour
                 Debug.Log($"Texture loaded: {loadedTexture.width}x{loadedTexture.height}");
             }
 
-            // 2. Create the material (Skybox/Panoramic is the 360 standard)
+            // 2. Create the material
             skyboxMaterial = new Material(Shader.Find("Skybox/Panoramic"));
             
             Debug.Log(skyboxMaterial);
@@ -45,6 +48,7 @@ public class Image360 : MonoBehaviour
             // 3. Apply and update
             RenderSettings.skybox = skyboxMaterial;
             DynamicGI.UpdateEnvironment();
+            if(onImagePrepared != null) onImagePrepared.Invoke();
         }
     }
 

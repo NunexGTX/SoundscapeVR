@@ -1,0 +1,9 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <ui:Toggle label="Video Soundscape" name="videoToggle" style="align-content: flex-start; justify-content: flex-start; align-self: auto; align-items: stretch; flex-wrap: wrap; flex-direction: row;"/>
+    <ui:TextField label="Title" placeholder-text="filler text" name="titleInput"/>
+    <ui:TextField label="Time in Seconds" placeholder-text="filler text" keyboard-type="NumberPad" name="timeInput"/>
+    <ui:TextField label="Path to 2D" placeholder-text="filler text" name="2dPath"/>
+    <ui:TextField label="Path to 360" placeholder-text="filler text" name="360Path"/>
+    <ui:Button text="Delete?" name="deleteBtn" style="background-color: rgb(255, 134, 134); margin-top: 11px;"/>
+</ui:UXML>

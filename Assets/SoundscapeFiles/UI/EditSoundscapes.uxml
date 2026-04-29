@@ -1,15 +1,25 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
     <ui:VisualElement style="flex-grow: 1;">
-        <ui:ScrollView horizontal-scroller-visibility="Hidden" style="height: 100%;">
+        <ui:ScrollView horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" mouse-wheel-scroll-size="18" style="height: 100%;">
             <ui:Button text="Go Back" name="returnBtn" class="buttonStyle"/>
             <ui:Label text="" name="selectedSoundscape"/>
             <ui:VisualElement name="soundscapes" style="flex-grow: 1; height: auto; max-height: 50%;">
                 <ui:Label text="Soundscapes"/>
-                <ui:VisualElement name="soundscapeList" style="flex-grow: 1;">
-                    <ui:Button text="&#10;" icon-image="project://database/Assets/Resources/plus-symbol-button.png?fileID=2800000&amp;guid=358e54b0cb326de47a55236b41a9d280&amp;type=3#plus-symbol-button" name="newSs" class="unity-button buttonStyle" style="width: 40%; aspect-ratio: 1; padding-top: 3px; padding-right: 0; padding-bottom: 0; padding-left: 4px;"/>
-                </ui:VisualElement>
+                <ui:VisualElement name="soundscapeList" style="flex-grow: 1;"/>
             </ui:VisualElement>
+            <ui:Foldout text="Soundscape Settings" value="false" name="settingsFoldout">
+                <ui:TextField label="Title*" placeholder-text="filler text" name="titleInput"/>
+                <ui:IntegerField label="Time in Seconds" value="90" name="timeInput"/>
+                <ui:Toggle label="Video Soundscape" name="videoToggle" style="align-content: flex-start; justify-content: flex-start; align-self: auto; align-items: stretch; flex-wrap: wrap; flex-direction: row;"/>
+                <ui:TextField label="Path to 2D" placeholder-text="filler text" name="2dPath"/>
+                <ui:TextField label="Path to 360" placeholder-text="filler text" name="360Path"/>
+                <ui:Label text="" name="debugLabel"/>
+                <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-around; align-self: center;">
+                    <ui:Button text="&#10;" icon-image="project://database/Assets/Resources/plus-symbol-button.png?fileID=2800000&amp;guid=358e54b0cb326de47a55236b41a9d280&amp;type=3#plus-symbol-button" name="createBtn" class="unity-button buttonStyle" style="width: 36%; aspect-ratio: 1; padding-top: 3px; padding-right: 0; padding-bottom: 0; padding-left: 4px; height: 34px; margin-right: 42px;"/>
+                    <ui:Button text="Delete" name="deleteBtn" style="background-color: rgb(255, 134, 134); margin-top: 11px; height: 42px;"/>
+                </ui:VisualElement>
+            </ui:Foldout>
             <ui:Label text="" name="selectedAudio"/>
             <ui:VisualElement name="audios" style="flex-grow: 1; height: auto; opacity: 1; background-color: rgb(117, 152, 154); margin-top: 9px; margin-right: 9px; margin-bottom: 9px; margin-left: 9px; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
                 <ui:Label text="Audio Library"/>

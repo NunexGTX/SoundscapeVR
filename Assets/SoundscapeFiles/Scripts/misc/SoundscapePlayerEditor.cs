@@ -19,6 +19,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     public Material deletingMaterial;
     [SerializeField] private float scrollStep = 0.2f;
     [SerializeField] private GameObject distanceTextAsset;
+    [SerializeField] private EditScript editUi;
     private GameObject currentPlacingObject;
     private GameObject currentTextAsset = null;
 
@@ -74,6 +75,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(worldPos.Equals(INVALID_VEC_POS)) return;
         if(currentSelectedAudio == null)
         {
+            UnselectLibraryAudio();
             Debug.LogError("Tried to place a null audio");
             return;
         }
@@ -126,6 +128,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         soundscapeWrapper.PlaceAudioSource(currentAudioAsSource, true, true, true);
         currentState = State.Standby;
         DestroyTextAsset();
+        UnselectLibraryAudio();
     }
 
     //called by the world source objects
@@ -159,7 +162,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     {
         if(currentState == State.Standby) return;
         currentState = State.Standby;
-        currentAudioAsSource = null;
+        UnselectLibraryAudio();
         //currentSelectedAudio = null;
         if(currentSelectedAudioSource != null)
         {
@@ -195,6 +198,13 @@ public class SoundscapePlayerEditor: MonoBehaviour
         CreatePlaceholderPlacer(worldPos);
         currentAudioAsSource.WithNewPosition(newCoords);
         DistanceFeedback(worldPos);
+    }
+
+    private void UnselectLibraryAudio()
+    {
+        editUi.UnselectAudio();
+        currentSelectedAudio = null;
+        currentAudioAsSource = null;
     }
 
     public void LeaveEdit()

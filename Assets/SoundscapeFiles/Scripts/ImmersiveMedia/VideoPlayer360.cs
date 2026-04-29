@@ -45,6 +45,7 @@ public class VideoPlayer360 : MonoBehaviour
     private void OnDestroy()
     {
         // Clean up the texture when the scene changes or app closes
+        videoPlayer.prepareCompleted -= OnVideoPrepared;
         if (videoTex != null) videoTex.Release();
         RenderSettings.skybox = skyboxMat;
         DynamicGI.UpdateEnvironment();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -32,19 +33,25 @@ public class SoundscapeLibrary: MonoBehaviour
     public void SaveSoundscape(Soundscape updatedSoundscape)
     {
         soundscapeList.UpdateList(updatedSoundscape);
+        if(!SaveSoundscapeList())
+            Debug.LogWarning($"Soundscape '{updatedSoundscape.title}' was not saved successfully.");
+    }
 
+    private bool SaveSoundscapeList()
+    {
         string json = JsonUtility.ToJson(soundscapeList, true);
         string fullPath = GetSoundscapeFilePath();
         
         try
         {
             File.WriteAllText(fullPath, json);
-            Debug.Log($"Soundscape '{updatedSoundscape.title}' saved successfully to {fullPath}");
+            return true;
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             Debug.LogError($"Failed to save soundscape JSON: {e.Message}");
         }
+        return false;
     }
 
     public AudioSource CreateSourceAt(Audio audio, Vector3 spherePosition)
@@ -58,6 +65,21 @@ public class SoundscapeLibrary: MonoBehaviour
         return CreateSourceAt(audio, spherePosition);
     }
 
+    public bool DoesSoundscapeExist(string soundscapeTitle)
+    {
+        foreach(Soundscape ss in soundscapeList.GetSoundscapes())
+        {
+            if(ss.title.Equals(soundscapeTitle)) return true;
+        }
+        return false;
+    }
+
+    public void DeleteSoundscape(string soundscapeTitle)
+    {
+        soundscapeList.RemoveSoundscape(soundscapeTitle);
+        if(!SaveSoundscapeList())
+            Debug.LogWarning($"{soundscapeTitle} failed to be deleted");
+    }
     
     public static string GetStreamingPath(string fileName)
     {
@@ -120,11 +142,11 @@ public class SoundscapeLibrary: MonoBehaviour
     
     public IEnumerator LoadAudioClip(Audio audioData)
     {
-        UnityEngine.AudioType type = audioData.fileType switch
+        AudioType type = audioData.fileType switch
         {
-            "wav" => UnityEngine.AudioType.WAV,
-            "ogg" => UnityEngine.AudioType.OGGVORBIS,
-            _ => UnityEngine.AudioType.MPEG    
+            "wav" => AudioType.WAV,
+            "ogg" => AudioType.OGGVORBIS,
+            _ => AudioType.MPEG    
         };
         // Use the path stored in your audio object
         Debug.Log("Reading audio clip at: " + GetStreamingPath(audioData.fileName));

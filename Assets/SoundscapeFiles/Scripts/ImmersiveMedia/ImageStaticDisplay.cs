@@ -2,10 +2,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Collections;
+using System;
 
-public class StaticImageDisplay : MonoBehaviour
+public class ImageStaticDisplay : MonoBehaviour
 {
     public string imagePath;
+    public Action onImagePrepared;
 
     void Start()
     {
@@ -25,6 +27,7 @@ public class StaticImageDisplay : MonoBehaviour
                 Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
                 
                 GetComponent<Image>().sprite = sprite;
+                if(onImagePrepared != null) onImagePrepared.Invoke();
             }
         }
     }

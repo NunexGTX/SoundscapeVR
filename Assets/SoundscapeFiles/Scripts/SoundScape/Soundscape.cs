@@ -1,17 +1,38 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Soundscape
 {
     [SerializeField] public string title;
+    [SerializeField] public int timeSeconds = 90;
+    [SerializeField] public string staticPath = null;
+    [SerializeField] public string encompassingPath = null;
     [SerializeField] protected List<AudioSource> audioSources = new();
+    protected Action onVisualsLoaded = null;
     public static readonly string VIDEO_GO_NAME = "soundscapeVideo";
 
-    public Soundscape(List<AudioSource> srcs, string title)
+    public static Soundscape CreateSoundscape(string title, int time, string staticPath, string encompassingPath, bool video)
     {
-        this.audioSources = srcs;
-        this.title = title;
+        if (video)
+        {
+            return new VideoSoundscape(title, time, staticPath, encompassingPath);
+        } else
+        {
+            return new ImageSoundscape(title, time, staticPath, encompassingPath);
+        }
     }
+    protected Soundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath)
+    {
+        audioSources = srcs;
+        this.title = title;
+        this.timeSeconds = time;
+        this.staticPath = staticPath;
+        this.encompassingPath = encompassingPath;
+    }
+
+    public void OnVisualsLoaded(Action action){onVisualsLoaded = action;}
+    public virtual void ClearVisualsBinding(){onVisualsLoaded=null;}
 
     public string GetTitle(){return title;}
 
