@@ -60,14 +60,18 @@ public class PlayerManager : MonoBehaviour
             videoOptions.value = 2;
         }
     }
-    
-    public void SetPlayerMovement(bool canMove)
+
+    public void JustStopPlayer(bool canMove)
     {
         if(player != null) player.ActivatePlayer(canMove);
         if (moveProvider != null) moveProvider.enabled = canMove;
         if (teleportProvider != null) teleportProvider.enabled = canMove;
         if (vrGravity != null) vrGravity.enabled = canMove;
-
+    }
+    
+    public void SetPlayerMovement(bool canMove)
+    {
+        JustStopPlayer(canMove);
         if (canMove)
         {
             

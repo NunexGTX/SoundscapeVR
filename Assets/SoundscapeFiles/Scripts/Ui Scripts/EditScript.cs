@@ -66,6 +66,10 @@ public class EditScript : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+    }
+
     private void AddSoundscape(Soundscape soundscape)
     {
         //create button
