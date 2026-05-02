@@ -1,0 +1,28 @@
+using UnityEngine;
+using System.Text;
+using System.Net;
+using System.Net.Sockets;
+
+
+public class ReapyControllerCommunication : MonoBehaviour
+{
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        TcpClient client = new TcpClient("192.168.1.69", 6337);
+        NetworkStream stream = client.GetStream();
+
+        byte[] message = Encoding.UTF8.GetBytes("hi\n");
+        stream.Write(message, 0, message.Length);
+
+        Debug.Log("'Hi' Sent");
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    
+    
+}
