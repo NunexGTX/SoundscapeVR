@@ -63,10 +63,23 @@ public class SoundscapeWrapper: MonoBehaviour
     public void DeleteAudio(GameObject srcObject)
     {
         if(srcObject == null) return;
-        WorldAudioSource src = srcObject.GetComponent<WorldAudioSource>();
-        if(src == null) return;
-        DeleteAudio(src.uuid);
+        DeleteAudio(srcObject.GetComponent<WorldAudioSource>());
     }
+    private void DeleteAudio(WorldAudioSource srcObject)
+    {
+        if(srcObject == null) return;
+        DeleteAudio(srcObject.uuid);
+    }
+    public void UpdateSource(GameObject srcObject)
+    {
+        if(srcObject == null) return;
+        WorldAudioSource worldAudioSource = srcObject.GetComponent<WorldAudioSource>();
+        //1. remove it
+        DeleteAudio(worldAudioSource);
+        //2. add it.
+        PlaceAudioSource(worldAudioSource.audioSource, play: true, debug: true, newSource: true);
+    }
+
     public void DeleteAudio(Guid audioId)
     {
         if(currentSoundscape == null) return;
@@ -94,6 +107,7 @@ public class SoundscapeWrapper: MonoBehaviour
         worldSrc.soundscapeWrapper = this;
         worldSrc.library = soundscapeLibrary;
         worldSrc.playbackType = vrStateData.GetCurrentAudio();
+        src.ApplyEffects(go);
         placedAudios.Add(srcId, go);
         go.SetActive(true);
         if(newSource) EditSoundscape(src, true);

@@ -26,6 +26,7 @@ public class PlayerControl : MonoBehaviour
     public bool IsDisabled(){return !activated;}
 
     public void ActivatePlayer(bool canMove){
+        if(activated == canMove) return;
         activated = canMove;
         Debug.Log($"Player movement is now {canMove}");
     }

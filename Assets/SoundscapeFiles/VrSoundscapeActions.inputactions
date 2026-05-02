@@ -1114,7 +1114,7 @@
                 {
                     "name": "",
                     "id": "248a4b1b-7c60-493a-b02f-f3b8e715c16c",
-                    "path": "<Keyboard>/escape",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -2163,7 +2163,7 @@
                 {
                     "name": "",
                     "id": "446abefe-746a-425a-9d65-5b67455e2084",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/backspace",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

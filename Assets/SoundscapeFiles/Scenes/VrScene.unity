@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 86987621}
   - component: {fileID: 86987620}
   m_Layer: 5
-  m_Name: AudioLibrary
+  m_Name: AudioVideoConfig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1530,17 +1530,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundscapePlayerEditor
   soundscapeWrapper: {fileID: 1891192193}
-  TriggerAction: {fileID: 83097790271614945, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
-  cancelAction: {fileID: 187161793506945269, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  confirmAction: {fileID: 83097790271614945, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  cancelAction: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  deleteAction: {fileID: 187161793506945269, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   scrollAction: {fileID: -6756787485274679044, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   aimingSphere: {fileID: 468564577}
   audioSourcePlacerObject: {fileID: 4017158347209711136, guid: 7994b6627bcf14f458477dc662f6548a, type: 3}
   placingMaterial: {fileID: 2100000, guid: 82c97886f55849f46bb8d8b491654bf4, type: 2}
   defaultMaterial: {fileID: 2100000, guid: cb58b00933386e844a4fe82d340b5ee7, type: 2}
   deletingMaterial: {fileID: 2100000, guid: bfa274fe4e5a5ff429e239d47d668ce3, type: 2}
+  selectingMaterial: {fileID: 2100000, guid: 82c97886f55849f46bb8d8b491654bf4, type: 2}
   scrollStep: 0.2
   distanceTextAsset: {fileID: 7548355003463832129, guid: efdbd5ff3a559644a85935edef2b1f1d, type: 3}
   editUi: {fileID: 1404888078}
+  effectFiltersUi: {fileID: 2125151702}
 --- !u!1 &737635497
 GameObject:
   m_ObjectHideFlags: 0
@@ -3970,14 +3973,14 @@ GameObject:
   - component: {fileID: 2125151700}
   - component: {fileID: 2125151699}
   - component: {fileID: 2125151698}
-  - component: {fileID: 2125151697}
+  - component: {fileID: 2125151702}
   m_Layer: 5
-  m_Name: AudioVideoConfig
+  m_Name: AudioEffects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2125151696
 Transform:
   m_ObjectHideFlags: 0
@@ -3986,29 +3989,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2125151695}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.92387944, z: -0, w: 0.38268375}
-  m_LocalPosition: {x: -3.78, y: 1.453, z: -4.71}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -2.85, y: 1.453, z: -2.38}
   m_LocalScale: {x: 0.39509, y: 0.39509, z: 0.39509}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 292047922}
-  m_LocalEulerAnglesHint: {x: 0, y: 135, z: 0}
---- !u!114 &2125151697
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2125151695}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28dd09d0852e1174a8da53e13c936785, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  configMenu: {fileID: 0}
-  soundscapeMenu: {fileID: 0}
-  editMenu: {fileID: 0}
-  formMenu: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &2125151698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4140,15 +4127,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
   m_PanelSettings: {fileID: 11400000, guid: e7496767898f08e45b3e15f384905b23, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 23e8135b71995ff43868f844067c4cde, type: 3}
   m_SortingOrder: 0
   m_Position: 0
   m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 343
+  m_WorldSpaceWidth: 436
   m_WorldSpaceHeight: 414.2
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &2125151702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125151695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 556bf4050b2d79a4b80b33621edc8a9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioEffectScript
+  editor: {fileID: 657310050}
 --- !u!1001 &2621824500180925399
 PrefabInstance:
   m_ObjectHideFlags: 0

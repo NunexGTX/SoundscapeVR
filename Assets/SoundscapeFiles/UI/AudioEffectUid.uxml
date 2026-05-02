@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/sliderStyle.uss?fileID=7433441132597879392&amp;guid=12ecb2eb793a3264f84d7d10dce03e48&amp;type=3#sliderStyle"/>
+    <ui:Slider label="Volume" value="1" high-value="1" show-input-field="true" fill="true" name="volume"/>
+    <ui:Foldout text="Echo Effect" name="echoFoldout" value="true" style="background-color: rgba(0, 0, 0, 0.1); margin-top: 5px; padding: 5px;">
+        <ui:Toggle label="Apply Echo" name="echoToggle"/>
+        <ui:SliderInt label="Delay (ms)" value="500" high-value="5000" show-input-field="true" fill="true" low-value="10" name="echoDelay"/>
+        <ui:Slider label="Decay Ratio" value="0.5" high-value="1" show-input-field="true" fill="true" name="echoDecay"/>
+        <ui:Slider label="Dry Mix" value="1" high-value="1" show-input-field="true" fill="true" low-value="0" name="echoDry"/>
+        <ui:Slider label="Wet Mix" value="1" high-value="1" show-input-field="true" fill="true" name="echoWet"/>
+    </ui:Foldout>
+    <ui:Button text="Save Effects" name="saveBtn" class="buttonStyle"/>
+</ui:UXML>

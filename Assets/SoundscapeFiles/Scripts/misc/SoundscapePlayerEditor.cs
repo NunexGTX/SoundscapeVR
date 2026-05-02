@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,52 +10,58 @@ public class SoundscapePlayerEditor: MonoBehaviour
 {
     public SoundscapeWrapper soundscapeWrapper;
 
-    public InputActionReference TriggerAction;
+    public InputActionReference confirmAction;
     public InputActionReference cancelAction;
+    public InputActionReference deleteAction;
     public InputActionReference scrollAction;
     public GameObject aimingSphere;
     public GameObject audioSourcePlacerObject;
     public Material placingMaterial;
     public Material defaultMaterial;
     public Material deletingMaterial;
+    public Material selectingMaterial;
     [SerializeField] private float scrollStep = 0.2f;
     [SerializeField] private GameObject distanceTextAsset;
     [SerializeField] private EditScript editUi;
+    [SerializeField] private AudioEffectScript effectFiltersUi;
     private GameObject currentPlacingObject;
     private GameObject currentTextAsset = null;
 
-    private Audio currentSelectedAudio;
-    private AudioSource currentAudioAsSource;
-    private GameObject currentSelectedAudioSource;
+    private Audio currentPickedAudio;
+    private AudioSource pickedAudioAsSource;
+    private GameObject currentSelectedSourceObject;
     private enum State
     {
         Standby,
         TryPlace,
         AdjustPlace,
-        TryRemove
+        TryRemove,
+        Select
 
     }
     private State currentState = State.Standby;
 
     void OnEnable()
     {
-        cancelAction.action.performed +=  CancelState;
-        TriggerAction.action.performed += Triggered;
-        scrollAction.action.performed += ScrollPosition;
+        cancelAction.action.performed +=  CancelAction;
+        confirmAction.action.performed += ConfirmAction;
+        scrollAction.action.performed += ScrollAction;
+        deleteAction.action.performed += DeleteAction;
     }
 
     void OnDisable()
     {
-        cancelAction.action.performed -= CancelState;
-        TriggerAction.action.performed -= Triggered;
-        scrollAction.action.performed -= ScrollPosition;
+        cancelAction.action.performed -= CancelAction;
+        confirmAction.action.performed -= ConfirmAction;
+        scrollAction.action.performed -= ScrollAction;
+        deleteAction.action.performed -= DeleteAction;
     }
 
     //Called by edit UI, when clicking on an audio source
     public bool SelectAudio(Audio audio)
     {
-        if(!soundscapeWrapper.HasSoundscape()) return false;
-        currentSelectedAudio = audio;
+        if(!soundscapeWrapper.HasSoundscape() || currentState != State.Standby) return false;
+        currentPickedAudio = audio;
         currentState = State.TryPlace;
         aimingSphere.SetActive(true);
         return true;
@@ -73,18 +80,15 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(!soundscapeWrapper.HasSoundscape()) return;
         if(currentState != State.TryPlace) return;
         if(worldPos.Equals(INVALID_VEC_POS)) return;
-        if(currentSelectedAudio == null)
+        if(currentPickedAudio == null)
         {
             UnselectLibraryAudio();
             Debug.LogError("Tried to place a null audio");
             return;
         }
-        Debug.Log("Placing audio: " + currentSelectedAudio.id + " at " + worldPos);
-        //convert to sphere coords
+        Debug.Log("Placing audio: " + currentPickedAudio.id + " at " + worldPos);
         Vector3 sphereCoords = SoundscapeLibrary.WorldToSphere(worldPos);
-        //create audiosource
-        currentAudioAsSource = new(currentSelectedAudio.id, sphereCoords);
-        //place placeholder gameobject
+        pickedAudioAsSource = new(currentPickedAudio.id, sphereCoords);
         CreatePlaceholderPlacer(worldPos);
         //change state
         currentState = State.AdjustPlace;
@@ -111,12 +115,11 @@ public class SoundscapePlayerEditor: MonoBehaviour
         throw new("Invalid arguments provided: " + args);
     }
 
-    private void Triggered(InputAction.CallbackContext context)
+    // called by this script for confirming/selecting
+    private void ConfirmAction(InputAction.CallbackContext context)
     {
         if(currentState == State.AdjustPlace)
             FinalizePlaceAudio();
-        else if (currentState == State.TryRemove)
-            DeleteAudioSource();
     }
 
     //called by this script to set distance to center
@@ -125,7 +128,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(!soundscapeWrapper.HasSoundscape()) return;
         Debug.Log("Finalizing audio placement.");
         Destroy(currentPlacingObject);
-        soundscapeWrapper.PlaceAudioSource(currentAudioAsSource, true, true, true);
+        soundscapeWrapper.PlaceAudioSource(pickedAudioAsSource, true, true, true);
         currentState = State.Standby;
         DestroyTextAsset();
         UnselectLibraryAudio();
@@ -135,57 +138,88 @@ public class SoundscapePlayerEditor: MonoBehaviour
     public void SelectAudioSource(GameObject src)
     {
         if(!soundscapeWrapper.HasSoundscape()) return;
-        if(currentState != State.Standby) return;
-        src.GetComponent<MeshRenderer>().material = deletingMaterial;
-        currentSelectedAudioSource = src;
-        currentState = State.TryRemove;
+        if(currentState != State.Standby && currentState != State.Select) return;
+        UnselectSource();
+        src.GetComponent<MeshRenderer>().material = selectingMaterial;
+        currentSelectedSourceObject = src;
+        effectFiltersUi.gameObject.SetActive(true);
+        effectFiltersUi.editor = this;
+        effectFiltersUi.SetValues(src);
+        currentState = State.Select;
+        Debug.Log("State changed to select");
     }
 
-    //called by this script 
+    //called by audio effect UI to collect the data from it and write it into currentSelectedSourceObject
+    public void UpdateSourceData(List<AudioEffectInstance> effectInstances, float volume){
+        currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource.audioEffects = effectInstances;
+        currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource.volume = volume;
+        soundscapeWrapper.UpdateSource(currentSelectedSourceObject);
+        UnselectSource();
+        currentState = State.Standby;
+    }
+
+    //called by this script to attempt or finalize source deletion
     private void DeleteAudioSource()
     {
         if(!soundscapeWrapper.HasSoundscape()) return;
         //contact wrapper to delete this src
-        if(currentState != State.TryRemove) return;
-        soundscapeWrapper.DeleteAudio(currentSelectedAudioSource);
-        currentSelectedAudioSource = null;
-        currentState = State.Standby;
+        if(currentState == State.TryRemove)
+        {
+            soundscapeWrapper.DeleteAudio(currentSelectedSourceObject);
+            UnselectSource(false);
+            currentState = State.Standby;
+        }
+        else if (currentState == State.Select)
+        {
+            currentSelectedSourceObject.GetComponent<MeshRenderer>().material = deletingMaterial;
+            currentState = State.TryRemove;
+        }
+    }
+    private void UnselectSource(bool goExists = true)
+    {
+        if(goExists && currentSelectedSourceObject != null)
+            currentSelectedSourceObject.GetComponent<MeshRenderer>().material = defaultMaterial;
+        currentSelectedSourceObject = null;
+        effectFiltersUi.gameObject.SetActive(false);
     }
 
     
-    //called by this action to cancel the current state and return to standby
-    private void CancelState(InputAction.CallbackContext context)
-    {
-        CancelState();
-    }
-    private void CancelState()
+    //called by this script to cancel the current state and return to standby
+    private void CancelAction(InputAction.CallbackContext context){CancelState();}
+    private void CancelState(bool leaving = false)
     {
         if(currentState == State.Standby) return;
-        currentState = State.Standby;
-        UnselectLibraryAudio();
-        //currentSelectedAudio = null;
-        if(currentSelectedAudioSource != null)
+        
+        if(currentState == State.TryRemove && !leaving)
         {
-            currentSelectedAudioSource.GetComponent<MeshRenderer>().material = defaultMaterial;        
-            currentSelectedAudioSource = null;
+            if(currentSelectedSourceObject != null)
+                currentSelectedSourceObject.GetComponent<MeshRenderer>().material = selectingMaterial; 
+            currentState = State.Select;
         }
-        if(currentPlacingObject != null)
+        else
         {
-            Destroy(currentPlacingObject);       
-            currentPlacingObject = null;
+            UnselectSource();
+            currentState = State.Standby;
+            UnselectLibraryAudio();
+            //currentSelectedAudio = null;
+            if(currentPlacingObject != null)
+            {
+                Destroy(currentPlacingObject);       
+                currentPlacingObject = null;
+            }
+            aimingSphere.SetActive(false);
+            DestroyTextAsset();
         }
-        aimingSphere.SetActive(false);
-        DestroyTextAsset();
     }
 
     //called to scroll the audio position
-    private void ScrollPosition(InputAction.CallbackContext context)
+    private void ScrollAction(InputAction.CallbackContext context)
     {
         if(currentState != State.AdjustPlace) return;
         Vector2 scrollValue = context.ReadValue<Vector2>();
         Debug.Log(scrollValue);
         float scrollY = scrollValue.y;
-        Vector3 sphereCoords = currentAudioAsSource.GetSpherePosition();
+        Vector3 sphereCoords = pickedAudioAsSource.GetSpherePosition();
         Vector3 newCoords = new()
         {
             y = sphereCoords.y,
@@ -196,20 +230,25 @@ public class SoundscapePlayerEditor: MonoBehaviour
 
         Destroy(currentPlacingObject);
         CreatePlaceholderPlacer(worldPos);
-        currentAudioAsSource.WithNewPosition(newCoords);
+        pickedAudioAsSource.WithNewPosition(newCoords);
         DistanceFeedback(worldPos);
+    }
+
+    private void DeleteAction(InputAction.CallbackContext context)
+    {
+        DeleteAudioSource();
     }
 
     private void UnselectLibraryAudio()
     {
         editUi.UnselectAudio();
-        currentSelectedAudio = null;
-        currentAudioAsSource = null;
+        currentPickedAudio = null;
+        pickedAudioAsSource = null;
     }
 
     public void LeaveEdit()
     {
-        CancelState();
+        CancelState(leaving: true);
     }
 
     private void DestroyTextAsset()

@@ -15,7 +15,6 @@ public class FieldMovementStopped: MonoBehaviour
 
         if (uiHasFocus)
         {
-            // Disable player input
             FocusOnText();
         }
         else
@@ -26,7 +25,6 @@ public class FieldMovementStopped: MonoBehaviour
 
     private void FocusOnText()
     {
-        Debug.Log("Focusing");
         if (vrStateData.IsInVr)
         {
             TouchScreenKeyboard.Open("");
@@ -37,7 +35,6 @@ public class FieldMovementStopped: MonoBehaviour
     }
     private void UnfocusOnText()
     {
-        Debug.Log("Unfocusing");
         if(vrStateData.IsInVr){}else
         {
             playerManager.JustStopPlayer(true);

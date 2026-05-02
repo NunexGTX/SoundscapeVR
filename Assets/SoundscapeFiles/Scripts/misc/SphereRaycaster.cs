@@ -6,13 +6,12 @@ public class SphereRaycaster : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private SoundscapePlayerEditor editor;
     [SerializeField] private VrStateData vrStateData;
-    [SerializeField] private LayerMask sphereLayer; // Put your sphere on a specific layer
-    [SerializeField] private LayerMask soundSourcesLayer; // Put your sphere on a specific layer
-    [SerializeField] private LayerMask UiLayer; // Put your sphere on a specific layer
+    [SerializeField] private LayerMask sphereLayer;
+    [SerializeField] private LayerMask soundSourcesLayer; 
+    [SerializeField] private LayerMask UiLayer;
 
     void Update()
     {
-        // Example: Trigger raycast on Mouse Click or Controller Trigger
         if (Mouse.current.leftButton.wasPressedThisFrame && !vrStateData.IsInVr)
         {
             GameObject obj = RaycastAudioSources();
@@ -25,10 +24,9 @@ public class SphereRaycaster : MonoBehaviour
     {
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 1000f, UiLayer))
+        if (Physics.Raycast(ray, out hit, 1000f, soundSourcesLayer))
         {
             GameObject sourceFound = hit.collider.gameObject;
-            if(!sourceFound.CompareTag("AudioSource")) return null;
             return sourceFound;
         }
         return null;

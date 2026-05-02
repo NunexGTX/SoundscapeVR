@@ -1,0 +1,6 @@
+:root {
+}
+
+.unity-base-slider__text-field {
+    width: 75px;
+}

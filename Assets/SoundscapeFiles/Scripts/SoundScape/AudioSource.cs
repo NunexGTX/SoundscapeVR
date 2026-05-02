@@ -1,10 +1,14 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class AudioSource
 {
     [SerializeField] private string audioId;
     [SerializeField] private SerializableVector3 spherePosition;
+    public float volume = 1f;
+    public List<AudioEffectInstance> audioEffects = new();
 
     public AudioSource(string audioId, Vector3 spherePosition)
     {
@@ -26,5 +30,11 @@ public class AudioSource
     public void WithNewPosition(Vector3 newCoords)
     {
         this.spherePosition = new(newCoords);
+    }
+
+    public void ApplyEffects(GameObject go)
+    {
+        foreach(AudioEffectInstance effect in audioEffects) effect.ApplyEffectToSource(go);
+        go.GetComponent<UnityEngine.AudioSource>().volume = volume;
     }
 }
