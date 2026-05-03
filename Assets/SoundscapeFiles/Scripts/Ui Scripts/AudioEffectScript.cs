@@ -9,6 +9,7 @@ public class AudioEffectScript: MonoBehaviour
     private VisualElement root = null;
     private List<AudioEffectInstance> effects = new();
     private float volume = 1f;
+    private string audioName = "Audio Name";
     void OnEnable()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -22,6 +23,7 @@ public class AudioEffectScript: MonoBehaviour
     {
         effects = new(worldAudioSource.GetComponent<WorldAudioSource>().audioSource.audioEffects);
         volume = worldAudioSource.GetComponent<WorldAudioSource>().audioSource.volume;
+        audioName = worldAudioSource.GetComponent<WorldAudioSource>().audioSource.GetAudioId();
         if(root == null) return;
         PopulateValues();
     }
@@ -29,8 +31,9 @@ public class AudioEffectScript: MonoBehaviour
     private void PopulateValues()
     {
         root.Q<Foldout>("echoFoldout").value = false;
-        root.Q<Toggle>("echoFoldout").value = false;
+        root.Q<Toggle>("echoToggle").value = false;
         root.Q<Slider>("volume").value = volume;
+        root.Q<Label>("audioName").text = audioName;
         foreach(AudioEffectInstance effect in effects)
         {
             switch (effect.effectId)

@@ -10,10 +10,9 @@ using UnityEngine.Networking;
 
 public class SoundscapeLibrary: MonoBehaviour
 {
-    public AudioList audioList;
-    public SoundscapeList soundscapeList;
-    public Form form;
-
+    public AudioList audioList = new();
+    public SoundscapeList soundscapeList = new();
+    public Form form = new();
 
     private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
     

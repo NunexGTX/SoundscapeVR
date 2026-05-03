@@ -5,8 +5,8 @@ using UnityEngine.Video;
 [System.Serializable]
 public class VideoSoundscape : Soundscape
 {
-    public VideoSoundscape(string title, int time, string staticPath, string encompassingPath) : this(new(), title, time, staticPath, encompassingPath){}
-    protected VideoSoundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath) : base(srcs, title, time, staticPath, encompassingPath){}
+    public VideoSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType) : this(new(), title, time, staticPath, encompassingPath, projectionType){}
+    protected VideoSoundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath, string projectionType) : base(srcs, title, time, staticPath, encompassingPath, projectionType){}
     
 
     public override VisualType GetSupportedVisual()
@@ -27,7 +27,7 @@ public class VideoSoundscape : Soundscape
     }
     public override Soundscape Copy()
     {
-        return new VideoSoundscape(audioSources, title, timeSeconds, staticPath, encompassingPath);
+        return new VideoSoundscape(audioSources, title, timeSeconds, staticPath, encompassingPath, projectionType);
     }
 
     public override GameObject TryGetVisuals(VisualType visualType)
@@ -50,7 +50,16 @@ public class VideoSoundscape : Soundscape
             //videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
             VideoPlayer360 v360 = go.AddComponent<VideoPlayer360>();
             v360.videoFileName = SoundscapeLibrary.GetStreamingPath(encompassingPath);
-            v360.Video360Material = new Material(Shader.Find("Skybox/Panoramic"));
+            Material mat = new Material(Shader.Find("Skybox/Panoramic"));
+            //2f corresponds to over under, 1f to side by side, 0f to none (default)
+            if (projectionType.Equals("None"))
+            {
+                if(projectionType.Equals("OverUndere"))
+                    mat.SetFloat("_Layout", 2f);
+                else
+                    mat.SetFloat("_Layout", 1f);
+            }
+            v360.Video360Material = mat;
         } else
         {
             videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;

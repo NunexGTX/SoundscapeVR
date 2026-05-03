@@ -142,9 +142,9 @@ public class SoundscapePlayerEditor: MonoBehaviour
         UnselectSource();
         src.GetComponent<MeshRenderer>().material = selectingMaterial;
         currentSelectedSourceObject = src;
-        effectFiltersUi.gameObject.SetActive(true);
         effectFiltersUi.editor = this;
         effectFiltersUi.SetValues(src);
+        effectFiltersUi.gameObject.SetActive(true);
         currentState = State.Select;
         Debug.Log("State changed to select");
     }

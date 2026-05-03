@@ -8,27 +8,29 @@ public abstract class Soundscape
     [SerializeField] public int timeSeconds = 90;
     [SerializeField] public string staticPath = null;
     [SerializeField] public string encompassingPath = null;
+    [SerializeField] public string projectionType = "None";
     [SerializeField] protected List<AudioSource> audioSources = new();
     protected Action onVisualsLoaded = null;
     public static readonly string VIDEO_GO_NAME = "soundscapeVideo";
 
-    public static Soundscape CreateSoundscape(string title, int time, string staticPath, string encompassingPath, bool video)
+    public static Soundscape CreateSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType, bool video)
     {
         if (video)
         {
-            return new VideoSoundscape(title, time, staticPath, encompassingPath);
+            return new VideoSoundscape(title, time, staticPath, encompassingPath, projectionType);
         } else
         {
-            return new ImageSoundscape(title, time, staticPath, encompassingPath);
+            return new ImageSoundscape(title, time, staticPath, encompassingPath, projectionType);
         }
     }
-    protected Soundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath)
+    protected Soundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath, string projectionType)
     {
         audioSources = srcs;
         this.title = title;
         this.timeSeconds = time;
         this.staticPath = staticPath;
         this.encompassingPath = encompassingPath;
+        this.projectionType = projectionType;
     }
 
     public void OnVisualsLoaded(Action action){onVisualsLoaded = action;}

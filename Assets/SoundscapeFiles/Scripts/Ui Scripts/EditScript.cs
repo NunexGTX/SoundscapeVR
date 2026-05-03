@@ -35,7 +35,10 @@ public class EditScript : MonoBehaviour
         ssLabel = root.Q<Label>("selectedSoundscape");
         audioLabel = root.Q<Label>("selectedAudio");
 
-        ssEditor = new SoundscapeEditor(root.Q<Foldout>("settingsFoldout"), ssWrapper, library).RunOnCreate(OnCreateSoundscape).RunOnDestroy(OnDeleteSoundscape);
+        ssEditor = new SoundscapeEditor(root.Q<Foldout>("settingsFoldout"), ssWrapper, library)
+            .RunOnCreate(OnCreateSoundscape)
+            .RunOnDestroy(OnDeleteSoundscape)
+            .RunOnSave(OnSaveSoundscape);
 
         returnBtn.clicked += Return;
 
@@ -76,7 +79,7 @@ public class EditScript : MonoBehaviour
         button.text = soundscape.title;
 
         //wrap button in handler to later allow to free memory from binding this action
-        ButtonHandler handler = new(button){id = soundscape.title};
+        ButtonHandler handler = new(button, soundscape.title);
         handler.SetAction(action);
 
         //add button to the UI
@@ -107,9 +110,21 @@ public class EditScript : MonoBehaviour
     {
         foreach(ButtonHandler handler in ssButtons)
         {
-            if(handler.id.Equals(title)) handler.Clear();
+            if(handler.GetId().Equals(title)) handler.Clear();
         }
         soundscapeList.Q(title).RemoveFromHierarchy();
+    }
+    
+    private void OnSaveSoundscape(string oldTitle, Soundscape soundscape)
+    {
+        foreach(ButtonHandler handler in ssButtons)
+        {
+            if (handler.GetId().Equals(oldTitle))
+            {
+                handler.SetId(soundscape.title);
+                handler.SetAction(() => SetSoundscape(soundscape));
+            } 
+        }
     }
     
 

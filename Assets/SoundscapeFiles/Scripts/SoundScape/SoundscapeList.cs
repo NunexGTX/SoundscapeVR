@@ -57,29 +57,24 @@ public class SoundscapeList
 
     public bool UpdateSoundscapeData(string soundscapeId, Soundscape soundscape)
     {
-        if(soundscape is VideoSoundscape vSoundscape)
+        bool found = RemoveSoundscape(soundscapeId);
+        if (!found)
         {
-            int index = videoSoundscapes.FindIndex(s => s.title == soundscapeId);
-
-            if (index == -1) return false;
-            videoSoundscapes[index] = vSoundscape;
-            return true;
-        } else if(soundscape is ImageSoundscape iSoundscape)
-        {
-            int index = imageSoundscapes.FindIndex(s => s.title == soundscapeId);
-
-            if (index == -1) return false;
-            imageSoundscapes[index] = iSoundscape;
-            return true;
+            return false;
         }
-        return false;
+        ReplaceOrAddSoundscape(soundscape);
+        return true;
     }
 
-    public void RemoveSoundscape(string soundscapeTitle)
+    public bool RemoveSoundscape(string soundscapeTitle)
     {
         int videoDeletions = videoSoundscapes.RemoveAll((vss) => vss.title.Equals(soundscapeTitle));
         int imageDeletions = imageSoundscapes.RemoveAll((vss) => vss.title.Equals(soundscapeTitle));
         if(videoDeletions < 1 && imageDeletions < 1)
+        {
             Debug.LogWarning($"Warning: Failed to find soundscape to delete: {soundscapeTitle}");
+            return false;            
+        }
+        return true;
     }
 }
