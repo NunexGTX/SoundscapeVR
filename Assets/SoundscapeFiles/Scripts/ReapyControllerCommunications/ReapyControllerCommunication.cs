@@ -16,6 +16,13 @@ public class ReapyControllerCommunication : MonoBehaviour
         stream.Write(message, 0, message.Length);
 
         Debug.Log("'Hi' Sent");
+
+        // Wait for and read the response
+        byte[] buffer = new byte[1024];
+        int bytesRead = stream.Read(buffer, 0, buffer.Length);
+        string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+        Debug.Log("Server response: " + response);
+
     }
 
     // Update is called once per frame
