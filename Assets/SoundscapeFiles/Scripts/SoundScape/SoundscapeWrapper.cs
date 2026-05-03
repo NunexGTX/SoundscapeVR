@@ -33,7 +33,7 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         if (edited && currentSoundscape != null)
         {
-            soundscapeLibrary.SaveSoundscape(currentSoundscape);
+            soundscapeLibrary.ReplaceOrAddSoundscape(currentSoundscape);
             edited = false;            
         }
     }

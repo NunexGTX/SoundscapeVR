@@ -34,7 +34,7 @@ public class SoundscapeList
         return JsonUtility.ToJson(this);
     }
 
-    public void UpdateList(Soundscape soundscape)
+    public void ReplaceOrAddSoundscape(Soundscape soundscape)
     {
         if(soundscape is VideoSoundscape vSoundscape)
         {
@@ -53,6 +53,26 @@ public class SoundscapeList
             else
                 imageSoundscapes.Add(iSoundscape);
         }
+    }
+
+    public bool UpdateSoundscapeData(string soundscapeId, Soundscape soundscape)
+    {
+        if(soundscape is VideoSoundscape vSoundscape)
+        {
+            int index = videoSoundscapes.FindIndex(s => s.title == soundscapeId);
+
+            if (index == -1) return false;
+            videoSoundscapes[index] = vSoundscape;
+            return true;
+        } else if(soundscape is ImageSoundscape iSoundscape)
+        {
+            int index = imageSoundscapes.FindIndex(s => s.title == soundscapeId);
+
+            if (index == -1) return false;
+            imageSoundscapes[index] = iSoundscape;
+            return true;
+        }
+        return false;
     }
 
     public void RemoveSoundscape(string soundscapeTitle)

@@ -15,10 +15,12 @@ public class SoundscapeEditor
     private Label debugLabel;
     private Button createButton;
     private Button destroyButton;
+    private Button saveButton;
     private int deleteCounter = 0;
     private const int deleteThreshold = 1;
     private Action<Soundscape> runOnCreate = null;
     private Action<string> runOnDestroy = null;
+    private Soundscape currentSelectedSoundscape = null;
     public SoundscapeEditor(VisualElement foldout, SoundscapeWrapper ssWrapper, SoundscapeLibrary library)
     {   
         this.ssWrapper = ssWrapper;
@@ -32,9 +34,11 @@ public class SoundscapeEditor
         debugLabel = foldout.Q<Label>("debugLabel");
         createButton = foldout.Q<Button>("createBtn");
         destroyButton = foldout.Q<Button>("deleteBtn");
+        saveButton = foldout.Q<Button>("saveBtn");
         
         createButton.clicked += OnCreate;
         destroyButton.clicked += OnDestroy;
+        saveButton.clicked += OnSave;
 
     }
 
@@ -54,6 +58,7 @@ public class SoundscapeEditor
     {
         createButton.clicked -= OnCreate;
         destroyButton.clicked -= OnDestroy;
+        destroyButton.clicked -= OnSave;
     }
 
     public void SetData(Soundscape soundscape)
@@ -65,6 +70,7 @@ public class SoundscapeEditor
         encompassingPath.value = soundscape.encompassingPath;
         ResetDeleteCounter();
         debugLabel.text = "";
+        currentSelectedSoundscape = soundscape;
     }
 
     private void OnCreate()
@@ -76,7 +82,7 @@ public class SoundscapeEditor
         }
         if (library.DoesSoundscapeExist(titleField.value))
         {
-            debugLabel.text = "Soundscape already exists. Can't create.";
+            debugLabel.text = $"Soundscape {titleField.value} already exists. Can't create.";
             return;
         }
         debugLabel.text = "";
@@ -89,7 +95,7 @@ public class SoundscapeEditor
     {
         if (!library.DoesSoundscapeExist(titleField.value))
         {
-            debugLabel.text = "Soundscape title doesn't exist in library";
+            debugLabel.text = $"Soundscape {titleField.value} doesn't exist in library";
             return;
         }
         if(deleteCounter++ >= deleteThreshold)
@@ -98,10 +104,27 @@ public class SoundscapeEditor
             ssWrapper.StopSoundscape(titleField.value);
             library.DeleteSoundscape(titleField.value);
             debugLabel.text = "";
+            currentSelectedSoundscape = null;
             if(runOnDestroy != null) runOnDestroy.Invoke(titleField.value);
             return;
         }
-        destroyButton.text = "Are you sure?";
+        destroyButton.text = $"Delete {titleField.value}?";
+    }
+    private void OnSave()
+    {
+        if(currentSelectedSoundscape == null)
+        {
+            debugLabel.text = $"No soundscape selected to save.";
+            return;
+        }
+        if(titleField.value.IsNullOrEmpty())
+        {
+            debugLabel.text = "No title defined.";
+            return;
+        }
+        Soundscape newSS = Soundscape.CreateSoundscape(titleField.value, timeField.value, staticPath.value, encompassingPath.value, videoToggle.value);
+        newSS.CopySourcesFrom(currentSelectedSoundscape);
+        library.UpdateSoundscapeData(currentSelectedSoundscape.title, newSS);
     }
 
     private void ResetDeleteCounter()

@@ -30,11 +30,18 @@ public class SoundscapeLibrary: MonoBehaviour
         }
         //Debug.Log(audioList.Print());
     }
-    public void SaveSoundscape(Soundscape updatedSoundscape)
+    public void ReplaceOrAddSoundscape(Soundscape updatedSoundscape)
     {
-        soundscapeList.UpdateList(updatedSoundscape);
+        soundscapeList.ReplaceOrAddSoundscape(updatedSoundscape);
         if(!SaveSoundscapeList())
             Debug.LogWarning($"Soundscape '{updatedSoundscape.title}' was not saved successfully.");
+    }
+
+    public void UpdateSoundscapeData(string soundscapeId, Soundscape updatedSoundscape)
+    {
+        soundscapeList.UpdateSoundscapeData(soundscapeId, updatedSoundscape);
+        if(!SaveSoundscapeList())
+            Debug.LogWarning($"Soundscape '{soundscapeId}' was not saved successfully.");
     }
 
     private bool SaveSoundscapeList()

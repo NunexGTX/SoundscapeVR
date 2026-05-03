@@ -62,4 +62,9 @@ public abstract class Soundscape
     public abstract Soundscape Copy();
     public abstract GameObject TryGetVisuals(VisualType visualType);
     public abstract VisualType GetSupportedVisual();
+
+    public void CopySourcesFrom(Soundscape other)
+    {
+        audioSources = new(other.audioSources);
+    }
 }
