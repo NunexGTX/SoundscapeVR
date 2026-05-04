@@ -162,6 +162,7 @@ public class SoundscapeLibrary: MonoBehaviour
             yield return www.SendWebRequest();
             if (www.result == UnityWebRequest.Result.Success)
             {
+                Debug.Log($"Loading audio: {audioData.fileName}");
                 AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
                 audioData.SetClip(downloadedClip);
                 Debug.Log($"Successfully loaded: {audioData.name}");

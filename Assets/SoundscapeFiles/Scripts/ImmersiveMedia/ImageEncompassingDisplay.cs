@@ -32,7 +32,8 @@ public class ImageEncompassingDisplay : MonoBehaviour
 
             // 1. Get the texture and fix seams
             loadedTexture = DownloadHandlerTexture.GetContent(uwr);
-            loadedTexture.wrapMode = TextureWrapMode.Clamp;
+            loadedTexture.wrapMode = TextureWrapMode.Repeat;
+            loadedTexture.filterMode = FilterMode.Bilinear;
 
             if (loadedTexture != null)
             {

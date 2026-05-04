@@ -6,6 +6,7 @@ public class SceneSkybox : MonoBehaviour
 
     // The Material reference
     public Material skyboxMaterial;
+    public Material skyboxMaterial2;
     private GameObject room;
     public int RoomLayerIndex = 6; //Room layer
 

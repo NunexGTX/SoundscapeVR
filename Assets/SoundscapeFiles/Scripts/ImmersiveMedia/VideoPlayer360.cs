@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Video;
 
 public class VideoPlayer360 : MonoBehaviour
@@ -27,6 +28,7 @@ public class VideoPlayer360 : MonoBehaviour
     {
         // Now that the video is loaded, we can access its dimensions to create the image texture dynamically
         videoTex = new RenderTexture((int)source.width, (int)source.height, 0);
+        //videoTex.dimension = TextureDimension.Cube;
 
         // Player now draws on the texture
         source.targetTexture = videoTex;

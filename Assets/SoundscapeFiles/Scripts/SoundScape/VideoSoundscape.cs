@@ -52,9 +52,10 @@ public class VideoSoundscape : Soundscape
             v360.videoFileName = SoundscapeLibrary.GetStreamingPath(encompassingPath);
             Material mat = new Material(Shader.Find("Skybox/Panoramic"));
             //2f corresponds to over under, 1f to side by side, 0f to none (default)
-            if (projectionType.Equals("None"))
+            mat.SetFloat("_Layout", 0f);
+            if (!projectionType.Equals("None"))
             {
-                if(projectionType.Equals("OverUndere"))
+                if(projectionType.Equals("Over Under"))
                     mat.SetFloat("_Layout", 2f);
                 else
                     mat.SetFloat("_Layout", 1f);
