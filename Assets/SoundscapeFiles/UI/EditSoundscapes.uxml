@@ -12,6 +12,7 @@
                 <ui:TextField label="Title*" placeholder-text="filler text" name="titleInput" style="flex-direction: column;"/>
                 <ui:IntegerField label="Time in Seconds" value="90" name="timeInput"/>
                 <ui:Toggle label="Video Soundscape" name="videoToggle" style="align-content: flex-start; justify-content: flex-start; align-self: auto; align-items: stretch; flex-wrap: wrap; flex-direction: row;"/>
+                <ui:Toggle label="Loop?" name="loopToggle"/>
                 <ui:TextField label="Path to 2D" placeholder-text="filler text" name="2dPath" style="flex-direction: column;"/>
                 <ui:TextField label="Path to 360" placeholder-text="filler text" name="360Path" style="flex-direction: column;"/>
                 <ui:DropdownField label="Projection Type" choices="None (As Is),Side by Side,Over Under" index="0" name="projectionDropdown" style="flex-direction: column;"/>

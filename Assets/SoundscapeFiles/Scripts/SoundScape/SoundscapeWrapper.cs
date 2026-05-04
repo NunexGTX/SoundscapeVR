@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Video;
 
 public class SoundscapeWrapper: MonoBehaviour
 {
@@ -113,30 +115,56 @@ public class SoundscapeWrapper: MonoBehaviour
         if(newSource) EditSoundscape(src, true);
     }
 
-    public void StartSoundscape(bool debug)
+    private void RestartSoundscape()
+    {
+        currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
+        RemoveAudioSources();
+        StartSoundscape(false);
+    }
+
+    public void PrepareSoundscape(bool debug)
     {
         playerManager.HideCameraLayers(debug);
         editing = debug;
-        if (!debug)
+        if (debug)
         {
-            playerManager.SetPlayerMovement(false);
-            
-            currentSoundscape.OnVisualsLoaded(() => StartSoundSources(debug));
-            ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());
-            if(ssVisual != null)
-                videoPlaying = true;
+            StartSoundscape(debug);
             return;
         }
-        StartSoundSources(debug);
+        playerManager.SetPlayerMovement(false);
+        currentSoundscape.OnVisualsLoaded(() => StartSoundscape(debug));
+        ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());
+        if(ssVisual != null)
+            videoPlaying = true;
+        return;
 
     }
 
-    private void StartSoundSources(bool debug)
+    private void StartSoundscape(bool debug)
     {
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
         {
             PlaceAudioSource(src, true, debug);
         }
+        if(!debug) StartLoopCoroutine();
+    }
+
+    //function to start counting time to loop the SS.
+    //if currrentSS time is 0, this does nothing. otherwise starts the coroutine that will then call RestartSoundscape()
+    private void StartLoopCoroutine()
+    {
+        int time = currentSoundscape.timeSeconds;
+        if(time == 0) return;
+        StartCoroutine(SoundscapeCountdown(time));
+    }
+
+    IEnumerator SoundscapeCountdown(int timeSeconds)
+    {
+        yield return new WaitForSeconds(timeSeconds);
+        if(currentSoundscape.loop)
+            RestartSoundscape();
+        else
+            StopSoundscape();
     }
 
     private void StopSoundscape(InputAction.CallbackContext context)
@@ -164,6 +192,12 @@ public class SoundscapeWrapper: MonoBehaviour
             }
             videoPlaying = false;
         }
+        RemoveAudioSources();
+        StopAllCoroutines();
+    }
+
+    private void RemoveAudioSources()
+    {
         foreach(GameObject go in placedAudios.Values)
         {
             Destroy(go);
@@ -175,7 +209,7 @@ public class SoundscapeWrapper: MonoBehaviour
     public void SetAndStartSoundscape(Soundscape ss, bool debug = false)
     {
         SetSoundscape(ss);
-        StartSoundscape(debug);
+        PrepareSoundscape(debug);
     }
 
     public bool HasSoundscape(){return currentSoundscape != null;}

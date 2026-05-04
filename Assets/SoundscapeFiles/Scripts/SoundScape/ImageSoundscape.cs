@@ -5,8 +5,8 @@ using UnityEngine.UI;
 [System.Serializable]
 public class ImageSoundscape : Soundscape
 {
-    public ImageSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType) : this(new(), title, time, staticPath, encompassingPath, projectionType){}
-    protected ImageSoundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath, string projectionType) : base(srcs, title, time, staticPath, encompassingPath, projectionType){}
+    public ImageSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType, bool loop) : this(new(), title, time, staticPath, encompassingPath, loop, projectionType){}
+    protected ImageSoundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath, bool loop, string projectionType) : base(srcs, title, time, staticPath, encompassingPath, projectionType, loop){}
 
     public override VisualType GetSupportedVisual()
     {
@@ -26,7 +26,7 @@ public class ImageSoundscape : Soundscape
     }
     public override Soundscape Copy()
     {
-        return new ImageSoundscape(audioSources, title, timeSeconds, staticPath, encompassingPath, projectionType);
+        return new ImageSoundscape(audioSources, title, timeSeconds, staticPath, encompassingPath, loop, projectionType);
     }
 
     public override GameObject TryGetVisuals(VisualType visualType)
@@ -76,4 +76,6 @@ public class ImageSoundscape : Soundscape
         }
 
     }
+
+    public override void RestartVisuals(GameObject ssVisual, VisualType visualType){}
 }

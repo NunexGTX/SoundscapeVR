@@ -17,6 +17,7 @@ public class FormScript : MonoBehaviour
     [SerializeField] private VisualTreeAsset checkboxElement;
     [SerializeField] private VisualTreeAsset dropdownElement;
     [SerializeField] private GoogleForm formSubmiter;
+    public const string SoundscapeInit = "LoadSoundscape:";
     private Button returnBtn;
     private VisualElement formRoot;
     private List<List<FormElement>> formSections = new();
@@ -123,7 +124,6 @@ public class FormScript : MonoBehaviour
                 List<string> extras = ele.extra;
                 if (ele.required)
                 {
-                    Debug.Log("Found a required one");
                     answersHolder.RegisterRequiredQuestion(formPosition, id);
                     question += "*";
                 }
@@ -240,9 +240,31 @@ public class FormScript : MonoBehaviour
                         break;
                     default:
                         VisualElement textThing = labelElement.Instantiate();
-                        textThing.Q<Label>("title").text = id;
+                        string title = id;
+                        if (id.StartsWith(SoundscapeInit))
+                        {
+                            title = id[15..];
+                            Debug.Log($"Found request for ss: {title}");
+                        }
+                        
+                        textThing.Q<Label>("title").text = title;
                         textThing.Q<Label>("description").text = question;
-                        formRoot.Add(textThing);
+
+                        if(id.StartsWith(SoundscapeInit)){
+                            Soundscape found = library.soundscapeList.GetByTitle(title);
+                            if(found != null)
+                            {
+                                Action ssButtonStart = () => ssWrapper.SetAndStartSoundscape(found);
+                                Button btn = new()
+                                {
+                                    text = $"Start {title}"
+                                };
+                                btn.clicked += ssButtonStart;
+                                unbindingActions.Add(() => btn.clicked -= ssButtonStart);
+                                textThing.Add(btn);
+                            }
+                        }
+                        formRoot.Add(textThing);  
                         break;
                 }
             }

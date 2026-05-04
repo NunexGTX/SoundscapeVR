@@ -5,8 +5,8 @@ using UnityEngine.Video;
 [System.Serializable]
 public class VideoSoundscape : Soundscape
 {
-    public VideoSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType) : this(new(), title, time, staticPath, encompassingPath, projectionType){}
-    protected VideoSoundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath, string projectionType) : base(srcs, title, time, staticPath, encompassingPath, projectionType){}
+    public VideoSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType, bool loop) : this(new(), title, time, staticPath, encompassingPath, projectionType, loop){}
+    protected VideoSoundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath, string projectionType, bool loop) : base(srcs, title, time, staticPath, encompassingPath, projectionType, loop){}
     
 
     public override VisualType GetSupportedVisual()
@@ -27,7 +27,7 @@ public class VideoSoundscape : Soundscape
     }
     public override Soundscape Copy()
     {
-        return new VideoSoundscape(audioSources, title, timeSeconds, staticPath, encompassingPath, projectionType);
+        return new VideoSoundscape(audioSources, title, timeSeconds, staticPath, encompassingPath, projectionType, loop);
     }
 
     public override GameObject TryGetVisuals(VisualType visualType)
@@ -83,4 +83,9 @@ public class VideoSoundscape : Soundscape
         videoPlayer.prepareCompleted -= OnVideoPrepared;
     }
 
+    public override void RestartVisuals(GameObject ssVisual, VisualType visualType)
+    {
+        ssVisual.GetComponent<VideoPlayer>().Stop();
+        ssVisual.GetComponent<VideoPlayer>().Play();
+    }
 }

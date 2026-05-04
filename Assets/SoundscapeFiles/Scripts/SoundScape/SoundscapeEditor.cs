@@ -10,6 +10,7 @@ public class SoundscapeEditor
     private TextField titleField;
     private IntegerField timeField;
     private Toggle videoToggle;
+    private Toggle loopToggle;
     private TextField staticPath;
     private TextField encompassingPath;
     private Label debugLabel;
@@ -31,6 +32,7 @@ public class SoundscapeEditor
         titleField = foldout.Q<TextField>("titleInput");
         timeField = foldout.Q<IntegerField>("timeInput");
         videoToggle = foldout.Q<Toggle>("videoToggle");
+        loopToggle = foldout.Q<Toggle>("loopToggle");
         staticPath = foldout.Q<TextField>("2dPath");
         encompassingPath = foldout.Q<TextField>("360Path");
         debugLabel = foldout.Q<Label>("debugLabel");
@@ -75,6 +77,7 @@ public class SoundscapeEditor
         titleField.value = soundscape.title;
         timeField.value = soundscape.timeSeconds;
         videoToggle.value = soundscape is VideoSoundscape;
+        loopToggle.value = soundscape.loop;
         staticPath.value = soundscape.staticPath;
         encompassingPath.value = soundscape.encompassingPath;
         projectionDropdown.index = projectionDropdown.choices.IndexOf(soundscape.projectionType);
@@ -97,7 +100,7 @@ public class SoundscapeEditor
         }
 
         debugLabel.text = "";
-        Soundscape newSS = Soundscape.CreateSoundscape(titleField.value, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], videoToggle.value);
+        Soundscape newSS = Soundscape.CreateSoundscape(titleField.value, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], loopToggle.value, videoToggle.value);
         ssWrapper.SetSoundscape(newSS);
         ssWrapper.MarkEdited();
         if(runOnCreate != null) runOnCreate.Invoke(newSS);
@@ -141,7 +144,7 @@ public class SoundscapeEditor
         }
         debugLabel.text = "";
         string oldTitle = currentSelectedSoundscape.title;
-        Soundscape newSS = Soundscape.CreateSoundscape(newTitle, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], videoToggle.value);
+        Soundscape newSS = Soundscape.CreateSoundscape(newTitle, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], loopToggle.value, videoToggle.value);
         newSS.CopySourcesFrom(currentSelectedSoundscape);
         library.UpdateSoundscapeData(oldTitle, newSS);
         if(runOnSave != null) runOnSave.Invoke(oldTitle, newSS);

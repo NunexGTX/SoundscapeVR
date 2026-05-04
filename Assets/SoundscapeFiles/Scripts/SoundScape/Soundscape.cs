@@ -9,21 +9,22 @@ public abstract class Soundscape
     [SerializeField] public string staticPath = null;
     [SerializeField] public string encompassingPath = null;
     [SerializeField] public string projectionType = "None";
+    [SerializeField] public bool loop = true;
     [SerializeField] protected List<AudioSource> audioSources = new();
     protected Action onVisualsLoaded = null;
     public static readonly string VIDEO_GO_NAME = "soundscapeVideo";
 
-    public static Soundscape CreateSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType, bool video)
+    public static Soundscape CreateSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType, bool loop, bool video)
     {
         if (video)
         {
-            return new VideoSoundscape(title, time, staticPath, encompassingPath, projectionType);
+            return new VideoSoundscape(title, time, staticPath, encompassingPath, projectionType, loop);
         } else
         {
-            return new ImageSoundscape(title, time, staticPath, encompassingPath, projectionType);
+            return new ImageSoundscape(title, time, staticPath, encompassingPath, projectionType, loop);
         }
     }
-    protected Soundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath, string projectionType)
+    protected Soundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath, string projectionType, bool loop)
     {
         audioSources = srcs;
         this.title = title;
@@ -31,6 +32,7 @@ public abstract class Soundscape
         this.staticPath = staticPath;
         this.encompassingPath = encompassingPath;
         this.projectionType = projectionType;
+        this.loop = loop;
     }
 
     public void OnVisualsLoaded(Action action){onVisualsLoaded = action;}
@@ -60,13 +62,15 @@ public abstract class Soundscape
         }
         if(idxToRemove != -1) audioSources.RemoveAt(idxToRemove);
     }
-    public void RemoveSource(AudioSource audio){RemoveSource(audio.GetAudioId(), audio.GetSpherePosition());}
-    public abstract Soundscape Copy();
-    public abstract GameObject TryGetVisuals(VisualType visualType);
-    public abstract VisualType GetSupportedVisual();
-
+    
     public void CopySourcesFrom(Soundscape other)
     {
         audioSources = new(other.audioSources);
     }
+    public void RemoveSource(AudioSource audio){RemoveSource(audio.GetAudioId(), audio.GetSpherePosition());}
+    public abstract Soundscape Copy();
+    public abstract GameObject TryGetVisuals(VisualType visualType);
+    public abstract VisualType GetSupportedVisual();
+    public abstract void RestartVisuals(GameObject ssVisual, VisualType visualType);
+
 }

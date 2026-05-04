@@ -77,4 +77,11 @@ public class SoundscapeList
         }
         return true;
     }
+
+    public Soundscape GetByTitle(string title)
+    {
+        Soundscape match = imageSoundscapes.Find(s => s.title == title);
+        match ??= videoSoundscapes.Find(s => s.title == title);
+        return match;
+    }
 }
