@@ -162,7 +162,7 @@ def QuestionsGatherer():
             itemDict: dict = {
                 "id": q_id,
                 "type": q_type,
-                "_required": q_required,
+                "required": q_required,
                 "description": q_name,
                 "extra": q_extra
             }
