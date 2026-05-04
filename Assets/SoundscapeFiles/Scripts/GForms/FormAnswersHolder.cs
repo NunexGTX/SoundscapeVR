@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Tutorials.Core.Editor;
 
 public class FormAnswersHolder
 {
@@ -51,7 +50,7 @@ public class FormAnswersHolder
 
     public void AddSingleAnswer(string qId, string value)
     {
-        if(value.IsNullOrEmpty()) RemoveSingleAnswer(qId);
+        if(string.IsNullOrWhiteSpace(value)) RemoveSingleAnswer(qId);
         else singleAnswers[qId] = value;
     }
     public void ToggleRepeatableAnswer(string qId, string value, bool toggleOn)

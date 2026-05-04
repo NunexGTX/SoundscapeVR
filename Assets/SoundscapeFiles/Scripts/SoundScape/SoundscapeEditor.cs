@@ -1,6 +1,4 @@
 using System;
-using Unity.Tutorials.Core.Editor;
-using UnityEngine.Rendering.Universal.Internal;
 using UnityEngine.UIElements;
 
 public class SoundscapeEditor
@@ -88,7 +86,7 @@ public class SoundscapeEditor
 
     private void OnCreate()
     {
-        if(titleField.value.IsNullOrEmpty())
+        if(string.IsNullOrWhiteSpace(titleField.value))
         {
             debugLabel.text = "No title defined.";
             return;
@@ -132,7 +130,7 @@ public class SoundscapeEditor
             return;
         }
         string newTitle = titleField.value;
-        if(newTitle.IsNullOrEmpty())
+        if(string.IsNullOrWhiteSpace(newTitle))
         {
             debugLabel.text = "No title defined.";
             return;

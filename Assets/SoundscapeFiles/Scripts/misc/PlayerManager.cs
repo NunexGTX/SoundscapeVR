@@ -37,7 +37,9 @@ public class PlayerManager : MonoBehaviour
         crosshairCanvas.SetActive(false);
         StartCoroutine(VRSwitcher.EnableXRCoroutine());
         vrStateData.IsInVr = true;
+        #if UNITY_EDITOR
         EditorUtility.SetDirty(vrStateData);
+        #endif
     }
 
     public void ExitVR()
@@ -48,7 +50,9 @@ public class PlayerManager : MonoBehaviour
         VRSwitcher.DisableXR();
         //FixOptions();
         vrStateData.IsInVr = false;
+        #if UNITY_EDITOR
         EditorUtility.SetDirty(vrStateData);
+        #endif
     }
 
     void FixOptions()

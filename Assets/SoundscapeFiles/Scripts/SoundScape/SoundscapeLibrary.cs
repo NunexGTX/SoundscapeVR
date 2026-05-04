@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using Unity.Mathematics;
-using Unity.Tutorials.Core.Editor;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Networking;
@@ -176,7 +174,7 @@ public class SoundscapeLibrary: MonoBehaviour
 
     private IEnumerator LoadTexture(Audio audio)
     {
-        if(audio.imagePath.IsNullOrEmpty())
+        if(string.IsNullOrWhiteSpace(audio.imagePath))
                 yield break;
         using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(audio.GetRealAudioPath()))
         {
