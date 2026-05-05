@@ -36,6 +36,7 @@ public class FormScript : MonoBehaviour
         returnBtn.clicked += Return;
         if(library.form == null) return;
         formRoot = root.Q<VisualElement>("formRoot");
+        if(library.form == null || string.IsNullOrWhiteSpace(library.form.formTitle)) return;
         formSections = SeparateElements(library.form.questions);
         formTitle = library.form.formTitle;
         formDesc = library.form.description;

@@ -22,8 +22,10 @@ public class SoundscapeLibrary: MonoBehaviour
 
         foreach(Audio audio in audioList.GetAudios())
         {
-            StartCoroutine(LoadTexture(audio));
-            StartCoroutine(LoadAudioClip(audio));
+            if(!string.IsNullOrWhiteSpace(audio.imagePath))
+                StartCoroutine(LoadTexture(audio));
+            if(!string.IsNullOrWhiteSpace(audio.fileName))
+                StartCoroutine(LoadAudioClip(audio));
         }
         //Debug.Log(audioList.Print());
     }
@@ -120,7 +122,7 @@ public class SoundscapeLibrary: MonoBehaviour
         else
         {
             Debug.LogWarning($"Could not find questionnaire_config.json in path {path}. Please ensure it exists to use the questionnaire.");
-            form = null;
+            form = new();
         }
     }
 
