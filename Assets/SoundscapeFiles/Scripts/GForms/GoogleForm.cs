@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Networking;
 using System.Collections;
 using System;
+using System.Linq;
 
 public class GoogleForm : MonoBehaviour
 {
@@ -11,15 +12,15 @@ public class GoogleForm : MonoBehaviour
         return "https://docs.google.com/forms/d/e/" + formID + "/formResponse";
     };
 
-    //When all necessary values have been assigned, we call this to gather all the FormDatas of the GForms children to prepare and send the post request
     public void submitForm(FormAnswersHolder answers)
     {
-        StartCoroutine(GFormPOSTRequest(answers.GetAnswerList()));
+        StartCoroutine(GFormPOSTRequest(answers.GetAnswerList(), answers.pageCount));
     }
 
-    IEnumerator GFormPOSTRequest(List<KeyValuePair<string, string>> entries)
+    IEnumerator GFormPOSTRequest(List<KeyValuePair<string, string>> entries, int pageCount)
     {
         WWWForm GFormSend = new WWWForm(); //This will build the POST Request's json
+        GFormSend.AddField("pageHistory", string.Join(",", Enumerable.Range(0, pageCount)));
 
         foreach (KeyValuePair<string, string> entry in entries)
         {

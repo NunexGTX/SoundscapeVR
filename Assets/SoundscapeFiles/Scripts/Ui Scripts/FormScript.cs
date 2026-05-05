@@ -44,7 +44,7 @@ public class FormScript : MonoBehaviour
         nextBtn.clicked += NextSection;
         Label title = root.Q<Label>("formTitle");
         title.text = library.form.formTitle;
-        answersHolder = new();
+        answersHolder = new(){pageCount = formSections.Count};
         unbindingActions = new();
     }
 

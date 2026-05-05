@@ -5,6 +5,7 @@ public class FormAnswersHolder
     private List<KeyValuePair<string, string>> repeatableAnswers = new();
     private Dictionary<string, string> singleAnswers = new();
     private List<KeyValuePair<int, string>> requiredQuestions = new();
+    public int pageCount = 1;
 
     public bool AreRequiredComplete(){return AreRequiredComplete(int.MaxValue);}
     public bool AreRequiredComplete(int idxLimit)
@@ -81,5 +82,4 @@ public class FormAnswersHolder
         }
         return result;
     }
-
 }
