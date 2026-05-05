@@ -96,7 +96,8 @@ public class SoundscapeLibrary: MonoBehaviour
             return Path.Combine(Application.streamingAssetsPath, filePath);
         #elif UNITY_ANDROID
             string rootPath = "/storage/emulated/0/SoundscapeVr";
-            return androidStorage.GetPersistentPath();
+            //return androidStorage.GetPersistentPath();
+            return Path.Combine(Application.streamingAssetsPath, filePath);
         #else
             return Path.Combine(Application.streamingAssetsPath, filePath);
         #endif
