@@ -55,19 +55,9 @@ public class PlayerManager : MonoBehaviour
         #endif
     }
 
-    void FixOptions()
-    {
-        VisualElement root = AudioVideoMenu.GetComponent<UIDocument>().rootVisualElement;
-        RadioButtonGroup videoOptions = root.Q<RadioButtonGroup>("videoOptions");
-        if (videoOptions.value == 1)
-        {
-            videoOptions.value = 2;
-        }
-    }
-
     public void JustStopPlayer(bool canMove)
     {
-        if(player != null) player.ActivatePlayer(canMove);
+        if(player != null) player.SetPlayerMovement(canMove);
         if (moveProvider != null) moveProvider.enabled = canMove;
         if (teleportProvider != null) teleportProvider.enabled = canMove;
         if (vrGravity != null) vrGravity.enabled = canMove;

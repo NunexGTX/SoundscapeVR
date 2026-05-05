@@ -25,7 +25,7 @@ public class SoundscapeList
             string json = File.ReadAllText(path);
             return JsonUtility.FromJson<SoundscapeList>(json);
         }
-        Debug.Log("Could not find soundscapes.json");
+        Debug.Log($"Could not find soundscapes.json in {path}");
         return new();
     }
 

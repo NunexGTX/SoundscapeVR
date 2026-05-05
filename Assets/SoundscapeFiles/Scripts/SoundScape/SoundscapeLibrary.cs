@@ -1,33 +1,28 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class SoundscapeLibrary: MonoBehaviour
 {
     public AudioList audioList = new();
     public SoundscapeList soundscapeList = new();
     public Form form = new();
+    public LoadingManager loadingManager;
 
     private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
     
-    public void Start()
+    private async void Start()
     {
-        soundscapeList = SoundscapeList.ReadFromJson(GetSoundscapeFilePath());
-        audioList = AudioList.ReadFromJson(GetAudioFilePath());
-        ReadFormFromJson(GetFormFilePath());
+        await LoadFiles(GetSoundscapeFilePath(), GetAudioFilePath(), GetFormFilePath());
 
-        foreach(Audio audio in audioList.GetAudios())
-        {
-            if(!string.IsNullOrWhiteSpace(audio.imagePath))
-                StartCoroutine(LoadTexture(audio));
-            if(!string.IsNullOrWhiteSpace(audio.fileName))
-                StartCoroutine(LoadAudioClip(audio));
-        }
-        //Debug.Log(audioList.Print());
+        StartCoroutine(LoadAudios(audioList.GetAudios(), loadingManager));
     }
     public void ReplaceOrAddSoundscape(Soundscape updatedSoundscape)
     {
@@ -147,54 +142,72 @@ public class SoundscapeLibrary: MonoBehaviour
         return rootPath;
     }
     
-    public IEnumerator LoadAudioClip(Audio audioData)
+    private async Task LoadFiles(string soundscapePath, string audioPath, string formPath)
     {
-        AudioType type = audioData.fileType switch
-        {
-            "wav" => AudioType.WAV,
-            "ogg" => AudioType.OGGVORBIS,
-            _ => AudioType.MPEG    
-        };
-        // Use the path stored in your audio object
-        Debug.Log("Reading audio clip at: " + GetStreamingPath(audioData.fileName));
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(GetStreamingPath(audioData.fileName), type))
-        {
-            // Start the request and wait
-            yield return www.SendWebRequest();
-            if (www.result == UnityWebRequest.Result.Success)
-            {
-                Debug.Log($"Loading audio: {audioData.fileName}");
-                AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
-                audioData.SetClip(downloadedClip);
-                Debug.Log($"Successfully loaded: {audioData.name}");
-            }
-            else
-            {
-                Debug.LogError($"Error loading {audioData.fileName}: {www.error}");
-            }
-        }
+        soundscapeList = await Task.Run(() => SoundscapeList.ReadFromJson(soundscapePath));
+        audioList      = await Task.Run(() => AudioList.ReadFromJson(audioPath));
+        await Task.Run(() => ReadFormFromJson(formPath));
     }
 
-    private IEnumerator LoadTexture(Audio audio)
+    private IEnumerator LoadAudios(List<Audio> audios, LoadingManager loadingManager)
     {
-        if(string.IsNullOrWhiteSpace(audio.imagePath))
-                yield break;
-        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(audio.GetRealAudioPath()))
+        while (!loadingManager.CanLoad(true))
         {
-            yield return uwr.SendWebRequest();
-
-            if (uwr.result != UnityWebRequest.Result.Success)
+            yield return new WaitForSeconds(1);
+        }
+        loadingManager.SetToStart(audios.Count);
+        foreach (Audio audio in audios)
+        {
+            if (!string.IsNullOrWhiteSpace(audio.imagePath))
             {
-                Debug.Log("Image load failed: " + uwr.error);
-                yield break;
+                using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(audio.GetRealAudioPath()))
+                {
+                    yield return uwr.SendWebRequest();
+
+                    if (uwr.result != UnityWebRequest.Result.Success)
+                    {
+                        Debug.LogError("Image load failed: " + uwr.error);
+                    }
+                    else
+                    {
+                        Texture2D loadedTexture = DownloadHandlerTexture.GetContent(uwr);
+                        loadedTexture.wrapMode = TextureWrapMode.Clamp;
+                        audio.SetTexture(loadedTexture);
+                    }
+                }
             }
 
-            // 1. Get the texture and fix seams
-            Texture2D loadedTexture = DownloadHandlerTexture.GetContent(uwr);
-            loadedTexture.wrapMode = TextureWrapMode.Clamp;
-            audio.SetTexture(loadedTexture);
+            if (!string.IsNullOrWhiteSpace(audio.fileName))
+            {
+                AudioType type = audio.fileType switch
+                {
+                    "wav" => AudioType.WAV,
+                    "ogg" => AudioType.OGGVORBIS,
+                    _ => AudioType.MPEG
+                };
+
+                using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(GetStreamingPath(audio.fileName), type))
+                {
+                    yield return www.SendWebRequest();
+
+                    if (www.result == UnityWebRequest.Result.Success)
+                    {
+                        AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
+                        audio.SetClip(downloadedClip);
+                        Debug.Log($"Successfully loaded: {audio.name}");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Error loading {audio.fileName}: {www.error}");
+                    }
+                }
+            }
+            loadingManager.Increment();
+            yield return null; // let the UI update
         }
+        loadingManager.EndLoading();
     }
+
     public static Vector3 WorldToSphere(Vector3 worldCoords)
     {
         float x = worldCoords.x;

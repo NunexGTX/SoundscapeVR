@@ -21,13 +21,20 @@ public class PlayerControl : MonoBehaviour
     private Vector3 _velocity;
     private float _cameraPitch = 0f;
 
-    private bool activated = true;
+    private bool moving = true;
+    private bool rotating = true;
 
-    public bool IsDisabled(){return !activated;}
+    public bool IsDisabled(){return !moving;}
 
-    public void ActivatePlayer(bool canMove){
-        if(activated == canMove) return;
-        activated = canMove;
+    public void SetPlayerRotation(bool canRotate)
+    {
+        if(rotating == canRotate) return;
+        moving = canRotate;
+        Debug.Log($"Player rotation is now {canRotate}");
+    }
+    public void SetPlayerMovement(bool canMove){
+        if(moving == canMove) return;
+        moving = canMove;
         Debug.Log($"Player movement is now {canMove}");
     }
 
@@ -53,9 +60,8 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
-        HandleRotation();
-        if(!activated) return;
-        HandleMovement();
+        if(rotating) HandleRotation();
+        if(moving) HandleMovement();
     }
 
     private void HandleMovement()

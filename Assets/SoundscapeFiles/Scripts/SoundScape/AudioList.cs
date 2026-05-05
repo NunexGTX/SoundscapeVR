@@ -9,10 +9,10 @@ public class AudioList
 {
     public List<Audio> sounds;
     public AudioList(){sounds = new();}
-    public IEnumerable<Audio> GetAudios()
+    public List<Audio> GetAudios()
     {
         // Combines both into a single stream of Soundscape objects
-        return sounds.Cast<Audio>();
+        return sounds;
     }
     
 
