@@ -101,7 +101,11 @@ public class FormScript : MonoBehaviour
             unregister.Invoke();
         for(int i = formRoot.childCount - 1; i >= 0; i--)
             formRoot.RemoveAt(i);
-        unbindingActions = new();
+        unbindingActions.Clear();
+        
+        TextFieldFocuser focuser = gameObject.GetComponent<TextFieldFocuser>();
+        if(focuser == null) return;
+        focuser.UpdateFields();
     }
 
     private void BuildFormSection()
@@ -290,6 +294,10 @@ public class FormScript : MonoBehaviour
         }
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         root.Q<ScrollView>("ScrollView").scrollOffset = new(0, 0);
+
+        TextFieldFocuser focuser = gameObject.GetComponent<TextFieldFocuser>();
+        if(focuser == null) return;
+        focuser.UpdateFields();
     }
 
     private List<List<FormElement>> SeparateElements(List<FormElement> formElements)

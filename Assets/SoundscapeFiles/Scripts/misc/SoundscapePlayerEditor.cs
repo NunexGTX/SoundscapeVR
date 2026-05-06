@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -217,8 +218,8 @@ public class SoundscapePlayerEditor: MonoBehaviour
     {
         if(currentState != State.AdjustPlace) return;
         Vector2 scrollValue = context.ReadValue<Vector2>();
-        Debug.Log(scrollValue);
         float scrollY = scrollValue.y;
+        if(math.abs(scrollY) < 0.5) return;
         Vector3 sphereCoords = pickedAudioAsSource.GetSpherePosition();
         Vector3 newCoords = new()
         {

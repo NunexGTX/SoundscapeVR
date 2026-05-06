@@ -11,6 +11,9 @@ public class PlayerManager : MonoBehaviour
 {
     [SerializeField] private GameObject vrCamera;
     [SerializeField] private GameObject playerCamera;
+    [SerializeField] private Camera vrUICamera;
+    [SerializeField] private Camera playerUICamera;
+    [SerializeField] private Canvas canvas;
     [SerializeField] private GameObject crosshairCanvas;
     [SerializeField] private GameObject AudioVideoMenu;
     [SerializeField] private PlayerControl player;
@@ -35,6 +38,7 @@ public class PlayerManager : MonoBehaviour
         playerCamera.SetActive(false);
         vrCamera.SetActive(true);
         crosshairCanvas.SetActive(false);
+        canvas.worldCamera = vrUICamera;
         StartCoroutine(VRSwitcher.EnableXRCoroutine());
         vrStateData.IsInVr = true;
         #if UNITY_EDITOR
@@ -47,6 +51,7 @@ public class PlayerManager : MonoBehaviour
         playerCamera.SetActive(true);
         vrCamera.SetActive(false);
         crosshairCanvas.SetActive(true);
+        canvas.worldCamera = playerUICamera;
         VRSwitcher.DisableXR();
         //FixOptions();
         vrStateData.IsInVr = false;

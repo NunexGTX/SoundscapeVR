@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6019997328645036657}
   - component: {fileID: 910421821952713553}
   - component: {fileID: 2013553953514860987}
-  m_Layer: 9
+  m_Layer: 5
   m_Name: WorldAudioSource
   m_TagString: AudioSource
   m_Icon: {fileID: 0}
@@ -231,6 +231,7 @@ MonoBehaviour:
       x: 0
       y: 0
       z: 0
+    volume: 0
     audioEffects: []
   playing: 1
   debug: 1
