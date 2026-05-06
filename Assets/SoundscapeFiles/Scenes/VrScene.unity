@@ -3843,7 +3843,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1535223712}
   - component: {fileID: 1535223715}
-  - component: {fileID: 1535223714}
   - component: {fileID: 1535223713}
   m_Layer: 7
   m_Name: UI Camera
@@ -3911,14 +3910,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!81 &1535223714
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1535223711}
-  m_Enabled: 1
 --- !u!20 &1535223715
 Camera:
   m_ObjectHideFlags: 0
@@ -4387,7 +4378,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1693604673}
   - component: {fileID: 1693604676}
-  - component: {fileID: 1693604675}
   - component: {fileID: 1693604674}
   m_Layer: 7
   m_Name: VR UI Camera
@@ -4455,14 +4445,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!81 &1693604675
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1693604672}
-  m_Enabled: 1
 --- !u!20 &1693604676
 Camera:
   m_ObjectHideFlags: 0

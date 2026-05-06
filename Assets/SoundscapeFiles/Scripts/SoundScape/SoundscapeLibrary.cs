@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using System.Reflection;
 
 public class SoundscapeLibrary: MonoBehaviour
 {
@@ -160,7 +161,7 @@ public class SoundscapeLibrary: MonoBehaviour
         {
             if (!string.IsNullOrWhiteSpace(audio.imagePath))
             {
-                using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(audio.GetRealAudioPath()))
+                using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture("file://"+audio.GetRealAudioPath()))
                 {
                     yield return uwr.SendWebRequest();
 
@@ -181,24 +182,50 @@ public class SoundscapeLibrary: MonoBehaviour
             {
                 AudioType type = audio.fileType switch
                 {
-                    "wav" => AudioType.WAV,
-                    "ogg" => AudioType.OGGVORBIS,
-                    _ => AudioType.MPEG
+                    "wav"           => AudioType.WAV,
+                    "ogg"           => AudioType.OGGVORBIS,
+                    "mp3" or "mp2"  => AudioType.MPEG,
+                    "aiff" or "aif" => AudioType.AIFF,
+                    "aac" or "m4a"  => AudioType.ACC,
+                    "it"            => AudioType.IT,
+                    "mod"           => AudioType.MOD,
+                    "s3m"           => AudioType.S3M,
+                    "xm"            => AudioType.XM,
+                    "xma"           => AudioType.XMA,
+                    "vag"           => AudioType.VAG,
+                    "flac" or "alac" => throw new NotSupportedException($"Sorry Audiophiles, '{audio.fileType}'s are not supported here in Unity. You gotta convert '{audio.fileName}' to a mediocre pesant format"),
+                    _               => AudioType.UNKNOWN   //Unsupported or Unregistered
                 };
-
-                using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(GetStreamingPath(audio.fileName), type))
+                
+                using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://"+GetStreamingPath(audio.fileName), type))
                 {
                     yield return www.SendWebRequest();
 
                     if (www.result == UnityWebRequest.Result.Success)
                     {
                         AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
+                        
+                        //Check if audio is the audio is configured as ambisonic and load it accordingly
+                        if (audio.type == Audio.TYPE_AMBISONIC)
+                        {
+                            typeof(AudioClip).GetField("m_Ambisonic", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(audio, true);
+
+                            Debug.Log($"{audio.fileName} ambisonic flag: {downloadedClip.ambisonic}");
+                        }
+
                         audio.SetClip(downloadedClip);
                         Debug.Log($"Successfully loaded: {audio.name}");
                     }
                     else
                     {
-                        Debug.LogError($"Error loading {audio.fileName}: {www.error}");
+                        
+                        if (audio.fileType == "m4a"){
+                            Debug.LogError($"Error loading {audio.fileName}: {www.error}. It can be because {audio.fileName} uses Apple's Lossless Codec. Please convert the audio to another format.");
+                        }
+                        else
+                        {
+                            Debug.LogError($"Error loading {audio.fileName}: {www.error}");
+                        }
                     }
                 }
             }

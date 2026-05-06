@@ -29,9 +29,10 @@ public class Audio
     {        
             return SoundscapeLibrary.GetStreamingPath(imagePath);
     }
+
     public string type;
 
-    public static string TYPE_STANDARD = "standard";
-    public static string TYPE_AMBISONIC = "ambisonic";
+    public const string TYPE_STANDARD = "standard";
+    public const string TYPE_AMBISONIC = "ambisonic";
 
 }
