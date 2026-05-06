@@ -29,7 +29,7 @@ public class PlayerControl : MonoBehaviour
     public void SetPlayerRotation(bool canRotate)
     {
         if(rotating == canRotate) return;
-        moving = canRotate;
+        rotating = canRotate;
         Debug.Log($"Player rotation is now {canRotate}");
     }
     public void SetPlayerMovement(bool canMove){

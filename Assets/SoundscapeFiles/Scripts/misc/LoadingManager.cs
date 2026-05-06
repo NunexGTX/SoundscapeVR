@@ -19,7 +19,7 @@ public class LoadingManager : MonoBehaviour
         {
             queued = true;
         }    
-        return softConcurrencyCheck;
+        return !softConcurrencyCheck;
     }
 
     public void SetToStart(float end)
@@ -74,7 +74,7 @@ public class LoadingManager : MonoBehaviour
             time = 0f;
             int dotsNow = text.text[7..].Length;
             string res = "Loading";
-            for(int i = 0; i < (dotsNow + 1)%3; i++)
+            for(int i = 0; i < (dotsNow + 1)%4; i++)
             {
                 res += ".";
             }
