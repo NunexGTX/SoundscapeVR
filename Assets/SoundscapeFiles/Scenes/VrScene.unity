@@ -3820,6 +3820,14 @@ PrefabInstance:
       propertyPath: m_PlayerRoot
       value: 
       objectReference: {fileID: 1373153107}
+    - target: {fileID: 2314523925997562667, guid: 763522a439f36ac4d881f5652181a2ee, type: 3}
+      propertyPath: m_CameraTransform
+      value: 
+      objectReference: {fileID: 1148877396}
+    - target: {fileID: 2314523925997562667, guid: 763522a439f36ac4d881f5652181a2ee, type: 3}
+      propertyPath: m_KeyboardOffset.y
+      value: -0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
