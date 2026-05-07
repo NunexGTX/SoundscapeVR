@@ -314,15 +314,6 @@ public class SoundscapeLibrary: MonoBehaviour
                     if (www.result == UnityWebRequest.Result.Success)
                     {
                         AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
-                        
-                        //Check if audio is the audio is configured as ambisonic and load it accordingly
-                        if (audio.type == Audio.TYPE_AMBISONIC)
-                        {
-                            typeof(AudioClip).GetField("m_Ambisonic", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(audio, true);
-
-                            Debug.Log($"{audio.fileName} ambisonic flag: {downloadedClip.ambisonic}");
-                        }
-
                         audio.SetClip(downloadedClip);
                         Debug.Log($"Successfully loaded: {audio.name}");
                     }
