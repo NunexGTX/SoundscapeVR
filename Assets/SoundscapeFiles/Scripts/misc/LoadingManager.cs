@@ -25,6 +25,7 @@ public class LoadingManager : MonoBehaviour
     public void SetToStart(float end)
     {
         if(softConcurrencyCheck) return;
+        if(end == 0) return;
         timeInQueue = 0f;
         softConcurrencyCheck = true;
         progress = 0f;
