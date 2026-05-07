@@ -12,8 +12,8 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 *.log
-VRSeeTest+ - Shortcut
-VRSeeTest+ - Shortcut.lnk.meta
+"VRSeeTest+ - Shortcut"
+"VRSeeTest+ - Shortcut.lnk.meta"
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
 *.blend1
