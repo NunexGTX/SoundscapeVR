@@ -39,7 +39,9 @@ public class PlayerManager : MonoBehaviour
         vrCamera.SetActive(true);
         crosshairCanvas.SetActive(false);
         canvas.worldCamera = vrUICamera;
+        #if !UNITY_ANDROID
         StartCoroutine(VRSwitcher.EnableXRCoroutine());
+        #endif
         vrStateData.IsInVr = true;
         #if UNITY_EDITOR
         EditorUtility.SetDirty(vrStateData);
