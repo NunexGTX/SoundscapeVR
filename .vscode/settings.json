@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "SoundscapeVR.slnx"
+    "dotnet.defaultSolution": "VRVideoTest.slnx"
 }
