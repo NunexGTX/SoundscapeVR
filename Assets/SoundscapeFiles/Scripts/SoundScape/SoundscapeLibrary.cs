@@ -9,6 +9,7 @@ using UnityEngine.Audio;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Reflection;
+using UnityEngine.Android;
 
 public class SoundscapeLibrary: MonoBehaviour
 {
@@ -18,9 +19,9 @@ public class SoundscapeLibrary: MonoBehaviour
     public LoadingManager loadingManager;
 
     private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
-    
     private async void Start()
     {
+        await CheckPermissions();
         await LoadFiles(GetSoundscapeFilePath(), GetAudioFilePath(), GetFormFilePath());
 
         StartCoroutine(LoadAudios(audioList.GetAudios(), loadingManager));
@@ -53,6 +54,7 @@ public class SoundscapeLibrary: MonoBehaviour
         {
             Debug.LogError($"Failed to save soundscape JSON: {e.Message}");
         }
+        RefreshMediaScanner(fullPath);
         return false;
     }
 
@@ -83,17 +85,54 @@ public class SoundscapeLibrary: MonoBehaviour
             Debug.LogWarning($"{soundscapeTitle} failed to be deleted");
     }
     
-    public static string GetStreamingPath(string fileName)
+    public static string GetStreamingPath(string fileName = "")
     {
         string filePath = fileName;
 
         #if UNITY_EDITOR || UNITY_STANDALONE_WIN
             // Standard PC StreamingAssets path
-            return Path.Combine(Application.streamingAssetsPath, filePath);
+            return string.IsNullOrWhiteSpace(fileName) ? Application.streamingAssetsPath : Path.Combine(Application.streamingAssetsPath, filePath);
         #elif UNITY_ANDROID
-            string rootPath = "/storage/emulated/0/SoundscapeVr";
-            //return androidStorage.GetPersistentPath();
+            if(HasPermissions())
+                return string.IsNullOrWhiteSpace(fileName) ? GetAndroidPath() : Path.Combine(GetAndroidPath(), filePath);
+            else
+                return Path.Combine(Application.streamingAssetsPath, filePath);
+        #else
             return Path.Combine(Application.streamingAssetsPath, filePath);
+        #endif
+    }
+    private static string GetStreamingConfigPath(string fileName)
+    {
+        string root = GetStreamingPath();
+        string rootPath = Path.Combine(root, "config");
+        if (!Directory.Exists(rootPath))
+        {
+            Directory.CreateDirectory(rootPath);
+            RefreshMediaScanner(rootPath);
+        }
+        return Path.Combine(rootPath, fileName);
+    }
+
+    private static string GetPersistentConfigPath(string fileName)
+    {
+        string folderName = "config";
+        #if UNITY_EDITOR || UNITY_STANDALONE_WIN
+            string rootPath = Path.Combine(Application.persistentDataPath, folderName);
+            if (!Directory.Exists(rootPath))
+            {
+                Directory.CreateDirectory(rootPath);
+                RefreshMediaScanner(rootPath);
+            }
+            return Path.Combine(rootPath, fileName);
+        #elif UNITY_ANDROID
+        string rootPath = "";
+        if(HasPermissions()){
+            rootPath = Path.Combine(GetAndroidPath(), folderName);
+        } else {
+            rootPath = Path.Combine(Application.persistentDataPath, folderName);
+        }
+        if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+        return Path.Combine(rootPath, fileName);
         #else
             return Path.Combine(Application.streamingAssetsPath, filePath);
         #endif
@@ -105,9 +144,57 @@ public class SoundscapeLibrary: MonoBehaviour
     }
     public static string GetAudioFilePath()
     {
-        return GetStreamingPath("configs/audios.json");
+        return GetStreamingConfigPath("audios.json");
     }
 
+    public static string GetFormFilePath()
+    {
+        return GetStreamingConfigPath("questionnaire_config.json");
+    }
+    
+    private static string GetAndroidPath()
+    {
+        //its private, so we assume the app has permissions
+    #if UNITY_ANDROID && !UNITY_EDITOR
+        using (AndroidJavaClass environment = new AndroidJavaClass("android.os.Environment"))
+        {
+            using (AndroidJavaObject storageDir = environment.CallStatic<AndroidJavaObject>("getExternalStorageDirectory"))
+            {
+                string absRootPath = storageDir.Call<string>("getAbsolutePath");
+                string customFolderPath = Path.Combine(absRootPath, "SoundscapeVR");
+
+                if (!Directory.Exists(customFolderPath))
+                {
+                    Directory.CreateDirectory(customFolderPath);
+                    RefreshMediaScanner(customFolderPath);
+                }
+                return customFolderPath;
+            }
+        }
+    #else
+    return Application.streamingAssetsPath;
+    #endif
+    }
+    private static void RefreshMediaScanner(string filePath)
+    {
+    #if UNITY_ANDROID && !UNITY_EDITOR
+        using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            using (AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            {
+                using (AndroidJavaObject context = currentActivity.Call<AndroidJavaObject>("getApplicationContext"))
+                {
+                    using (AndroidJavaClass mediaScanner = new AndroidJavaClass("android.media.MediaScannerConnection"))
+                    {
+                        mediaScanner.CallStatic("scanFile", context, new string[] { filePath }, null, null);
+                    }
+                }
+            }
+        }
+    #else
+        Debug.Log($"Media Scanner skip: Not on Android. Path: {filePath}");
+    #endif
+    }
     private void ReadFormFromJson(string path)
     {
         if (File.Exists(path))
@@ -123,25 +210,6 @@ public class SoundscapeLibrary: MonoBehaviour
         }
     }
 
-    public static string GetFormFilePath()
-    {
-        return GetStreamingPath("configs/questionnaire_config.json");
-    }
-
-    private static string GetPersistentConfigPath(string fileName)
-    {
-        string folderName = "configs";
-        string rootPath = Path.Combine(Application.persistentDataPath, folderName);
-        if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
-        return Path.Combine(rootPath, fileName);
-    }
-
-    private static string GetPersistentPath(string path)
-    {
-        string rootPath = Path.Combine(Application.persistentDataPath, path);
-        if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
-        return rootPath;
-    }
     
     private async Task LoadFiles(string soundscapePath, string audioPath, string formPath)
     {
@@ -150,6 +218,48 @@ public class SoundscapeLibrary: MonoBehaviour
         await Task.Run(() => ReadFormFromJson(formPath));
     }
 
+    static bool HasPermissions()
+    {
+        bool hasRead = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead);
+        bool hasWrite = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
+
+        if (!hasRead || !hasWrite)
+        {
+            // This triggers the Android system popup
+            Permission.RequestUserPermissions(new string[] { 
+                Permission.ExternalStorageRead, 
+                Permission.ExternalStorageWrite 
+            });
+            hasRead = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead);
+            hasWrite = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
+            return hasRead && hasWrite;
+        }
+        return true;
+    }
+    static async Task CheckPermissions()
+    {
+        Debug.Log("[SoundscapeVR] Checking permissions");
+        bool hasRead = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead);
+        bool hasWrite = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
+
+        Permission.RequestUserPermissions(new string[] { 
+            Permission.ExternalStorageRead, 
+            Permission.ExternalStorageWrite
+        });
+
+        while (!hasRead || !hasWrite)
+        {
+            hasRead = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead);
+            hasWrite = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
+            await Task.Delay(100);
+            #if UNITY_EDITOR
+            break;
+            #endif
+        }
+        Debug.Log("[SoundscapeVR] Permissions acquired");
+        GetAndroidPath();
+        Debug.Log("[SoundscapeVR] Gotten an android path");
+    }
     private IEnumerator LoadAudios(List<Audio> audios, LoadingManager loadingManager)
     {
         while (!loadingManager.CanLoad(true))
