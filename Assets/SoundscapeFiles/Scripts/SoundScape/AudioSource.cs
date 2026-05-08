@@ -7,6 +7,8 @@ public class AudioSource
 {
     [SerializeField] private string audioId;
     [SerializeField] private SerializableVector3 spherePosition;
+    public bool loop = true;
+    public int delaySeconds = 0;
     public float volume = 1f;
     public List<AudioEffectInstance> audioEffects = new();
 
@@ -36,5 +38,6 @@ public class AudioSource
     {
         foreach(AudioEffectInstance effect in audioEffects) effect.ApplyEffectToSource(go);
         go.GetComponent<UnityEngine.AudioSource>().volume = volume;
+        go.GetComponent<UnityEngine.AudioSource>().loop = loop;
     }
 }

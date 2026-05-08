@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -15,13 +16,18 @@ public class WorldAudioSource: MonoBehaviour
     public VrStateData vrStateData;
     public AudioListeningType playbackType;
 
-    void OnEnable()
+    void OnEnable(){
+        _ = PlayAudio();
+    }
+
+    //called when playing or replaying audio source.
+    public async Task PlayAudio()
     {
+        gameObject.GetComponent<MeshRenderer>().enabled = debug;
         if (playbackType.Equals(AudioListeningType.BINAURAL))
         {
-            gameObject.GetComponent<MeshRenderer>().enabled = debug;
             UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
-            IAudioGenerator gen = library.GetClipForAudio(audioSource.GetAudioId());
+            IAudioGenerator gen = await library.GetClipForAudio(audioSource.GetAudioId());
             if(gen == null) return;
             src.generator = gen;
             src.time = 0;
@@ -31,11 +37,9 @@ public class WorldAudioSource: MonoBehaviour
                 src.spatialize = false;
                 src.spatialBlend = 0;
             }
-            if (playing)
-            {
-                src.Play();
-                Debug.Log("Playing");
-            }
+            src.loop = audioSource.loop;
+            src.time = 0;
+            src.PlayDelayed(audioSource.delaySeconds);
             return;
         } 
         //TODO: reaper DAW logic here.

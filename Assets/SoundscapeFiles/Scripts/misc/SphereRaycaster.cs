@@ -15,7 +15,11 @@ public class SphereRaycaster : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame && !vrStateData.IsInVr)
         {
             GameObject obj = RaycastAudioSources();
-            if(obj != null) editor.SelectAudioSource(obj);
+            if(obj != null && obj.CompareTag("AudioSource"))
+            {
+                editor.SelectAudioSource(obj);
+                return;
+            }
             editor.FirstPlaceAudio(RaycastSphere());
         }
     }
@@ -24,7 +28,7 @@ public class SphereRaycaster : MonoBehaviour
     {
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 1000f, soundSourcesLayer))
+        if (Physics.Raycast(ray, out hit, 1000f, UiLayer))
         {
             GameObject sourceFound = hit.collider.gameObject;
             return sourceFound;

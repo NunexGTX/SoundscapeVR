@@ -17,14 +17,15 @@ public class SoundscapeLibrary: MonoBehaviour
     public SoundscapeList soundscapeList = new();
     public Form form = new();
     public LoadingManager loadingManager;
+    private AudioClipCache audioClipCache = new();
 
     private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
     private async void Start()
     {
-        await CheckPermissions();
+        //await CheckPermissions();
         await LoadFiles(GetSoundscapeFilePath(), GetAudioFilePath(), GetFormFilePath());
 
-        StartCoroutine(LoadAudios(audioList.GetAudios(), loadingManager));
+        _ = LoadAudioIcons(audioList.GetAudios(), loadingManager);
     }
     public void ReplaceOrAddSoundscape(Soundscape updatedSoundscape)
     {
@@ -78,11 +79,15 @@ public class SoundscapeLibrary: MonoBehaviour
         return false;
     }
 
-    public void DeleteSoundscape(string soundscapeTitle)
+    public bool DeleteSoundscape(string soundscapeTitle)
     {
         soundscapeList.RemoveSoundscape(soundscapeTitle);
-        if(!SaveSoundscapeList())
+        if (!SaveSoundscapeList())
+        {
             Debug.LogWarning($"{soundscapeTitle} failed to be deleted");
+            return false;
+        }
+        return true;
     }
     
     public static string GetStreamingPath(string fileName = "")
@@ -104,7 +109,7 @@ public class SoundscapeLibrary: MonoBehaviour
     private static string GetStreamingConfigPath(string fileName)
     {
         string root = GetStreamingPath();
-        string rootPath = Path.Combine(root, "config");
+        string rootPath = Path.Combine(root, "configs");
         if (!Directory.Exists(rootPath))
         {
             Directory.CreateDirectory(rootPath);
@@ -115,7 +120,7 @@ public class SoundscapeLibrary: MonoBehaviour
 
     private static string GetPersistentConfigPath(string fileName)
     {
-        string folderName = "config";
+        string folderName = "configs";
         #if UNITY_EDITOR || UNITY_STANDALONE_WIN
             string rootPath = Path.Combine(Application.persistentDataPath, folderName);
             if (!Directory.Exists(rootPath))
@@ -236,7 +241,7 @@ public class SoundscapeLibrary: MonoBehaviour
         }
         return true;
     }
-    static async Task CheckPermissions()
+    /*static async Task CheckPermissions()
     {
         Debug.Log("[SoundscapeVR] Checking permissions");
         bool hasRead = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead);
@@ -259,12 +264,12 @@ public class SoundscapeLibrary: MonoBehaviour
         Debug.Log("[SoundscapeVR] Permissions acquired");
         GetAndroidPath();
         Debug.Log("[SoundscapeVR] Gotten an android path");
-    }
-    private IEnumerator LoadAudios(List<Audio> audios, LoadingManager loadingManager)
+    }*/
+    private async Task LoadAudioIcons(List<Audio> audios, LoadingManager loadingManager)
     {
         while (!loadingManager.CanLoad(true))
         {
-            yield return new WaitForSeconds(1);
+            await Task.Delay(100); 
         }
         loadingManager.SetToStart(audios.Count);
         foreach (Audio audio in audios)
@@ -273,7 +278,12 @@ public class SoundscapeLibrary: MonoBehaviour
             {
                 using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture("file://"+audio.GetRealAudioPath()))
                 {
-                    yield return uwr.SendWebRequest();
+                    var operation = uwr.SendWebRequest();
+
+                    while (!operation.isDone)
+                    {
+                        await Task.Yield(); // Returns control to Unity until the next frame
+                    }
 
                     if (uwr.result != UnityWebRequest.Result.Success)
                     {
@@ -287,55 +297,106 @@ public class SoundscapeLibrary: MonoBehaviour
                     }
                 }
             }
-
-            if (!string.IsNullOrWhiteSpace(audio.fileName))
-            {
-                AudioType type = audio.fileType switch
-                {
-                    "wav"           => AudioType.WAV,
-                    "ogg"           => AudioType.OGGVORBIS,
-                    "mp3" or "mp2"  => AudioType.MPEG,
-                    "aiff" or "aif" => AudioType.AIFF,
-                    "aac" or "m4a"  => AudioType.ACC,
-                    "it"            => AudioType.IT,
-                    "mod"           => AudioType.MOD,
-                    "s3m"           => AudioType.S3M,
-                    "xm"            => AudioType.XM,
-                    "xma"           => AudioType.XMA,
-                    "vag"           => AudioType.VAG,
-                    "flac" or "alac" => throw new NotSupportedException($"Sorry Audiophiles, '{audio.fileType}'s are not supported here in Unity. You gotta convert '{audio.fileName}' to a mediocre pesant format"),
-                    _               => AudioType.UNKNOWN   //Unsupported or Unregistered
-                };
-                
-                using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://"+GetStreamingPath(audio.fileName), type))
-                {
-                    yield return www.SendWebRequest();
-
-                    if (www.result == UnityWebRequest.Result.Success)
-                    {
-                        AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
-                        audio.SetClip(downloadedClip);
-                        Debug.Log($"Successfully loaded: {audio.name}");
-                    }
-                    else
-                    {
-                        
-                        if (audio.fileType == "m4a"){
-                            Debug.LogError($"Error loading {audio.fileName}: {www.error}. It can be because {audio.fileName} uses Apple's Lossless Codec. Please convert the audio to another format.");
-                        }
-                        else
-                        {
-                            Debug.LogError($"Error loading {audio.fileName}: {www.error}");
-                        }
-                    }
-                }
-            }
             loadingManager.Increment();
-            yield return null; // let the UI update
+            await Task.Yield(); // Equivalent to yield return null
         }
         loadingManager.EndLoading();
     }
 
+    public async Task<IAudioGenerator> GetClipForAudio(string audioId)
+    {
+        if(audioClipCache.IsAudioLoaded(audioId)) return audioClipCache.GetAudioClip(audioId);
+        await LoadAudioClipsAsync(new List<string>{audioId});
+        return audioClipCache.GetAudioClip(audioId);
+    }
+    public async Task LoadAudioClipsAsync(List<string> audioIds)
+    {
+        await LoadAudioClipsAsync(audioList.GetAudios().FindAll(audio => audioIds.Contains(audio.id)));
+    }
+    public async Task LoadAudioClipsAsync(List<Audio> audios)
+    {
+        while (!loadingManager.CanLoad(true))
+        {
+            await Task.Delay(100); 
+        }
+
+        loadingManager.SetToStart(audios.Count);
+        int i = 0;
+        foreach (Audio audio in audios)
+        {
+            loadingManager.SetInfo($"Loading audio clip {audio.id}: {i++}/{audios.Count}");
+            if (!string.IsNullOrWhiteSpace(audio.fileName) && !audioClipCache.IsAudioLoaded(audio.id))
+            {
+                AudioType type = GetAudioType(audio.fileType, audio.fileName);
+
+                string url = "file://" + GetStreamingPath(audio.fileName);
+                using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, type))
+                {
+                    // We await the request completion
+                    var operation = www.SendWebRequest();
+
+                    while (!operation.isDone)
+                    {
+                        await Task.Yield(); // Returns control to Unity until the next frame
+                    }
+
+                    if (www.result == UnityWebRequest.Result.Success)
+                    {
+                        AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
+                        audioClipCache.AddAudio(audio.id, downloadedClip);
+                        //audio.SetClip(downloadedClip);
+                        Debug.Log($"Successfully loaded: {audio.name}");
+                    }
+                    else
+                    {
+                        HandleLoadError(www, audio);
+                    }
+                }
+            }
+
+            loadingManager.Increment();
+            await Task.Yield(); // Equivalent to yield return null
+        }
+
+        loadingManager.EndLoading();
+    }
+
+    public void ClearAudioCache(string soundscapeId)
+    {
+        audioClipCache.Clear(soundscapeId);
+    }
+
+    private AudioType GetAudioType(string extension, string fileName)
+    {
+        return extension.ToLower() switch
+        {
+            "wav"            => AudioType.WAV,
+            "ogg"            => AudioType.OGGVORBIS,
+            "mp3" or "mp2"   => AudioType.MPEG,
+            "aiff" or "aif"  => AudioType.AIFF,
+            "aac" or "m4a"   => AudioType.ACC,
+            "it"             => AudioType.IT,
+            "mod"            => AudioType.MOD,
+            "s3m"            => AudioType.S3M,
+            "xm"             => AudioType.XM,
+            "xma"            => AudioType.XMA,
+            "vag"            => AudioType.VAG,
+            "flac" or "alac" => throw new NotSupportedException($"Sorry Audiophiles, '{extension}' is not supported. Convert '{fileName}' to a mediocre peasant format."),
+            _                => AudioType.UNKNOWN
+        };
+    }
+
+    private void HandleLoadError(UnityWebRequest www, Audio audio)
+    {
+        if (audio.fileType == "m4a")
+        {
+            Debug.LogError($"Error loading {audio.fileName}: {www.error}. Likely Apple Lossless Codec (ALAC).");
+        }
+        else
+        {
+            Debug.LogError($"Error loading {audio.fileName}: {www.error}");
+        }
+    }
     public static Vector3 WorldToSphere(Vector3 worldCoords)
     {
         float x = worldCoords.x;
@@ -396,18 +457,6 @@ public class SoundscapeLibrary: MonoBehaviour
 
         // 3. Return the square root, ensuring we don't sqrt a tiny negative due to float precision
         return math.sqrt(math.max(0, distSq));
-    }
-
-    public IAudioGenerator GetClipForAudio(string audioId)
-    {
-        foreach(Audio audio in audioList.GetAudios())
-        {
-            if (audio.id.Equals(audioId))
-            {
-                return audio.GetClip();
-            }
-        }
-        return null;
     }
 
     public string GetAudioType(string audioId)

@@ -84,6 +84,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(currentPickedAudio == null)
         {
             UnselectLibraryAudio();
+            CancelState();
             Debug.LogError("Tried to place a null audio");
             return;
         }
@@ -129,7 +130,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(!soundscapeWrapper.HasSoundscape()) return;
         Debug.Log("Finalizing audio placement.");
         Destroy(currentPlacingObject);
-        soundscapeWrapper.PlaceAudioSource(pickedAudioAsSource, true, true, true);
+        soundscapeWrapper.PlaceNewAudioSource(pickedAudioAsSource);
         currentState = State.Standby;
         DestroyTextAsset();
         UnselectLibraryAudio();
@@ -151,9 +152,12 @@ public class SoundscapePlayerEditor: MonoBehaviour
     }
 
     //called by audio effect UI to collect the data from it and write it into currentSelectedSourceObject
-    public void UpdateSourceData(List<AudioEffectInstance> effectInstances, float volume){
-        currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource.audioEffects = effectInstances;
-        currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource.volume = volume;
+    public void UpdateSourceData(List<AudioEffectInstance> effectInstances, float volume, int delaySeconds, bool loop){
+        AudioSource src = currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource;
+        src.audioEffects = effectInstances;
+        src.volume = volume;
+        src.loop = loop;
+        src.delaySeconds = delaySeconds;
         soundscapeWrapper.UpdateSource(currentSelectedSourceObject);
         UnselectSource();
         currentState = State.Standby;

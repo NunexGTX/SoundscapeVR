@@ -10,6 +10,8 @@ public class AudioEffectScript: MonoBehaviour
     private List<AudioEffectInstance> effects = new();
     private float volume = 1f;
     private string audioName = "Audio Name";
+    private int delay = 0;
+    private bool loop = true;
     void OnEnable()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -22,8 +24,11 @@ public class AudioEffectScript: MonoBehaviour
     public void SetValues(GameObject worldAudioSource)
     {
         effects = new(worldAudioSource.GetComponent<WorldAudioSource>().audioSource.audioEffects);
-        volume = worldAudioSource.GetComponent<WorldAudioSource>().audioSource.volume;
-        audioName = worldAudioSource.GetComponent<WorldAudioSource>().audioSource.GetAudioId();
+        AudioSource src = worldAudioSource.GetComponent<WorldAudioSource>().audioSource;
+        volume = src.volume;
+        audioName = src.GetAudioId();
+        delay = src.delaySeconds;
+        loop = src.loop;
         if(root == null) return;
         PopulateValues();
     }
@@ -33,6 +38,8 @@ public class AudioEffectScript: MonoBehaviour
         root.Q<Foldout>("echoFoldout").value = false;
         root.Q<Toggle>("echoToggle").value = false;
         root.Q<Slider>("volume").value = volume;
+        root.Q<SliderInt>("delay").value = delay;
+        root.Q<Toggle>("loop").value = loop;
         root.Q<Label>("audioName").text = audioName;
         foreach(AudioEffectInstance effect in effects)
         {
@@ -58,6 +65,8 @@ public class AudioEffectScript: MonoBehaviour
     private void SaveData()
     {
         volume = root.Q<Slider>("volume").value;
+        loop = root.Q<Toggle>("loop").value;
+        delay = root.Q<SliderInt>("delay").value;
         List<AudioEffectInstance> effects = new();
         if (root.Q<Toggle>("echoToggle").value)
         {
@@ -67,6 +76,7 @@ public class AudioEffectScript: MonoBehaviour
             float echoWet = root.Q<Slider>("echoWet").value;
             effects.Add(new(AudioEffectInstance.Echo, new EchoEffectData(echoDelay, echoDecay, wet: echoWet, dry: echoDry)));
         }
-        editor.UpdateSourceData(effects, volume);
+        editor.UpdateSourceData(effects, volume, delay, loop);
+        
     }
 }

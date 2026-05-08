@@ -97,7 +97,7 @@ public class SoundscapeEditor
             return;
         }
 
-        debugLabel.text = "";
+        debugLabel.text = $"Created soundscape {titleField.value}";
         Soundscape newSS = Soundscape.CreateSoundscape(titleField.value, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], loopToggle.value, videoToggle.value);
         ssWrapper.SetSoundscape(newSS);
         ssWrapper.MarkEdited();
@@ -105,22 +105,25 @@ public class SoundscapeEditor
     }
     private void OnDestroy()
     {
-        if (!library.DoesSoundscapeExist(titleField.value))
+        /*if (!library.DoesSoundscapeExist(titleField.value))
         {
             debugLabel.text = $"Soundscape {titleField.value} doesn't exist in library";
             return;
-        }
+        }*/
+        string ssTitle = currentSelectedSoundscape.title;
         if(deleteCounter++ >= deleteThreshold)
         {
             ResetDeleteCounter();
-            ssWrapper.StopSoundscape(titleField.value);
-            library.DeleteSoundscape(titleField.value);
-            debugLabel.text = "";
+            ssWrapper.StopSoundscape(ssTitle);
+            if (library.DeleteSoundscape(ssTitle))
+                debugLabel.text = $"Soundscape {ssTitle} deleted successfully.";
+            else 
+                debugLabel.text = $"Soundscape {ssTitle} failed deletion.";
             currentSelectedSoundscape = null;
             if(runOnDestroy != null) runOnDestroy.Invoke(titleField.value);
             return;
         }
-        destroyButton.text = $"Delete {titleField.value}?";
+        destroyButton.text = $"Delete {ssTitle}?";
     }
     private void OnSave()
     {
@@ -140,7 +143,7 @@ public class SoundscapeEditor
             debugLabel.text = "New title already exists.";
             return;
         }
-        debugLabel.text = "";
+        debugLabel.text = $"Soundscape {currentSelectedSoundscape.title} saved.";
         string oldTitle = currentSelectedSoundscape.title;
         Soundscape newSS = Soundscape.CreateSoundscape(newTitle, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], loopToggle.value, videoToggle.value);
         newSS.CopySourcesFrom(currentSelectedSoundscape);

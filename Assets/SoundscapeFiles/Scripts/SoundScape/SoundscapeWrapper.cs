@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Video;
@@ -18,6 +19,7 @@ public class SoundscapeWrapper: MonoBehaviour
     private Dictionary<Guid, GameObject> placedAudios = new();
     private bool editing = false;
     [SerializeField] private InputActionReference leaveSoundscapeAction;
+    [SerializeField] private LoadingManager loadingManager;
 
 
     void OnEnable()
@@ -79,7 +81,7 @@ public class SoundscapeWrapper: MonoBehaviour
         //1. remove it
         DeleteAudio(worldAudioSource);
         //2. add it.
-        PlaceAudioSource(worldAudioSource.audioSource, play: true, debug: true, newSource: true);
+        PlaceNewAudioSource(worldAudioSource.audioSource);
     }
 
     public void DeleteAudio(Guid audioId)
@@ -90,49 +92,86 @@ public class SoundscapeWrapper: MonoBehaviour
             AudioSource src = placedAudios[audioId].GetComponent<WorldAudioSource>().audioSource;
             EditSoundscape(src, false);
             Destroy(placedAudios[audioId]);
+            placedAudios.Remove(audioId);
             return;
         }
         Debug.LogError($"Tried to remove an audio source that doesnt exist: {audioId}");
     }
 
-    public void PlaceAudioSource(AudioSource src, bool play = true, bool debug = true, bool newSource = false)
+    public void PlaceNewAudioSource(AudioSource src)
     {
         if(currentSoundscape == null) return;
+        PlaceBaseSource(src, debug: true);
+        EditSoundscape(src, add: true);
+    }
+    
+    private void PlaceSoundscapeAudioSource(AudioSource src, bool debug)
+    {
+        if(currentSoundscape == null) return;
+        PlaceBaseSource(src, debug);
+    }
+
+    private void PlaceBaseSource(AudioSource src, bool debug)
+    {
         Guid srcId = Guid.NewGuid();
         GameObject go = Instantiate(audioSourceObject);
         go.transform.position = SoundscapeLibrary.SphereToWorld(src.GetSpherePosition());
+
         WorldAudioSource worldSrc = go.GetComponent<WorldAudioSource>();
         worldSrc.uuid = srcId;
         worldSrc.audioSource = src;
-        worldSrc.playing = play;
         worldSrc.debug = debug;
         worldSrc.soundscapeWrapper = this;
         worldSrc.library = soundscapeLibrary;
         worldSrc.playbackType = vrStateData.GetCurrentAudio();
+
         src.ApplyEffects(go);
         placedAudios.Add(srcId, go);
         go.SetActive(true);
-        if(newSource) EditSoundscape(src, true);
     }
 
-    private void RestartSoundscape()
+    //called when the audio sources are already created, we just want to replay them
+    private void PlayExistingSourcesFromZero()
+    {
+        Debug.Log("Replaying audios");
+        foreach(GameObject go in placedAudios.Values)
+            PlayAudioSource(go);
+    }
+
+    private void PlayAudioSource(GameObject srcObj)
+    {
+        _ = srcObj.GetComponent<WorldAudioSource>().PlayAudio();
+    }
+
+    private void RestartSoundscape(bool debug)
     {
         currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
-        RemoveAudioSources();
-        StartSoundscape(false);
+        PlayExistingSourcesFromZero();
+        StartLoopCoroutine(debug);
     }
 
-    public void PrepareSoundscape(bool debug)
+    public async Task PrepareSoundscape(bool debug)
     {
         playerManager.HideCameraLayers(debug);
         editing = debug;
-        if (debug)
+        /*if (debug)
         {
             StartSoundscape(debug);
             return;
+        }*/
+        playerManager.SetPlayerMovement(debug);
+        while (!loadingManager.CanLoad(true))
+        {
+            await Task.Delay(100);
         }
-        playerManager.SetPlayerMovement(false);
-        currentSoundscape.OnVisualsLoaded(() => StartSoundscape(debug));
+        loadingManager.SetToStart(1);
+        loadingManager.SetInfo($"Loading visuals for: {currentSoundscape.title}");
+        currentSoundscape.OnVisualsLoaded(() =>
+        {
+          loadingManager.Increment();  
+          loadingManager.EndLoading();  
+          _ = PrepareAudiosAndPlaySoundscape(debug);
+        } );
         ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());
         if(ssVisual != null)
             videoPlaying = true;
@@ -140,29 +179,43 @@ public class SoundscapeWrapper: MonoBehaviour
 
     }
 
+    private async Task PrepareAudiosAndPlaySoundscape(bool debug)
+    {
+        List<string> audioIds = new();
+        foreach(AudioSource src in currentSoundscape.GetAudioSources())
+        {
+            audioIds.Add(src.GetAudioId());
+        }
+        soundscapeLibrary.ClearAudioCache(currentSoundscape.title);
+        await soundscapeLibrary.LoadAudioClipsAsync(audioIds);
+        StartSoundscape(debug);
+    }
+
     private void StartSoundscape(bool debug)
     {
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
         {
-            PlaceAudioSource(src, true, debug);
+            PlaceSoundscapeAudioSource(src, debug);
         }
-        if(!debug) StartLoopCoroutine();
+        currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
+        StartLoopCoroutine(debug);
     }
 
     //function to start counting time to loop the SS.
     //if currrentSS time is 0, this does nothing. otherwise starts the coroutine that will then call RestartSoundscape()
-    private void StartLoopCoroutine()
+    private void StartLoopCoroutine(bool debug)
     {
         int time = currentSoundscape.timeSeconds;
         if(time == 0) return;
-        StartCoroutine(SoundscapeCountdown(time));
+        StartCoroutine(SoundscapeCountdown(time, debug));
     }
 
-    IEnumerator SoundscapeCountdown(int timeSeconds)
+    IEnumerator SoundscapeCountdown(int timeSeconds, bool debug)
     {
         yield return new WaitForSeconds(timeSeconds);
-        if(currentSoundscape.loop)
-            RestartSoundscape();
+        //if we're debugging, loop soundscape always.
+        if(currentSoundscape.loop || debug)
+            RestartSoundscape(debug);
         else
             StopSoundscape();
     }
@@ -193,6 +246,7 @@ public class SoundscapeWrapper: MonoBehaviour
             videoPlaying = false;
         }
         RemoveAudioSources();
+        currentSoundscape = null;
         StopAllCoroutines();
     }
 
@@ -203,13 +257,12 @@ public class SoundscapeWrapper: MonoBehaviour
             Destroy(go);
         }
         placedAudios = new();
-        currentSoundscape = null;
     }
 
     public void SetAndStartSoundscape(Soundscape ss, bool debug = false)
     {
         SetSoundscape(ss);
-        PrepareSoundscape(debug);
+        _ = PrepareSoundscape(debug);
     }
 
     public bool HasSoundscape(){return currentSoundscape != null;}

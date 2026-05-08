@@ -8,11 +8,17 @@ public class LoadingManager : MonoBehaviour
     public PlayerControl player;
     [SerializeField] private Slider loadingBar;
     [SerializeField] private GameObject image;
-    [SerializeField] private TextMeshProUGUI text;
+    [SerializeField] private TextMeshProUGUI loadingText;
+    [SerializeField] private TextMeshProUGUI infoText;
     private float progress = 0f;
     private float end = 1f;
     private bool softConcurrencyCheck = false;
     private bool queued = false;
+
+    public void SetInfo(string text)
+    {
+        infoText.text = text;
+    }
 
     public bool CanLoad(bool queueUp){
         if (softConcurrencyCheck && queueUp)
@@ -33,6 +39,7 @@ public class LoadingManager : MonoBehaviour
         image.gameObject.SetActive(true);
         loadingBar.value = 0;
         player.SetPlayerRotation(false);
+        SetInfo("Starting up...");
     }
 
     public void Increment(float amount = 1f)
@@ -73,13 +80,13 @@ public class LoadingManager : MonoBehaviour
         if(time > 0.5f)
         {
             time = 0f;
-            int dotsNow = text.text[7..].Length;
+            int dotsNow = loadingText.text[7..].Length;
             string res = "Loading";
             for(int i = 0; i < (dotsNow + 1)%4; i++)
             {
                 res += ".";
             }
-            text.text = res;
+            loadingText.text = res;
         }
         //if someone queued up but theres nothing loading
         if(queued && !softConcurrencyCheck)

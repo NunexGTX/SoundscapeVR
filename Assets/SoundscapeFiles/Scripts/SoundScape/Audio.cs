@@ -8,15 +8,11 @@ public class Audio
     public string fileName;
     public string imagePath;
     public string fileType;
-    private AudioClip audioClip = null;
     private Texture2D texture2D;
     public Texture2D GetImage()
     {
         return texture2D;
     }
-
-    public void SetClip(AudioClip clip){this.audioClip = clip;}
-    public AudioClip GetClip(){return audioClip;}
 
     public void SetTexture(Texture2D texture){this.texture2D = texture;}
 

@@ -1,12 +1,12 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3"/>
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
     <ui:VisualElement style="flex-grow: 1; cursor: initial;">
         <ui:ScrollView scroll-deceleration-rate="-0.03">
             <ui:VisualElement name="Header" style="flex-grow: 1;">
                 <ui:Label text="Audio-Video Configuration" class="headerStyle"/>
             </ui:VisualElement>
             <ui:VisualElement name="VideoSel" style="flex-grow: 1;">
-                <ui:RadioButtonGroup label="Video Type" choices="No Video,2D Video,3D Video" value="2" name="videoOptions" class="radioStyle">
+                <ui:RadioButtonGroup label="Video Type" choices="No Video,2D Video,360 Video" value="2" name="videoOptions" class="radioStyle">
                     <Bindings>
                         <ui:DataBinding property="value" data-source-path="CurrentVisualChoice" data-source="project://database/Assets/SoundscapeFiles/Scripts/SavedData/VrStateData.asset?fileID=11400000&amp;guid=26e8613f074c8004192a57c57732439f&amp;type=2#VrStateData" binding-mode="TwoWay"/>
                     </Bindings>
