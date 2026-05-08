@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Reflection;
 using UnityEngine.Android;
+using NUnit.Framework;
 
 public class SoundscapeLibrary: MonoBehaviour
 {
@@ -237,7 +238,26 @@ public class SoundscapeLibrary: MonoBehaviour
             });
             hasRead = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead);
             hasWrite = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
+
+            if (hasRead)
+            {
+                Debug.Log("User has acquired External Storage Read Permission");
+            }
+
+            if (hasWrite)
+            {
+                Debug.Log("User has acquired External Storage Write Permissions");
+            }
             return hasRead && hasWrite;
+        }
+        if (hasRead)
+        {
+            Debug.Log("User has External Storage Read Permission");
+        }
+
+        if (hasWrite)
+        {
+            Debug.Log("User has External Storage Write Permissions");
         }
         return true;
     }
