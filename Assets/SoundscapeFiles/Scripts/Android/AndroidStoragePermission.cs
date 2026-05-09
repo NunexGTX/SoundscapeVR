@@ -59,6 +59,8 @@ public class AndroidStoragePermission : MonoBehaviour
         string ManageStorage = "android.permission.MANAGE_EXTERNAL_STORAGE";
         return Permission.HasUserAuthorizedPermission(ManageStorage); //New manage storage API (doesn't work with Meta's storage permissions)*/
 
+        //The meta quest actually uses the old ExternalStorageReadWrite permissions
+        //but we don't have access in unity to prompt the user to give that permission automatically
         return Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) && Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
     }
 
