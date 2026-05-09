@@ -1,16 +1,16 @@
 using UnityEngine;
 using UnityEngine.Android;
-using UnityEngine.SceneManagement;
 
 public class AndroidStoragePermission : MonoBehaviour
 {
-    public static string MainScene = "VrScene";
+    private const string ManageStorage = "android.permission.MANAGE_EXTERNAL_STORAGE";
+
+    private bool waiting_for_user_permission = false;
 
     // Static instance accessible from any scene
-    public static AndroidStoragePermission Instance { get; private set; }
+    //public static AndroidStoragePermission Instance { get; private set; }
 
-    public bool PermissionsAcquired { get; private set; }
-
+    /*
     void Awake()
     {
         // Singleton pattern
@@ -22,67 +22,62 @@ public class AndroidStoragePermission : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject); // Persists across scenes
-    }
+    }*/
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         #if UNITY_ANDROID && !UNITY_EDITOR
-            bool hasAll = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) &&
-                        Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
-
-            if (hasAll)
+            if (!checkManageStoragePermission())
             {
-                LoadMainScene(); // Already granted, skip straight through
-            }
-            else
-            {
-                RequestPermissions();
-            }
+                Debug.LogWarning("User does not have Manage Storage Permissions. Opening settings and asking for user's permission");
+                waiting_for_user_permission = true;
+                openStorageSettings();
+            }else{
+                SoundscapeSceneLoad.LoadMainScene();
+            }   
         #else
             Debug.LogWarning("This system is not running Android. Please remove the Android Permission Scene from this build");
-            LoadMainScene();
+            SoundscapeSceneLoad.LoadMainScene();
         #endif
 
     }
 
-    private void RequestPermissions()
+    private void openStorageSettings()
     {
-        var callbacks = new PermissionCallbacks();
-        callbacks.PermissionGranted += OnGranted;
-        callbacks.PermissionDenied += OnDenied;
+        AndroidJavaObject intent = new AndroidJavaObject(
+        "android.content.Intent",
+        "android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION"
+        );
 
-        Permission.RequestUserPermissions(new string[]
-        {
-            Permission.ExternalStorageRead,
-            Permission.ExternalStorageWrite
-        }, callbacks);
+        AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        AndroidJavaObject activity = unity.GetStatic<AndroidJavaObject>("currentActivity");
+        activity.Call("startActivity", intent);
     }
 
-    private void OnGranted(string permission)
+    //Should be called when the user comes back from Android settings page
+    private void OnApplicationFocus(bool hasFocus)
     {
-        // Check if ALL permissions are now granted before proceeding
-        bool hasAll = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) &&
-                      Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
-        if (!hasAll)
+        if (hasFocus && waiting_for_user_permission)
         {
-            Debug.LogError("Storage Permission was Granted, but the permissions were not acquired.");
+            waiting_for_user_permission = false;
+
+            if (checkManageStoragePermission())
+            {
+                Debug.Log("Permission granted. Loading main scene...");
+            }
+            else
+            {
+                Debug.LogWarning("Manage Storage Permission was not granted. Use another storage path instead.");
+            }
+            SoundscapeSceneLoad.LoadMainScene();
         }
-        //We procceed anyways
-        LoadMainScene();
-        
     }
 
-    private void OnDenied(string permission)
-    {
-        Debug.LogWarning($"Storage Permission denied: {permission}");
-        // Optionally show a UI message, or still load the scene with limited functionality
-        LoadMainScene();
-    }
 
-    void LoadMainScene()
+    public static bool checkManageStoragePermission()
     {
-        SceneManager.LoadScene(MainScene);
+        return Permission.HasUserAuthorizedPermission(ManageStorage);
     }
 
 }

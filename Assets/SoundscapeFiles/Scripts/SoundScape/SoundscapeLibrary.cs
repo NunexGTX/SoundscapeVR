@@ -226,12 +226,7 @@ public class SoundscapeLibrary: MonoBehaviour
 
     static bool HasPermissions()
     {
-        if (AndroidStoragePermission.Instance == null)
-        {
-            Debug.LogError("AndroidStoragePermissions class not found!");
-            return false;
-        }
-        return AndroidStoragePermission.Instance.PermissionsAcquired;
+        return AndroidStoragePermission.checkManageStoragePermission();
     }
     /*static async Task CheckPermissions()
     {
