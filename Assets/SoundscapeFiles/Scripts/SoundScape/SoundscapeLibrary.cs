@@ -102,7 +102,7 @@ public class SoundscapeLibrary: MonoBehaviour
             if(HasPermissions())
                 return string.IsNullOrWhiteSpace(fileName) ? GetAndroidPath() : Path.Combine(GetAndroidPath(), filePath);
             else
-                return Path.Combine(Application.streamingAssetsPath, filePath);
+                return Path.Combine(Application.streamingAssetsPath, filePath); 
         #else
             return Path.Combine(Application.streamingAssetsPath, filePath);
         #endif
@@ -113,7 +113,7 @@ public class SoundscapeLibrary: MonoBehaviour
         string rootPath = Path.Combine(root, "configs");
         if (!Directory.Exists(rootPath))
         {
-            Directory.CreateDirectory(rootPath);
+            Directory.CreateDirectory(rootPath); //FOR ANDROID: If we try to create a folder in streaming assets on android we'll be delighted by a read only error
             RefreshMediaScanner(rootPath);
         }
         return Path.Combine(rootPath, fileName);
@@ -226,40 +226,12 @@ public class SoundscapeLibrary: MonoBehaviour
 
     static bool HasPermissions()
     {
-        bool hasRead = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead);
-        bool hasWrite = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
-
-        if (!hasRead || !hasWrite)
+        if (AndroidStoragePermission.Instance == null)
         {
-            // This triggers the Android system popup
-            Permission.RequestUserPermissions(new string[] { 
-                Permission.ExternalStorageRead, 
-                Permission.ExternalStorageWrite 
-            });
-            hasRead = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead);
-            hasWrite = Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
-
-            if (hasRead)
-            {
-                Debug.Log("User has acquired External Storage Read Permission");
-            }
-
-            if (hasWrite)
-            {
-                Debug.Log("User has acquired External Storage Write Permissions");
-            }
-            return hasRead && hasWrite;
+            Debug.LogError("AndroidStoragePermissions class not found!");
+            return false;
         }
-        if (hasRead)
-        {
-            Debug.Log("User has External Storage Read Permission");
-        }
-
-        if (hasWrite)
-        {
-            Debug.Log("User has External Storage Write Permissions");
-        }
-        return true;
+        return AndroidStoragePermission.Instance.PermissionsAcquired;
     }
     /*static async Task CheckPermissions()
     {
