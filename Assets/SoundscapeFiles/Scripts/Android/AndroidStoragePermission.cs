@@ -3,26 +3,7 @@ using UnityEngine.Android;
 
 public class AndroidStoragePermission : MonoBehaviour
 {
-    private const string ManageStorage = "android.permission.MANAGE_EXTERNAL_STORAGE";
-
     private bool waiting_for_user_permission = false;
-
-    // Static instance accessible from any scene
-    //public static AndroidStoragePermission Instance { get; private set; }
-
-    /*
-    void Awake()
-    {
-        // Singleton pattern
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject); // Persists across scenes
-    }*/
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -30,9 +11,10 @@ public class AndroidStoragePermission : MonoBehaviour
         #if UNITY_ANDROID && !UNITY_EDITOR
             if (!checkManageStoragePermission())
             {
-                Debug.LogWarning("User does not have Manage Storage Permissions. Opening settings and asking for user's permission");
+                Debug.LogWarning("User does not have Storage Permissions. Please show the user the instructions on how to give the Storage Permission");
                 waiting_for_user_permission = true;
-                openStorageSettings();
+                showStoragePermissionQuestTutorial();
+                skipStoragePermissions(); //TODO: remove this when the tutorial menu is done
             }else{
                 SoundscapeSceneLoad.LoadMainScene();
             }   
@@ -43,16 +25,10 @@ public class AndroidStoragePermission : MonoBehaviour
 
     }
 
-    private void openStorageSettings()
+    void showStoragePermissionQuestTutorial()
     {
-        AndroidJavaObject intent = new AndroidJavaObject(
-        "android.content.Intent",
-        "android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION"
-        );
-
-        AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject activity = unity.GetStatic<AndroidJavaObject>("currentActivity");
-        activity.Call("startActivity", intent);
+        //TODO: Make tutorial instructions for the storage permission in the Meta Quest
+        
     }
 
     //Should be called when the user comes back from Android settings page
@@ -65,19 +41,37 @@ public class AndroidStoragePermission : MonoBehaviour
             if (checkManageStoragePermission())
             {
                 Debug.Log("Permission granted. Loading main scene...");
+                permissionSuccessful();
             }
             else
             {
-                Debug.LogWarning("Manage Storage Permission was not granted. Use another storage path instead.");
+                Debug.LogWarning("Storage Permission was not granted...");
+                //If the user does not give the permission, allow to be skipped in the UI and call directly the main scene loader
             }
-            SoundscapeSceneLoad.LoadMainScene();
+
         }
     }
 
 
     public static bool checkManageStoragePermission()
     {
-        return Permission.HasUserAuthorizedPermission(ManageStorage);
+        /*
+        string ManageStorage = "android.permission.MANAGE_EXTERNAL_STORAGE";
+        return Permission.HasUserAuthorizedPermission(ManageStorage); //New manage storage API (doesn't work with Meta's storage permissions)*/
+
+        return Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) && Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
+    }
+
+    void permissionSuccessful()
+    {
+        //TODO: Show a cute UI animation that tells the user the permission was given successfully before loading the main scene
+        SoundscapeSceneLoad.LoadMainScene();
+    }
+
+    public static void skipStoragePermissions()
+    {
+        Debug.LogWarning("Storage Permission was not granted...");
+        SoundscapeSceneLoad.LoadMainScene();
     }
 
 }
