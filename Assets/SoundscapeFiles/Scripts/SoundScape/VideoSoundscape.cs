@@ -34,9 +34,9 @@ public class VideoSoundscape : Soundscape
 
     public override GameObject TryGetVisuals(VisualType visualType)
     {
+        if(!string.IsNullOrWhiteSpace(encompassingPath)) return GetVideo(visualType);
         if(visualType == VisualType.STATIC && !string.IsNullOrWhiteSpace(staticPath)) return GetVideo(visualType);
-        if(visualType == VisualType.ENCOMPASSING && !string.IsNullOrWhiteSpace(encompassingPath)) return GetVideo(visualType);
-        onVisualsLoaded.Invoke();
+        //onVisualsLoaded.Invoke();
         return null;
     }
 
@@ -50,6 +50,7 @@ public class VideoSoundscape : Soundscape
         videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
         if(visualType == VisualType.ENCOMPASSING)
         {
+            Debug.Log("Encomapssing");
             //videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
             VideoPlayer360 v360 = go.AddComponent<VideoPlayer360>();
             v360.videoFileName = SoundscapeLibrary.GetStreamingPath(encompassingPath);
@@ -64,16 +65,23 @@ public class VideoSoundscape : Soundscape
                     mat.SetFloat("_Layout", 0f);
             }
             v360.Video360Material = mat;
-        } else
+        } else if(!string.IsNullOrWhiteSpace(staticPath))
         {
-            videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
-            videoPlayer.targetCamera = Camera.main;
+            Debug.Log("Static path");
             videoPlayer.url = SoundscapeLibrary.GetStreamingPath(staticPath);
+            videoPlayer.prepareCompleted += AdaptEncompassingToScreen;
+            CreateScreenAdapter(createCanvas: true);
+        } else if(!string.IsNullOrWhiteSpace(encompassingPath))
+        {
+            Debug.Log("Cinema mode");
+            videoPlayer.url = SoundscapeLibrary.GetStreamingPath(encompassingPath);
+            CreateScreenAdapter(createCanvas: false);
+            videoPlayer.prepareCompleted += AdaptEncompassingToScreen;
         }
         videoPlayer.prepareCompleted += OnVideoPrepared;
         VideoPlayer.ErrorEventHandler onError = (vp, mess) => {onVisualsFailed.Invoke();};
         videoPlayer.errorReceived += onError;
-        videoPlayer.Prepare();   
+        videoPlayer.Prepare(); 
         return go;
     }
 
@@ -82,14 +90,23 @@ public class VideoSoundscape : Soundscape
         onVisualsLoaded.Invoke();
     }
 
+    private void AdaptEncompassingToScreen(VideoPlayer player)
+    {
+        screenTexture = new RenderTexture((int)player.width, (int)player.height, 0);
+        player.targetTexture = screenTexture;
+        screenMat.SetTexture("_MainTex",screenTexture);
+        if(rawImage != null) rawImage.texture = screenTexture;
+    }
+
     public override void ClearVisualsBinding()
     {
         base.ClearVisualsBinding();
-        videoPlayer.prepareCompleted -= OnVideoPrepared;
     }
 
     public override void RestartVisuals(GameObject ssVisual, VisualType visualType)
     {
+        videoPlayer.prepareCompleted -= OnVideoPrepared;
+        videoPlayer.prepareCompleted -= AdaptEncompassingToScreen;
         ssVisual.GetComponent<VideoPlayer>().Stop();
         ssVisual.GetComponent<VideoPlayer>().Play();
     }

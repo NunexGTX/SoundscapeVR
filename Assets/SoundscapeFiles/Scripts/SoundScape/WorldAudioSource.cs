@@ -36,7 +36,11 @@ public class WorldAudioSource: MonoBehaviour
         {
             UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
             IAudioGenerator gen = await library.GetClipForAudio(audioSource.GetAudioId());
-            if(gen == null) return;
+            if(gen == null)
+            {
+                Destroy(gameObject);            
+                return;
+            }
             src.generator = gen;
             src.time = 0;
             if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))

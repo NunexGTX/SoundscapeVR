@@ -9,6 +9,7 @@ using UnityEngine.Video;
 public class SoundscapeWrapper: MonoBehaviour
 {
     private GameObject ssVisual;
+    private GameObject screen;
     private Soundscape currentSoundscape;
     public PlayerManager playerManager;
     public VrStateData vrStateData;
@@ -177,8 +178,17 @@ public class SoundscapeWrapper: MonoBehaviour
             loadingManager.EndLoading();  
             _ = PrepareAudiosAndPlaySoundscape(debug);
         } );
-        ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals()); 
-            
+        try
+        {
+            ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());         
+        }
+        catch
+        {
+            Debug.LogWarning("Caught an error trying to load the visuals of a soundscape");
+            _ = OnVisualFail(currentSoundscape.title);
+        }
+        screen = currentSoundscape.GetScreenObject();
+        currentSoundscape.SetEdit(debug);
         if(ssVisual != null)
             videoPlaying = true;
         return;
@@ -214,6 +224,8 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
         {
+            //if an audio isnt loaded here, that means it could not be loaded, so we dont instantiate it.
+            if(!soundscapeLibrary.IsAudioLoaded(src.GetAudioId())) continue;
             PlaceSoundscapeAudioSource(src, debug);
         }
         currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
@@ -263,6 +275,12 @@ public class SoundscapeWrapper: MonoBehaviour
                 ssVisual = null;
                 RenderSettings.skybox = defaultSkybox;
                 DynamicGI.UpdateEnvironment();
+            }
+            if(screen != null) 
+            {
+                currentSoundscape.DeleteScreen();
+                Destroy(screen);
+                screen = null;
             }
             videoPlaying = false;
         }

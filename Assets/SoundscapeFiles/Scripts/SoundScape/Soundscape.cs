@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 public abstract class Soundscape
@@ -15,6 +17,10 @@ public abstract class Soundscape
     protected Action onVisualsLoaded = null;
     protected Action onVisualsFailed = null;
     public static readonly string VIDEO_GO_NAME = "soundscapeVideo";
+    private GameObject screenObject = null;
+    protected RenderTexture screenTexture = null;
+    protected Material screenMat = null;
+    protected RawImage rawImage = null;
 
     public static Soundscape CreateSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType, bool loop, bool video)
     {
@@ -39,7 +45,11 @@ public abstract class Soundscape
 
     public void OnVisualsLoaded(Action action){onVisualsLoaded = action;}
     public void OnVisualsFail(Action action){onVisualsFailed = action;}
-    public virtual void ClearVisualsBinding(){onVisualsLoaded=null;}
+    public virtual void ClearVisualsBinding(){
+        onVisualsLoaded=null;
+        onVisualsFailed = null;
+
+    }
 
     public string GetTitle(){return title;}
 
@@ -64,6 +74,61 @@ public abstract class Soundscape
     {
         audioSources = new(other.audioSources);
     }
+
+    protected void CreateScreenAdapter(bool createCanvas)
+    {
+        Debug.Log("Creating cinema adapter");
+        Material skyboxMat = new Material(Shader.Find("Skybox/Panoramic"));
+        skyboxMat.SetColor("_Tint", new Color(0, 0, 0));
+        RenderSettings.skybox = skyboxMat;
+        DynamicGI.UpdateEnvironment();
+        screenMat = new Material(Shader.Find("Custom/CinemaStereoProjection"));
+        screenObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        screenObject.GetComponent<MeshRenderer>().material = screenMat;
+        screenObject.transform.position = new(5.5f, 2f, 0);
+        screenObject.transform.rotation = Quaternion.Euler(0, 90, 0);
+        screenObject.transform.localScale = new(8, 5, 5);
+        if(!createCanvas) return;
+
+        screenObject.GetComponent<MeshRenderer>().enabled = false;
+        GameObject canvasObj = new GameObject("Canvas"); 
+        canvasObj.transform.SetParent(screenObject.transform, false);
+        Canvas canvas = canvasObj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+        canvas.worldCamera = Camera.main;
+        canvas.GetComponent<RectTransform>().localScale = new(0.01f, 0.01f, 0.0125f);
+        canvas.GetComponent<RectTransform>().localPosition = new(0, 0, 0);
+
+        GameObject img = new GameObject("VideoDisplay");
+        img.transform.SetParent(canvasObj.transform);
+        img.transform.localPosition = new(0, 0, 0);
+        img.transform.localScale = new(1, 1, 1);
+        img.transform.rotation = Quaternion.Euler(0, 90, 0);
+        rawImage = img.AddComponent<RawImage>();
+    }
+    public void SetEdit(bool debug)
+    {
+        if(!debug) return;
+        if(screenObject == null) return;
+        screenMat.SetFloat("Opacity", 0.5f);
+        if(rawImage == null) return;
+        Color c = rawImage.color;
+        c.a = 0.5f;
+        rawImage.color = c;
+    }
+
+    public void DeleteScreen()
+    {
+        if(screenObject == null) return;
+        if(screenTexture != null) screenTexture.Release();
+        //if(rawImage != null) rawImage = null;
+        
+        screenTexture = null;
+        screenObject = null;
+        rawImage = null;
+    }
+
+    public GameObject GetScreenObject(){return screenObject;}
     public void RemoveSource(AudioSource audio){RemoveSource(audio.GetUUID());}
     public abstract Soundscape Copy();
     public abstract GameObject TryGetVisuals(VisualType visualType);

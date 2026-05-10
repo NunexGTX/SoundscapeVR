@@ -33,7 +33,6 @@ public class ImageSoundscape : Soundscape
     {
         if(visualType == VisualType.STATIC && !string.IsNullOrWhiteSpace(staticPath)) return GetImage(visualType);
         if(visualType == VisualType.ENCOMPASSING && !string.IsNullOrWhiteSpace(encompassingPath)) return GetImage(visualType);
-        onVisualsLoaded.Invoke();
         return null;
     }
 
@@ -70,7 +69,7 @@ public class ImageSoundscape : Soundscape
             rect.sizeDelta = Vector2.zero;
 
             // 4. Attach the loader script
-            ImageStaticDisplay loader = go.AddComponent<ImageStaticDisplay>();
+            StaticDisplay loader = go.AddComponent<StaticDisplay>();
             loader.imagePath = SoundscapeLibrary.GetStreamingPath(staticPath);
             loader.onImagePrepared = onVisualsLoaded;
             loader.onLoadFailed = onVisualsFailed;

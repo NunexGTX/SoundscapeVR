@@ -455,4 +455,9 @@ public class SoundscapeLibrary: MonoBehaviour
         }
         return "";
     }
+
+    public bool IsAudioLoaded(string audioId)
+    {
+        return audioClipCache.IsAudioLoaded(audioId);
+    }
 }

@@ -4,9 +4,10 @@ using UnityEngine.Networking;
 using System.Collections;
 using System;
 
-public class ImageStaticDisplay : MonoBehaviour
+public class StaticDisplay : MonoBehaviour
 {
     public string imagePath;
+    public bool video;
     public Action onImagePrepared;
     public Action onLoadFailed;
 
