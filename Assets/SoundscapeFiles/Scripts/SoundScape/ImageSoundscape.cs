@@ -31,8 +31,9 @@ public class ImageSoundscape : Soundscape
 
     public override GameObject TryGetVisuals(VisualType visualType)
     {
-        if(visualType == VisualType.STATIC && null != staticPath) return GetImage(visualType);
-        if(visualType == VisualType.ENCOMPASSING && null != encompassingPath) return GetImage(visualType);
+        if(visualType == VisualType.STATIC && !string.IsNullOrWhiteSpace(staticPath)) return GetImage(visualType);
+        if(visualType == VisualType.ENCOMPASSING && !string.IsNullOrWhiteSpace(encompassingPath)) return GetImage(visualType);
+        onVisualsLoaded.Invoke();
         return null;
     }
 
@@ -44,6 +45,7 @@ public class ImageSoundscape : Soundscape
             ImageEncompassingDisplay i360 = go.AddComponent<ImageEncompassingDisplay>();
             i360.imagePath = SoundscapeLibrary.GetStreamingPath(encompassingPath);
             i360.onImagePrepared = onVisualsLoaded;
+            i360.onImageFailed = onVisualsFailed;
             return go;
         } else
         {
@@ -71,7 +73,7 @@ public class ImageSoundscape : Soundscape
             ImageStaticDisplay loader = go.AddComponent<ImageStaticDisplay>();
             loader.imagePath = SoundscapeLibrary.GetStreamingPath(staticPath);
             loader.onImagePrepared = onVisualsLoaded;
-            
+            loader.onLoadFailed = onVisualsFailed;
             return go;
         }
 

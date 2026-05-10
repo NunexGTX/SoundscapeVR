@@ -10,10 +10,10 @@ public class ImageEncompassingDisplay : MonoBehaviour
     private Material skyboxMaterial;
     private Texture2D loadedTexture;
     public Action onImagePrepared = null;
+    public Action onImageFailed = null;
 
     void Start()
     {
-        defaultSkybox = RenderSettings.skybox;
         StartCoroutine(LoadAndApply());
 
     }
@@ -27,6 +27,7 @@ public class ImageEncompassingDisplay : MonoBehaviour
             if (uwr.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError("Image load failed: " + uwr.error);
+                if(onImageFailed != null) onImageFailed.Invoke();
                 yield break;
             }
 
@@ -57,8 +58,6 @@ public class ImageEncompassingDisplay : MonoBehaviour
     {
         if (loadedTexture != null) Destroy(loadedTexture);
         if (skyboxMaterial != null) Destroy(skyboxMaterial);
-        RenderSettings.skybox = defaultSkybox;
-        DynamicGI.UpdateEnvironment();
     }
 
 }

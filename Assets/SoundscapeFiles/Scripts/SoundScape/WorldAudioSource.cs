@@ -7,14 +7,22 @@ using UnityEngine.Audio;
 public class WorldAudioSource: MonoBehaviour
 {
     public AudioSource audioSource;
-    public Guid uuid;
-    public bool playing = true;
     public bool debug = true;
 
     public SoundscapeWrapper soundscapeWrapper;
     public SoundscapeLibrary library;
     public VrStateData vrStateData;
     public AudioListeningType playbackType;
+
+    public Guid GetUUID()
+    {
+        return audioSource.GetUUID();
+    }
+
+    public void SetUUID(Guid uuid)
+    {
+        audioSource.SetUUID(uuid);
+    }
 
     void OnEnable(){
         _ = PlayAudio();

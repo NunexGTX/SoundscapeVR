@@ -8,6 +8,7 @@ public class ImageStaticDisplay : MonoBehaviour
 {
     public string imagePath;
     public Action onImagePrepared;
+    public Action onLoadFailed;
 
     void Start()
     {
@@ -28,7 +29,7 @@ public class ImageStaticDisplay : MonoBehaviour
                 
                 GetComponent<Image>().sprite = sprite;
                 if(onImagePrepared != null) onImagePrepared.Invoke();
-            }
+            } else if(uwr.result != UnityWebRequest.Result.InProgress && onLoadFailed != null) onLoadFailed.Invoke();
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public abstract class Soundscape
 {
@@ -12,6 +13,7 @@ public abstract class Soundscape
     [SerializeField] public bool loop = true;
     [SerializeField] protected List<AudioSource> audioSources = new();
     protected Action onVisualsLoaded = null;
+    protected Action onVisualsFailed = null;
     public static readonly string VIDEO_GO_NAME = "soundscapeVideo";
 
     public static Soundscape CreateSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType, bool loop, bool video)
@@ -36,6 +38,7 @@ public abstract class Soundscape
     }
 
     public void OnVisualsLoaded(Action action){onVisualsLoaded = action;}
+    public void OnVisualsFail(Action action){onVisualsFailed = action;}
     public virtual void ClearVisualsBinding(){onVisualsLoaded=null;}
 
     public string GetTitle(){return title;}
@@ -46,19 +49,13 @@ public abstract class Soundscape
     {
         audioSources.Add(audio);
     }
-    private void RemoveSource(string audiodId, Vector3 position)
+    private void RemoveSource(Guid audioId)
     {
         int idxToRemove = -1;
-        float bestDist = int.MaxValue;
         for(int i = 0; i < audioSources.Count; i++)
         {
             AudioSource src = audioSources[i];
-            if (audiodId.Equals(src.GetAudioId()))
-            {
-                float dist = SoundscapeLibrary.DistanceInSphere(position, src.GetSpherePosition());
-                if(dist < bestDist)
-                    idxToRemove = i;
-            }
+            if(src.GetUUID().Equals(audioId)) idxToRemove = i;
         }
         if(idxToRemove != -1) audioSources.RemoveAt(idxToRemove);
     }
@@ -67,7 +64,7 @@ public abstract class Soundscape
     {
         audioSources = new(other.audioSources);
     }
-    public void RemoveSource(AudioSource audio){RemoveSource(audio.GetAudioId(), audio.GetSpherePosition());}
+    public void RemoveSource(AudioSource audio){RemoveSource(audio.GetUUID());}
     public abstract Soundscape Copy();
     public abstract GameObject TryGetVisuals(VisualType visualType);
     public abstract VisualType GetSupportedVisual();

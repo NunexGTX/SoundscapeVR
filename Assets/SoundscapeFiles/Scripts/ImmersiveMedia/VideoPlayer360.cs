@@ -8,12 +8,10 @@ public class VideoPlayer360 : MonoBehaviour
     public string videoFileName;
     private RenderTexture videoTex;
     public Material Video360Material;
-    public Material skyboxMat;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        skyboxMat = RenderSettings.skybox;
         videoPlayer = gameObject.GetComponent<VideoPlayer>();
         string videoPath = videoFileName;
         videoPlayer.source = VideoSource.Url;
@@ -22,6 +20,7 @@ public class VideoPlayer360 : MonoBehaviour
 
         //Wait for promise for video player to get prepared to play
         videoPlayer.prepareCompleted += OnVideoPrepared;
+        Debug.Log("Starting 360 video");
     }
 
     void OnVideoPrepared(VideoPlayer source)
@@ -42,6 +41,7 @@ public class VideoPlayer360 : MonoBehaviour
         
         //  Start playing
         source.Play();
+        Debug.Log("Playing 360 video");
     }
     
     private void OnDestroy()
@@ -49,8 +49,7 @@ public class VideoPlayer360 : MonoBehaviour
         // Clean up the texture when the scene changes or app closes
         videoPlayer.prepareCompleted -= OnVideoPrepared;
         if (videoTex != null) videoTex.Release();
-        RenderSettings.skybox = skyboxMat;
-        DynamicGI.UpdateEnvironment();
+        Debug.Log("Destroying 360 video");
     }
 
 }

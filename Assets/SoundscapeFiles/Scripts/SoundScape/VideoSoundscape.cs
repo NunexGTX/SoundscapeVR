@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -32,8 +34,9 @@ public class VideoSoundscape : Soundscape
 
     public override GameObject TryGetVisuals(VisualType visualType)
     {
-        if(visualType == VisualType.STATIC && null != staticPath) return GetVideo(visualType);
-        if(visualType == VisualType.ENCOMPASSING && null != encompassingPath) return GetVideo(visualType);
+        if(visualType == VisualType.STATIC && !string.IsNullOrWhiteSpace(staticPath)) return GetVideo(visualType);
+        if(visualType == VisualType.ENCOMPASSING && !string.IsNullOrWhiteSpace(encompassingPath)) return GetVideo(visualType);
+        onVisualsLoaded.Invoke();
         return null;
     }
 
@@ -52,13 +55,13 @@ public class VideoSoundscape : Soundscape
             v360.videoFileName = SoundscapeLibrary.GetStreamingPath(encompassingPath);
             Material mat = new Material(Shader.Find("Skybox/Panoramic"));
             //2f corresponds to over under, 1f to side by side, 0f to none (default)
-            mat.SetFloat("_Layout", 0f);
-            if (!projectionType.Equals("None"))
+            mat.SetFloat("_Layout", 2f);
+            if (!projectionType.Equals("Over Under"))
             {
-                if(projectionType.Equals("Over Under"))
-                    mat.SetFloat("_Layout", 2f);
-                else
+                if(projectionType.Equals("Side by Side"))
                     mat.SetFloat("_Layout", 1f);
+                else
+                    mat.SetFloat("_Layout", 0f);
             }
             v360.Video360Material = mat;
         } else
@@ -68,7 +71,9 @@ public class VideoSoundscape : Soundscape
             videoPlayer.url = SoundscapeLibrary.GetStreamingPath(staticPath);
         }
         videoPlayer.prepareCompleted += OnVideoPrepared;
-        videoPlayer.Prepare();
+        VideoPlayer.ErrorEventHandler onError = (vp, mess) => {onVisualsFailed.Invoke();};
+        videoPlayer.errorReceived += onError;
+        videoPlayer.Prepare();   
         return go;
     }
 

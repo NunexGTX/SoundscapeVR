@@ -18,6 +18,7 @@ public class SoundscapeWrapper: MonoBehaviour
     private bool edited = false;
     private Dictionary<Guid, GameObject> placedAudios = new();
     private bool editing = false;
+    private Material defaultSkybox;
     [SerializeField] private InputActionReference leaveSoundscapeAction;
     [SerializeField] private LoadingManager loadingManager;
 
@@ -26,6 +27,7 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         // Hook into the global event
         leaveSoundscapeAction.action.performed += StopSoundscape;
+        defaultSkybox = RenderSettings.skybox;
     }
 
     void OnDisable()
@@ -72,7 +74,7 @@ public class SoundscapeWrapper: MonoBehaviour
     private void DeleteAudio(WorldAudioSource srcObject)
     {
         if(srcObject == null) return;
-        DeleteAudio(srcObject.uuid);
+        DeleteAudio(srcObject.GetUUID());
     }
     public void UpdateSource(GameObject srcObject)
     {
@@ -113,12 +115,10 @@ public class SoundscapeWrapper: MonoBehaviour
 
     private void PlaceBaseSource(AudioSource src, bool debug)
     {
-        Guid srcId = Guid.NewGuid();
         GameObject go = Instantiate(audioSourceObject);
         go.transform.position = SoundscapeLibrary.SphereToWorld(src.GetSpherePosition());
 
         WorldAudioSource worldSrc = go.GetComponent<WorldAudioSource>();
-        worldSrc.uuid = srcId;
         worldSrc.audioSource = src;
         worldSrc.debug = debug;
         worldSrc.soundscapeWrapper = this;
@@ -126,7 +126,7 @@ public class SoundscapeWrapper: MonoBehaviour
         worldSrc.playbackType = vrStateData.GetCurrentAudio();
 
         src.ApplyEffects(go);
-        placedAudios.Add(srcId, go);
+        placedAudios.Add(worldSrc.GetUUID(), go);
         go.SetActive(true);
     }
 
@@ -166,17 +166,36 @@ public class SoundscapeWrapper: MonoBehaviour
         }
         loadingManager.SetToStart(1);
         loadingManager.SetInfo($"Loading visuals for: {currentSoundscape.title}");
+        
+        currentSoundscape.OnVisualsFail(() =>
+        {
+            _ = OnVisualFail(currentSoundscape.title);
+        });
         currentSoundscape.OnVisualsLoaded(() =>
         {
-          loadingManager.Increment();  
-          loadingManager.EndLoading();  
-          _ = PrepareAudiosAndPlaySoundscape(debug);
+            loadingManager.Increment();  
+            loadingManager.EndLoading();  
+            _ = PrepareAudiosAndPlaySoundscape(debug);
         } );
-        ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());
+        ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals()); 
+            
         if(ssVisual != null)
             videoPlaying = true;
         return;
 
+    }
+
+    private async Task OnVisualFail(string name)
+    {
+        loadingManager.SetInfo($"Failed to load visuals {name}"); 
+        int increments = 10;
+        for(int i = 0; i < increments; i++)
+        {
+            await Task.Delay(2000/increments);
+            loadingManager.Increment(1f/increments); 
+        }
+        StopSoundscape();
+        loadingManager.EndLoading(); 
     }
 
     private async Task PrepareAudiosAndPlaySoundscape(bool debug)
@@ -242,6 +261,8 @@ public class SoundscapeWrapper: MonoBehaviour
             {
                 Destroy(ssVisual);
                 ssVisual = null;
+                RenderSettings.skybox = defaultSkybox;
+                DynamicGI.UpdateEnvironment();
             }
             videoPlaying = false;
         }

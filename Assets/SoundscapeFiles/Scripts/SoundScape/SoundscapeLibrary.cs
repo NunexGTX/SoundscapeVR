@@ -37,7 +37,8 @@ public class SoundscapeLibrary: MonoBehaviour
 
     public void UpdateSoundscapeData(string soundscapeId, Soundscape updatedSoundscape)
     {
-        soundscapeList.UpdateSoundscapeData(soundscapeId, updatedSoundscape);
+        if(!soundscapeList.UpdateSoundscapeData(soundscapeId, updatedSoundscape))
+        Debug.LogWarning($"Soundscape '{soundscapeId}' failed to be updated");
         if(!SaveSoundscapeList())
             Debug.LogWarning($"Soundscape '{soundscapeId}' was not saved successfully.");
     }

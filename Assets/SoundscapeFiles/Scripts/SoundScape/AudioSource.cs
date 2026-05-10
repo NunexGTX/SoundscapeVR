@@ -3,26 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class AudioSource
+public class AudioSource : ISerializationCallbackReceiver
 {
     [SerializeField] private string audioId;
+    [SerializeField] private string sourceId;
     [SerializeField] private SerializableVector3 spherePosition;
     public bool loop = true;
     public int delaySeconds = 0;
     public float volume = 1f;
     public List<AudioEffectInstance> audioEffects = new();
 
-    public AudioSource(string audioId, Vector3 spherePosition)
+    public AudioSource(string audioId, Vector3 spherePosition, Guid uuid)
     {
         this.audioId = audioId;
         this.spherePosition = new(spherePosition);
+        this.sourceId = uuid.ToString();
     }
-    public AudioSource(Audio audio, Vector3 spherePosition)
-    {
-        this.audioId = audio.id;
-        this.spherePosition = new(spherePosition);
-    }
+
+    public AudioSource(string audioId, Vector3 spherePosition): this(audioId, spherePosition, Guid.NewGuid()){}
+    public AudioSource(Audio audio, Vector3 spherePosition): this(audio.id, spherePosition, Guid.NewGuid()){}
     public string GetAudioId(){return audioId;}
+    public Guid GetUUID(){return Guid.Parse(sourceId);}
+    public void SetUUID(Guid id){sourceId = id.ToString();}
 
     public Vector3 GetSpherePosition()
     {
@@ -39,5 +41,13 @@ public class AudioSource
         foreach(AudioEffectInstance effect in audioEffects) effect.ApplyEffectToSource(go);
         go.GetComponent<UnityEngine.AudioSource>().volume = volume;
         go.GetComponent<UnityEngine.AudioSource>().loop = loop;
+    }
+
+    public void OnBeforeSerialize(){}
+
+    public void OnAfterDeserialize()
+    {
+        if(string.IsNullOrEmpty(sourceId))
+            sourceId = Guid.NewGuid().ToString();
     }
 }
