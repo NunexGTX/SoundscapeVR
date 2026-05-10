@@ -25,35 +25,43 @@ public class WorldAudioSource: MonoBehaviour
     }
 
     void OnEnable(){
-        _ = PlayAudio();
+        if (playbackType.Equals(AudioListeningType.BINAURAL))
+        {
+          _ = PlayAudio();
+        }else if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
+        {
+            //TODO: reaper DAW logic here.
+            
+            //Tell reaper the audio source was created so it makes the new track
+            ReapyControllerCommunication.NewTrack(audioSource.GetAudioId(),GetUUID());
+        }
+
+        
+        
     }
 
     //called when playing or replaying audio source.
     public async Task PlayAudio()
     {
         gameObject.GetComponent<MeshRenderer>().enabled = debug;
-        if (playbackType.Equals(AudioListeningType.BINAURAL))
+        UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
+        IAudioGenerator gen = await library.GetClipForAudio(audioSource.GetAudioId());
+        if(gen == null)
         {
-            UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
-            IAudioGenerator gen = await library.GetClipForAudio(audioSource.GetAudioId());
-            if(gen == null)
-            {
-                Destroy(gameObject);            
-                return;
-            }
-            src.generator = gen;
-            src.time = 0;
-            if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
-            {
-                src.spatializePostEffects = false;
-                src.spatialize = false;
-                src.spatialBlend = 0;
-            }
-            src.loop = audioSource.loop;
-            src.time = 0;
-            src.PlayDelayed(audioSource.delaySeconds);
+            Destroy(gameObject);            
             return;
-        } 
-        //TODO: reaper DAW logic here.
+        }
+        src.generator = gen;
+        src.time = 0;
+        if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
+        {
+            src.spatializePostEffects = false;
+            src.spatialize = false;
+            src.spatialBlend = 0;
+        }
+        src.loop = audioSource.loop;
+        src.time = 0;
+        src.PlayDelayed(audioSource.delaySeconds);
+        return;
     }
 }
