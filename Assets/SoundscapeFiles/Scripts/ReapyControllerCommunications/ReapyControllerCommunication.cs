@@ -9,15 +9,21 @@ using UnityEditor.VersionControl;
 public class ReapyControllerCommunication : MonoBehaviour
 {
     public string ServerIP;
-    public int ReapyCommunicationPort = 6637;
+    public int ReapyCommunicationPort = 6337;
     private TcpClient client;
     private NetworkStream stream;
+
+    //Commands
+    [SerializeField]
+    private string newTrackCommand = "new_track";
 
     void Start()
     {
         //TODO: start the TCP connection when a button is pressed and not on start
         client = new TcpClient(ServerIP, ReapyCommunicationPort); 
         stream = client.GetStream();
+
+        NewTrack("stones",Guid.NewGuid());
     }
 
     async void message_beeboop(string command) //All communication to server needs to be async to not freeze the entire game
@@ -39,7 +45,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     //New audio source
     public void NewTrack(string audioID, Guid soundUUID)
     {
-        var msg = new { command = "new_track", AudioID = audioID, SoundUUID = soundUUID}; //TODO Make this message with Newtonsoft or dont make a dictionary inside the dictionary
+        var msg = new NewTrack {command = newTrackCommand, AudioID = audioID, SoundUUID = soundUUID.ToString()};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);
