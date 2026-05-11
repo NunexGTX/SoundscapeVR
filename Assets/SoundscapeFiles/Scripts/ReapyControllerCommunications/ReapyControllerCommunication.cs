@@ -8,10 +8,10 @@ using UnityEditor.VersionControl;
 
 public class ReapyControllerCommunication : MonoBehaviour
 {
-    public static string ServerIP;
-    public static int ReapyCommunicationPort = 6637;
-    private static TcpClient client;
-    private static NetworkStream stream;
+    public string ServerIP;
+    public int ReapyCommunicationPort = 6637;
+    private TcpClient client;
+    private NetworkStream stream;
 
     void Start()
     {
@@ -20,7 +20,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         stream = client.GetStream();
     }
 
-    async static void message_beeboop(string command) //All communication to server needs to be async to not freeze the entire game
+    async void message_beeboop(string command) //All communication to server needs to be async to not freeze the entire game
     {
         byte[] message = Encoding.UTF8.GetBytes(command);
         stream.Write(message, 0, message.Length); //Send message
@@ -37,12 +37,12 @@ public class ReapyControllerCommunication : MonoBehaviour
     //Command functions
 
     //New audio source
-    public static void NewTrack(string audioID, Guid soundUUID)
+    public void NewTrack(string audioID, Guid soundUUID)
     {
-        var msg = new { command = "new_track", data = new { AudioID = audioID, SoundUUID = soundUUID } }; //TODO Make this message with Newtonsoft or dont make a dictionary inside the dictionary
+        var msg = new { command = "new_track", AudioID = audioID, SoundUUID = soundUUID}; //TODO Make this message with Newtonsoft or dont make a dictionary inside the dictionary
         string json = JsonUtility.ToJson(msg);
 
-        //T
+        message_beeboop(json);
     }
     
 }

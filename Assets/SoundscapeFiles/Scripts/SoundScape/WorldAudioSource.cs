@@ -13,6 +13,7 @@ public class WorldAudioSource: MonoBehaviour
     public SoundscapeLibrary library;
     public VrStateData vrStateData;
     public AudioListeningType playbackType;
+    public ReapyControllerCommunication reaperController;
 
     public Guid GetUUID()
     {
@@ -33,7 +34,7 @@ public class WorldAudioSource: MonoBehaviour
             //TODO: reaper DAW logic here.
             
             //Tell reaper the audio source was created so it makes the new track
-            ReapyControllerCommunication.NewTrack(audioSource.GetAudioId(),GetUUID());
+            reaperController.NewTrack(audioSource.GetAudioId(),GetUUID());
         }
 
         

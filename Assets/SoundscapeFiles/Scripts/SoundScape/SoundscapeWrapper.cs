@@ -15,6 +15,7 @@ public class SoundscapeWrapper: MonoBehaviour
     public VrStateData vrStateData;
     public GameObject audioSourceObject;
     public SoundscapeLibrary soundscapeLibrary;
+    public ReapyControllerCommunication reapyController;
     private bool videoPlaying = false;
     private bool edited = false;
     private Dictionary<Guid, GameObject> placedAudios = new();
@@ -125,6 +126,7 @@ public class SoundscapeWrapper: MonoBehaviour
         worldSrc.soundscapeWrapper = this;
         worldSrc.library = soundscapeLibrary;
         worldSrc.playbackType = vrStateData.GetCurrentAudio();
+        worldSrc.reaperController = reapyController;
 
         src.ApplyEffects(go);
         placedAudios.Add(worldSrc.GetUUID(), go);

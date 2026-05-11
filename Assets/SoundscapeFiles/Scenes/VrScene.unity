@@ -5064,6 +5064,7 @@ GameObject:
   - component: {fileID: 1891192193}
   - component: {fileID: 1891192195}
   - component: {fileID: 1891192196}
+  - component: {fileID: 1891192197}
   m_Layer: 0
   m_Name: SoundscapeWrapper
   m_TagString: Untagged
@@ -5087,6 +5088,7 @@ MonoBehaviour:
   vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   audioSourceObject: {fileID: 1728820851829268507, guid: b7b851fdf3be6ff4ca7f8c7a2db404d7, type: 3}
   soundscapeLibrary: {fileID: 1891192195}
+  reapyController: {fileID: 1891192197}
   leaveSoundscapeAction: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   loadingManager: {fileID: 657310051}
 --- !u!4 &1891192194
@@ -5139,6 +5141,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3c40c7b95e2d4c229002643c6474ac5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoogleForm
+--- !u!114 &1891192197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1891192192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb384dca29586ebbb995ce16505d9b74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReapyControllerCommunication
+  ServerIP: 
+  ReapyCommunicationPort: 6637
 --- !u!1 &2037751217
 GameObject:
   m_ObjectHideFlags: 0
