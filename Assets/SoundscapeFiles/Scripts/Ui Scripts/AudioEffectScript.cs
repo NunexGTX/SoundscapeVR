@@ -37,10 +37,15 @@ public class AudioEffectScript: MonoBehaviour
     {
         root.Q<Foldout>("echoFoldout").value = false;
         root.Q<Toggle>("echoToggle").value = false;
+
+        root.Q<Foldout>("occlusionFoldout").value = false;
+        root.Q<Toggle>("occlusionToggle").value = false;
+
         root.Q<Slider>("volume").value = volume;
         root.Q<SliderInt>("delay").value = delay;
         root.Q<Toggle>("loop").value = loop;
         root.Q<Label>("audioName").text = audioName;
+
         foreach(AudioEffectInstance effect in effects)
         {
             switch (effect.effectId)
@@ -52,6 +57,15 @@ public class AudioEffectScript: MonoBehaviour
                     root.Q<Slider>("echoDecay").value = effect.echoEffectData.decay_ratio;
                     root.Q<Slider>("echoDry").value = effect.echoEffectData.dry_mix;
                     root.Q<Slider>("echoWet").value = effect.echoEffectData.wet_mix;
+                    break;
+                case AudioEffectInstance.Occlusion:
+                    root.Q<Foldout>("occlusionFoldout").value = true;
+                    root.Q<Toggle>("occlusionToggle").value = true;
+                    root.Q<Toggle>("freqToggle").value = effect.occlusionEffectData.frequency_dependent;
+                    root.Q<Slider>("occlusionValue").value = effect.occlusionEffectData.occlusion_value;
+                    root.Q<Slider>("lowFreqOcc").value = effect.occlusionEffectData.occlusion_low_freq;
+                    root.Q<Slider>("midFreqOcc").value = effect.occlusionEffectData.occlusion_mid_freq;
+                    root.Q<Slider>("highFreqOcc").value = effect.occlusionEffectData.occlusion_high_freq;
                     break;
             }
         }
@@ -75,6 +89,15 @@ public class AudioEffectScript: MonoBehaviour
             float echoDry = root.Q<Slider>("echoDry").value;
             float echoWet = root.Q<Slider>("echoWet").value;
             effects.Add(new(AudioEffectInstance.Echo, new EchoEffectData(echoDelay, echoDecay, wet: echoWet, dry: echoDry)));
+        }
+        if (root.Q<Toggle>("occlusionToggle").value)
+        {
+            bool dependency = root.Q<Toggle>("freqToggle").value;
+            float occlusionValue = root.Q<Slider>("occlusionValue").value;
+            float lowOcc = root.Q<Slider>("lowFreqOcc").value;
+            float midOcc = root.Q<Slider>("midFreqOcc").value;
+            float highOcc = root.Q<Slider>("highFreqOcc").value;
+            effects.Add(new(AudioEffectInstance.Occlusion, new OcclusionEffectData(dependency, occlusionValue, lowOcc, midOcc, highOcc)));
         }
         editor.UpdateSourceData(effects, volume, delay, loop);
         

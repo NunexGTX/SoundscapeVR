@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6019997328645036657}
   - component: {fileID: 910421821952713553}
   - component: {fileID: 2013553953514860987}
+  - component: {fileID: 2480258698525180206}
   m_Layer: 5
   m_Name: WorldAudioSource
   m_TagString: AudioSource
@@ -227,18 +228,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorldAudioSource
   audioSource:
     audioId: 
+    sourceId: 1b2dfe1c-49c8-40b1-a8a7-848bce587385
     spherePosition:
       x: 0
       y: 0
       z: 0
+    loop: 0
+    delaySeconds: 0
     volume: 0
     audioEffects: []
-  playing: 1
   debug: 1
   soundscapeWrapper: {fileID: 0}
   library: {fileID: 0}
   vrStateData: {fileID: 0}
   playbackType: 0
+  reaperController: {fileID: 0}
 --- !u!114 &910421821952713553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,3 +341,86 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4911fc470e6a94144ab297e9d095d0b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+--- !u!114 &2480258698525180206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1728820851829268507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59c3684b22f00604a97bb68037fcf4cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SteamAudioUnity::SteamAudio.SteamAudioSource
+  directBinaural: 1
+  interpolation: 0
+  perspectiveCorrection: 0
+  distanceAttenuation: 0
+  distanceAttenuationInput: 0
+  distanceAttenuationValue: 1
+  airAbsorption: 0
+  airAbsorptionInput: 0
+  airAbsorptionLow: 1
+  airAbsorptionMid: 1
+  airAbsorptionHigh: 1
+  directivity: 0
+  directivityInput: 0
+  dipoleWeight: 0
+  dipolePower: 0
+  directivityValue: 1
+  occlusion: 1
+  occlusionInput: 1
+  occlusionType: 0
+  occlusionRadius: 1
+  occlusionSamples: 16
+  occlusionValue: 1
+  transmission: 1
+  transmissionType: 0
+  transmissionInput: 1
+  transmissionLow: 1
+  transmissionMid: 1
+  transmissionHigh: 1
+  maxTransmissionSurfaces: 1
+  directMixLevel: 1
+  reflections: 0
+  reflectionsType: 0
+  useDistanceCurveForReflections: 0
+  currentBakedSource: {fileID: 0}
+  reverbTimeLow: 0
+  reverbTimeMid: 0
+  reverbTimeHigh: 0
+  hybridReverbEQLow: 1
+  hybridReverbEQMid: 1
+  hybridReverbEQHigh: 1
+  hybridReverbDelay: 0
+  applyHRTFToReflections: 0
+  reflectionsMixLevel: 1
+  pathing: 0
+  pathingProbeBatch: {fileID: 0}
+  pathValidation: 1
+  findAlternatePaths: 1
+  pathingEQ:
+  - 1
+  - 1
+  - 1
+  pathingSH:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  applyHRTFToPathing: 0
+  pathingMixLevel: 1
+  normalizePathingEQ: 0
