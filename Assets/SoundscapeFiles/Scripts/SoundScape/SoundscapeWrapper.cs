@@ -187,26 +187,31 @@ public class SoundscapeWrapper: MonoBehaviour
         catch
         {
             Debug.LogWarning("Caught an error trying to load the visuals of a soundscape");
-            _ = OnVisualFail(currentSoundscape.title);
+            _ = OnVisualFail($"Failed to load visuals {currentSoundscape.title}");
         }
         screen = currentSoundscape.GetScreenObject();
         currentSoundscape.SetEdit(debug);
-        if(ssVisual != null)
-            videoPlaying = true;
+        videoPlaying = true;
+        if(ssVisual == null)
+        {
+            videoPlaying = false;
+            _ = OnVisualFail($"Visuals could not be loaded for {currentSoundscape.title}", stopSoundscape: false);
+        }
         return;
 
     }
 
-    private async Task OnVisualFail(string name)
+    private async Task OnVisualFail(string errorMessage, bool stopSoundscape = true)
     {
-        loadingManager.SetInfo($"Failed to load visuals {name}"); 
+        loadingManager.SetInfo(errorMessage); 
         int increments = 10;
         for(int i = 0; i < increments; i++)
         {
             await Task.Delay(2000/increments);
             loadingManager.Increment(1f/increments); 
         }
-        StopSoundscape();
+        if(stopSoundscape)
+            StopSoundscape();
         loadingManager.EndLoading(); 
     }
 
