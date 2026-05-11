@@ -5153,8 +5153,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb384dca29586ebbb995ce16505d9b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReapyControllerCommunication
-  ServerIP: 
-  ReapyCommunicationPort: 6637
+  ServerIP: 192.168.1.64
+  ReapyCommunicationPort: 6337
 --- !u!1 &2037751217
 GameObject:
   m_ObjectHideFlags: 0
