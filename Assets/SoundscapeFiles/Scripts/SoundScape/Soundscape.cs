@@ -82,6 +82,7 @@ public abstract class Soundscape
         skyboxMat.SetColor("_Tint", new Color(0, 0, 0));
         RenderSettings.skybox = skyboxMat;
         DynamicGI.UpdateEnvironment();
+        
         screenMat = new Material(Shader.Find("Custom/CinemaStereoProjection"));
         screenObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
         screenObject.GetComponent<MeshRenderer>().material = screenMat;
@@ -132,6 +133,7 @@ public abstract class Soundscape
     public void RemoveSource(AudioSource audio){RemoveSource(audio.GetUUID());}
     public abstract Soundscape Copy();
     public abstract GameObject TryGetVisuals(VisualType visualType);
+    [Obsolete("Este método não deve ter uso atualmente, verificar para remover.")]
     public abstract VisualType GetSupportedVisual();
     public abstract void RestartVisuals(GameObject ssVisual, VisualType visualType);
 

@@ -10,7 +10,7 @@ public class VideoSoundscape : Soundscape
     public VideoSoundscape(string title, int time, string staticPath, string encompassingPath, string projectionType, bool loop) : this(new(), title, time, staticPath, encompassingPath, projectionType, loop){}
     protected VideoSoundscape(List<AudioSource> srcs, string title, int time, string staticPath, string encompassingPath, string projectionType, bool loop) : base(srcs, title, time, staticPath, encompassingPath, projectionType, loop){}
     
-
+    [Obsolete("")]
     public override VisualType GetSupportedVisual()
     {
         if(null == staticPath && null == encompassingPath)
@@ -34,6 +34,11 @@ public class VideoSoundscape : Soundscape
 
     public override GameObject TryGetVisuals(VisualType visualType)
     {
+        if(visualType == VisualType.NONE)
+        {
+            onVisualsLoaded.Invoke();
+            return new GameObject("NoVideo");        
+        }
         if(!string.IsNullOrWhiteSpace(encompassingPath)) return GetVideo(visualType);
         if(visualType == VisualType.STATIC && !string.IsNullOrWhiteSpace(staticPath)) return GetVideo(visualType);
         //onVisualsLoaded.Invoke();
@@ -50,7 +55,6 @@ public class VideoSoundscape : Soundscape
         videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
         if(visualType == VisualType.ENCOMPASSING)
         {
-            Debug.Log("Encomapssing");
             //videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
             VideoPlayer360 v360 = go.AddComponent<VideoPlayer360>();
             v360.videoFileName = SoundscapeLibrary.GetStreamingPath(encompassingPath);
@@ -67,13 +71,11 @@ public class VideoSoundscape : Soundscape
             v360.Video360Material = mat;
         } else if(!string.IsNullOrWhiteSpace(staticPath))
         {
-            Debug.Log("Static path");
             videoPlayer.url = SoundscapeLibrary.GetStreamingPath(staticPath);
             videoPlayer.prepareCompleted += AdaptEncompassingToScreen;
             CreateScreenAdapter(createCanvas: true);
         } else if(!string.IsNullOrWhiteSpace(encompassingPath))
         {
-            Debug.Log("Cinema mode");
             videoPlayer.url = SoundscapeLibrary.GetStreamingPath(encompassingPath);
             CreateScreenAdapter(createCanvas: false);
             videoPlayer.prepareCompleted += AdaptEncompassingToScreen;

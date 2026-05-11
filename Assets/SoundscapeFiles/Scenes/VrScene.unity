@@ -2652,7 +2652,7 @@ PrefabInstance:
     - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_UIScroll
       value: 
-      objectReference: {fileID: -6756787485274679044, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+      objectReference: {fileID: -8666952849799569744, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_TeleportMode
       value: 

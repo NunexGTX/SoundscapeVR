@@ -20,7 +20,9 @@ public class ImageEncompassingDisplay : MonoBehaviour
     
     private IEnumerator LoadAndApply()
     {
-        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath))
+        DownloadedTextureParams downloadParams = DownloadedTextureParams.Default;
+        downloadParams.mipmapChain = false;
+        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath, downloadParams))
         {
             yield return uwr.SendWebRequest();
 
