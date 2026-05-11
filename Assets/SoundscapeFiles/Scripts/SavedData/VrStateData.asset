@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: VrStateData
   m_EditorClassIdentifier: Assembly-CSharp::VrStateData
   vrEnabled: 0
-  currentVisual: 1
+  currentVisual: 2
   currentAudio: 1

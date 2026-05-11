@@ -76,7 +76,7 @@ public class SoundscapeLibrary: MonoBehaviour
     {
         foreach(Soundscape ss in soundscapeList.GetSoundscapes())
         {
-            if(ss.title.Equals(soundscapeTitle)) return true;
+            if(ss.title.ToLower().Equals(soundscapeTitle.ToLower())) return true;
         }
         return false;
     }

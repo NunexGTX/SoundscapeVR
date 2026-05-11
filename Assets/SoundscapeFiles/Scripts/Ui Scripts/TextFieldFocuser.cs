@@ -12,7 +12,7 @@ public class TextFieldFocuser : MonoBehaviour
     private List<Action> unbindingActions = new();
     private VisualElement _activeField;
 
-    void Start()
+    void OnEnable()
     {
         RegisterAllTextFields();
     }

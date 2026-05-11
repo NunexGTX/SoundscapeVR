@@ -89,6 +89,7 @@ public abstract class Soundscape
         screenObject.transform.position = new(5.5f, 2f, 0);
         screenObject.transform.rotation = Quaternion.Euler(0, 90, 0);
         screenObject.transform.localScale = new(8, 5, 5);
+        screenObject.layer = 2;
         if(!createCanvas) return;
 
         screenObject.GetComponent<MeshRenderer>().enabled = false;
