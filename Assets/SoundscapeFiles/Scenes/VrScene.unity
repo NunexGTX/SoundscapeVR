@@ -1084,7 +1084,11 @@ PrefabInstance:
     - target: {fileID: 7536434562731816736, guid: b7b851fdf3be6ff4ca7f8c7a2db404d7, type: 3}
       propertyPath: m_Resource
       value: 
-      objectReference: {fileID: 8300000, guid: e5377be82ebb1f74886a61345415ac88, type: 3}
+      objectReference: {fileID: 8300000, guid: 7763c34c8d824de458914534b7a20d5e, type: 3}
+    - target: {fileID: 7536434562731816736, guid: b7b851fdf3be6ff4ca7f8c7a2db404d7, type: 3}
+      propertyPath: SpatializePostEffects
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7536434562731816736, guid: b7b851fdf3be6ff4ca7f8c7a2db404d7, type: 3}
       propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
       value: 0
