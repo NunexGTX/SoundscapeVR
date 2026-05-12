@@ -28,7 +28,10 @@ public class AudioSource : ISerializationCallbackReceiver
 
     public Vector3 GetSpherePosition()
     {
-        return spherePosition.ToVector3();
+        //distance: x
+        //elevation: y
+        //azimuth: z
+        return spherePosition.ToVector3(); 
     }
 
     public void WithNewPosition(Vector3 newCoords)

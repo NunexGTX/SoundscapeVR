@@ -17,13 +17,20 @@ public class ReapyControllerCommunication : MonoBehaviour
     [SerializeField]
     private string newTrackCommand = "new_track";
 
+    [SerializeField]
+    private string sourcePositionCommand = "source_position";
+
+    [SerializeField]
+    private string deleteTrackCommand = "delete_track";
+
+    [SerializeField]
+    private string resetCommand = "RESET";
+
     void Start()
     {
         //TODO: start the TCP connection when a button is pressed and not on start
         client = new TcpClient(ServerIP, ReapyCommunicationPort); 
         stream = client.GetStream();
-
-        NewTrack("stones",Guid.NewGuid());
     }
 
     async void message_beeboop(string command) //All communication to server needs to be async to not freeze the entire game
@@ -43,9 +50,36 @@ public class ReapyControllerCommunication : MonoBehaviour
     //Command functions
 
     //New audio source
-    public void NewTrack(string audioID, Guid soundUUID)
+    public void NewTrack(string audioID, Guid soundUUID, bool loop)
     {
-        var msg = new NewTrack {command = newTrackCommand, AudioID = audioID, SoundUUID = soundUUID.ToString()};
+        var msg = new NewTrack {command = newTrackCommand, AudioID = audioID, SoundUUID = soundUUID.ToString(), Loop = loop};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
+    //Update Audio Source Position
+    public void UpdateSourcePosition(string soundUUID, float azim, float elev, float Distance)
+    {
+        var msg = new SourcePosition {command = sourcePositionCommand, AudioID = soundUUID, position = (azim, elev), distance = Distance};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
+    //Delete Track
+    public void DeleteTrack(string soundUUID)
+    {
+        var msg = new DeleteTrack {command = deleteTrackCommand, AudioID = soundUUID};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
+    //Reset
+    public void Reset()
+    {
+        var msg = new ResetReapyController {command = resetCommand};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);

@@ -30,15 +30,34 @@ public class WorldAudioSource: MonoBehaviour
         {
           _ = PlayAudio();
         }else if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
-        {
-            //TODO: reaper DAW logic here.
-            
+        {            
             //Tell reaper the audio source was created so it makes the new track
-            reaperController.NewTrack(audioSource.GetAudioId(),GetUUID());
+            Debug.Log("Sending Audio Source to Reaper");
+            reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.loop);
+            updateReaperTrackPosition();
         }
+    }
 
-        
-        
+    void OnDestroy()
+    {
+        if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
+        {
+            deleteReaperTrack();
+        }
+    }
+
+    void updateReaperTrackPosition()
+    {
+        float distance = audioSource.GetSpherePosition().x;
+        float elevation = audioSource.GetSpherePosition().y;
+        float azimuth = audioSource.GetSpherePosition().z;
+
+        reaperController.UpdateSourcePosition(audioSource.GetAudioId(), azimuth,elevation,distance);
+    }
+
+    void deleteReaperTrack()
+    {
+        reaperController.DeleteTrack(audioSource.GetAudioId());
     }
 
     //called when playing or replaying audio source.
