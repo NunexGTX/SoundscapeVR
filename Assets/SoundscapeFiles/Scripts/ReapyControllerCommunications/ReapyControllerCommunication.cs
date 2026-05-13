@@ -59,18 +59,18 @@ public class ReapyControllerCommunication : MonoBehaviour
     }
 
     //Update Audio Source Position
-    public void UpdateSourcePosition(string soundUUID, float azim, float elev, float Distance)
+    public void UpdateSourcePosition(Guid soundUUID, float azim, float elev, float Distance)
     {
-        var msg = new SourcePosition {command = sourcePositionCommand, AudioID = soundUUID, position = (azim, elev), distance = Distance};
+        var msg = new SourcePosition {command = sourcePositionCommand, SoundUUID = soundUUID.ToString(), azim = azim, elev = elev, distance = Distance};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);
     }
 
     //Delete Track
-    public void DeleteTrack(string soundUUID)
+    public void DeleteTrack(Guid soundUUID)
     {
-        var msg = new DeleteTrack {command = deleteTrackCommand, AudioID = soundUUID};
+        var msg = new DeleteTrack {command = deleteTrackCommand, SoundUUID = soundUUID.ToString()};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);

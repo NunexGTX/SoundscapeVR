@@ -3,18 +3,21 @@ using System;
 public abstract class ReapyControllerCommand
 {
     public string command;
-    public string AudioID;
+    public string SoundUUID;
+
 }
 
 public class NewTrack: ReapyControllerCommand {
     
-    public string SoundUUID;
+    public string AudioID;
+
     public bool Loop;
 }
 
 public class SourcePosition: ReapyControllerCommand
 {
-    public (float, float) position;
+    public float azim; //Azimuth
+    public float elev; //elevation
     public float distance;
 }
 

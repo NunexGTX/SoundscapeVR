@@ -52,12 +52,24 @@ public class WorldAudioSource: MonoBehaviour
         float elevation = audioSource.GetSpherePosition().y;
         float azimuth = audioSource.GetSpherePosition().z;
 
-        reaperController.UpdateSourcePosition(audioSource.GetAudioId(), azimuth,elevation,distance);
+        reaperController.UpdateSourcePosition(audioSource.GetUUID(), azimuth,elevation,distance);
     }
 
     void deleteReaperTrack()
     {
-        reaperController.DeleteTrack(audioSource.GetAudioId());
+        reaperController.DeleteTrack(audioSource.GetUUID());
+    }
+
+    bool isWorldSourceAmbisonic()
+    {
+        if (library.GetAudioType(audioSource.GetAudioId()) == Audio.TYPE_AMBISONIC)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     //called when playing or replaying audio source.
