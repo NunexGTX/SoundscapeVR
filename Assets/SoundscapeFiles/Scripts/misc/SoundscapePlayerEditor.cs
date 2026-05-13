@@ -140,6 +140,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     public void SelectAudioSource(GameObject src)
     {
         if(!soundscapeWrapper.HasSoundscape()) return;
+        if(!soundscapeWrapper.inEditMode) return;
         if(currentState != State.Standby && currentState != State.Select) return;
         UnselectSource();
         src.GetComponent<MeshRenderer>().material = selectingMaterial;
@@ -152,12 +153,14 @@ public class SoundscapePlayerEditor: MonoBehaviour
     }
 
     //called by audio effect UI to collect the data from it and write it into currentSelectedSourceObject
-    public void UpdateSourceData(List<AudioEffectInstance> effectInstances, float volume, int delaySeconds, bool loop){
+    public void UpdateSourceData(List<AudioEffectInstance> effectInstances, float volume, int delaySeconds, bool loop, bool mute, bool visible){
         AudioSource src = currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource;
         src.audioEffects = effectInstances;
         src.volume = volume;
         src.loop = loop;
         src.delaySeconds = delaySeconds;
+        src.mute = mute;
+        src.visible = visible;
         soundscapeWrapper.UpdateSource(currentSelectedSourceObject);
         UnselectSource();
         currentState = State.Standby;

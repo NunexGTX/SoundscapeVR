@@ -9,6 +9,8 @@ public class AudioSource : ISerializationCallbackReceiver
     [SerializeField] private string sourceId;
     [SerializeField] private SerializableVector3 spherePosition;
     public bool loop = true;
+    public bool mute = true;
+    public bool visible = false;
     public int delaySeconds = 0;
     public float volume = 1f;
     public List<AudioEffectInstance> audioEffects = new();

@@ -35,6 +35,11 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     async void message_beeboop(string command) //All communication to server needs to be async to not freeze the entire game
     {
+        if(stream == null)
+        {
+            Debug.LogWarning($"[SoundscapeVR] No stream object was found. Failed to send message to Reaper Controller Server.\nAddress:{ServerIP}:{ReapyCommunicationPort}");
+            return;
+        }
         byte[] message = Encoding.UTF8.GetBytes(command);
         stream.Write(message, 0, message.Length); //Send message
         Debug.Log($"Sent {message} to Reaper Controller Server at {ServerIP}:{ReapyCommunicationPort}");

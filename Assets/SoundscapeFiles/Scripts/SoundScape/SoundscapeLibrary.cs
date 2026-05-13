@@ -19,6 +19,7 @@ public class SoundscapeLibrary: MonoBehaviour
     public Form form = new();
     public LoadingManager loadingManager;
     private AudioClipCache audioClipCache = new();
+    public Texture2D defaultAudioIcon;
 
     private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
     private async void Start()
@@ -459,5 +460,18 @@ public class SoundscapeLibrary: MonoBehaviour
     public bool IsAudioLoaded(string audioId)
     {
         return audioClipCache.IsAudioLoaded(audioId);
+    }
+
+    public Texture2D GetIconForAudio(string audioId)
+    {
+        foreach(Audio audio in audioList.GetAudios())
+        {
+            if (audio.id.Equals(audioId))
+            {
+                Texture2D tex = audio.GetImage();;
+                return tex == null ? defaultAudioIcon : tex;
+            }
+        }
+        return defaultAudioIcon;
     }
 }

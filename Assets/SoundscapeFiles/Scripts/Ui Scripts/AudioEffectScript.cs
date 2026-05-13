@@ -11,7 +11,7 @@ public class AudioEffectScript: MonoBehaviour
     private float volume = 1f;
     private string audioName = "Audio Name";
     private int delay = 0;
-    private bool loop = true;
+    private bool loop = true, visible = true, mute = false;
     void OnEnable()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -29,6 +29,8 @@ public class AudioEffectScript: MonoBehaviour
         audioName = src.GetAudioId();
         delay = src.delaySeconds;
         loop = src.loop;
+        visible = src.visible;
+        mute = src.mute;
         if(root == null) return;
         PopulateValues();
     }
@@ -44,6 +46,8 @@ public class AudioEffectScript: MonoBehaviour
         root.Q<Slider>("volume").value = volume;
         root.Q<SliderInt>("delay").value = delay;
         root.Q<Toggle>("loop").value = loop;
+        root.Q<Toggle>("mute").value = mute;
+        root.Q<Toggle>("visible").value = visible;
         root.Q<Label>("audioName").text = audioName;
 
         foreach(AudioEffectInstance effect in effects)
@@ -80,6 +84,8 @@ public class AudioEffectScript: MonoBehaviour
     {
         volume = root.Q<Slider>("volume").value;
         loop = root.Q<Toggle>("loop").value;
+        mute = root.Q<Toggle>("mute").value;
+        visible = root.Q<Toggle>("visible").value;
         delay = root.Q<SliderInt>("delay").value;
         List<AudioEffectInstance> effects = new();
         if (root.Q<Toggle>("echoToggle").value)
@@ -99,7 +105,7 @@ public class AudioEffectScript: MonoBehaviour
             float highOcc = root.Q<Slider>("highFreqOcc").value;
             effects.Add(new(AudioEffectInstance.Occlusion, new OcclusionEffectData(dependency, occlusionValue, lowOcc, midOcc, highOcc)));
         }
-        editor.UpdateSourceData(effects, volume, delay, loop);
+        editor.UpdateSourceData(effects, volume, delay, loop, mute, visible);
         
     }
 }

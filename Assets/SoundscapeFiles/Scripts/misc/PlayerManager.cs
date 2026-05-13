@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using SteamAudio;
+using static SteamAudio.SteamAudioManager;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Gravity;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
 using UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets;
@@ -44,7 +42,7 @@ public class PlayerManager : MonoBehaviour
         StartCoroutine(VRSwitcher.EnableXRCoroutine());
         #endif
         vrStateData.IsInVr = true;
-        SteamAudioManager.NotifyAudioListenerChanged();
+        NotifyAudioListenerChanged();
         #if UNITY_EDITOR
         EditorUtility.SetDirty(vrStateData);
         #endif
@@ -59,7 +57,7 @@ public class PlayerManager : MonoBehaviour
         VRSwitcher.DisableXR();
         //FixOptions();
         vrStateData.IsInVr = false;
-        SteamAudioManager.NotifyAudioListenerChanged();
+        NotifyAudioListenerChanged();
         #if UNITY_EDITOR
         EditorUtility.SetDirty(vrStateData);
         #endif

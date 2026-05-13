@@ -19,7 +19,7 @@ public class SoundscapeWrapper: MonoBehaviour
     private bool videoPlaying = false;
     private bool edited = false;
     private Dictionary<Guid, GameObject> placedAudios = new();
-    private bool editing = false;
+    public bool inEditMode {get; private set;} = false;
     private Material defaultSkybox;
     [SerializeField] private InputActionReference leaveSoundscapeAction;
     [SerializeField] private LoadingManager loadingManager;
@@ -146,23 +146,23 @@ public class SoundscapeWrapper: MonoBehaviour
         _ = srcObj.GetComponent<WorldAudioSource>().PlayAudio();
     }
 
-    private void RestartSoundscape(bool debug)
+    private void RestartSoundscape()
     {
         currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
         PlayExistingSourcesFromZero();
-        StartLoopCoroutine(debug);
+        StartLoopCoroutine();
     }
 
     public async Task PrepareSoundscape(bool debug)
     {
-        playerManager.HideCameraLayers(debug);
-        editing = debug;
+        inEditMode = debug;
+        playerManager.HideCameraLayers(inEditMode);
         /*if (debug)
         {
             StartSoundscape(debug);
             return;
         }*/
-        playerManager.SetPlayerMovement(debug);
+        playerManager.SetPlayerMovement(inEditMode);
         while (!loadingManager.CanLoad(true))
         {
             await Task.Delay(100);
@@ -178,7 +178,7 @@ public class SoundscapeWrapper: MonoBehaviour
         {
             loadingManager.Increment();  
             loadingManager.EndLoading();  
-            _ = PrepareAudiosAndPlaySoundscape(debug);
+            _ = PrepareAudiosAndPlaySoundscape();
         } );
         try
         {
@@ -190,7 +190,7 @@ public class SoundscapeWrapper: MonoBehaviour
             _ = OnVisualFail($"Failed to load visuals {currentSoundscape.title}");
         }
         screen = currentSoundscape.GetScreenObject();
-        currentSoundscape.SetEdit(debug);
+        currentSoundscape.SetEdit(inEditMode);
         videoPlaying = true;
         if(ssVisual == null)
         {
@@ -215,7 +215,7 @@ public class SoundscapeWrapper: MonoBehaviour
         loadingManager.EndLoading(); 
     }
 
-    private async Task PrepareAudiosAndPlaySoundscape(bool debug)
+    private async Task PrepareAudiosAndPlaySoundscape()
     {
         List<string> audioIds = new();
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
@@ -224,43 +224,45 @@ public class SoundscapeWrapper: MonoBehaviour
         }
         soundscapeLibrary.ClearAudioCache(currentSoundscape.title);
         await soundscapeLibrary.LoadAudioClipsAsync(audioIds);
-        StartSoundscape(debug);
+        StartSoundscape();
     }
 
-    private void StartSoundscape(bool debug)
+    private void StartSoundscape()
     {
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
         {
             //if an audio isnt loaded here, that means it could not be loaded, so we dont instantiate it.
             if(!soundscapeLibrary.IsAudioLoaded(src.GetAudioId())) continue;
-            PlaceSoundscapeAudioSource(src, debug);
+            PlaceSoundscapeAudioSource(src, inEditMode);
         }
         currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
-        StartLoopCoroutine(debug);
+        StartLoopCoroutine();
     }
 
     //function to start counting time to loop the SS.
     //if currrentSS time is 0, this does nothing. otherwise starts the coroutine that will then call RestartSoundscape()
-    private void StartLoopCoroutine(bool debug)
+    private void StartLoopCoroutine()
     {
         int time = currentSoundscape.timeSeconds;
         if(time == 0) return;
-        StartCoroutine(SoundscapeCountdown(time, debug));
+        StartCoroutine(SoundscapeCountdown(time));
     }
 
-    IEnumerator SoundscapeCountdown(int timeSeconds, bool debug)
+    IEnumerator SoundscapeCountdown(int timeSeconds)
     {
         yield return new WaitForSeconds(timeSeconds);
         //if we're debugging, loop soundscape always.
-        if(currentSoundscape.loop || debug)
-            RestartSoundscape(debug);
+        if(currentSoundscape.loop || inEditMode)
+            RestartSoundscape();
         else
             StopSoundscape();
     }
 
+    //function is called when player r-clicks / calls the cancel action keybind.
+    //we early return in edit mode because that action is used for other purposes.
     private void StopSoundscape(InputAction.CallbackContext context)
     {
-        if(editing) return;
+        if(inEditMode) return;
         StopSoundscape();
     }
 
@@ -269,7 +271,7 @@ public class SoundscapeWrapper: MonoBehaviour
 
     public void StopSoundscape()
     {
-        editing = false;
+        inEditMode = false;
         SaveCurrentSoundscape();
         playerManager.SetPlayerMovement(true);
         playerManager.ShowCameraLayers();
@@ -312,5 +314,4 @@ public class SoundscapeWrapper: MonoBehaviour
     }
 
     public bool HasSoundscape(){return currentSoundscape != null;}
-
 }

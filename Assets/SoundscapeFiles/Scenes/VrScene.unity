@@ -1579,7 +1579,7 @@ MonoBehaviour:
   vrGravity: {fileID: 935133053}
   cameraHideMask:
     serializedVersion: 2
-    m_Bits: 864
+    m_Bits: 352
   debugCameraHideMask:
     serializedVersion: 2
     m_Bits: 320
@@ -1675,7 +1675,7 @@ RectTransform:
   m_Father: {fileID: 977132029}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2735,7 +2735,7 @@ PrefabInstance:
       objectReference: {fileID: -6493913391331992944, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 3796692410269933979, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_PhysicsLayerMask.m_Bits
-      value: 993
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4295892835532738850, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_ExcludeLayers.m_Bits
@@ -3535,12 +3535,12 @@ GameObject:
   - component: {fileID: 1428927973}
   - component: {fileID: 1428927972}
   m_Layer: 3
-  m_Name: Canvas
+  m_Name: HUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1428927972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4765,7 +4765,7 @@ RectTransform:
   m_Father: {fileID: 2037751218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5133,6 +5133,7 @@ MonoBehaviour:
     description: 
     questions: []
   loadingManager: {fileID: 657310051}
+  defaultAudioIcon: {fileID: 2800000, guid: 14347192edc0e544abfefae7af9ea5b5, type: 3}
 --- !u!114 &1891192196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5160,6 +5161,9 @@ MonoBehaviour:
   ServerIP: 192.168.1.64
   ReapyCommunicationPort: 6337
   newTrackCommand: new_track
+  sourcePositionCommand: source_position
+  deleteTrackCommand: delete_track
+  resetCommand: RESET
 --- !u!1 &2037751217
 GameObject:
   m_ObjectHideFlags: 0

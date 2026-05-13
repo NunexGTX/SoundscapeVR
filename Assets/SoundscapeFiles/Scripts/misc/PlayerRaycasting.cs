@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem; // Using New Input System
 
-public class SphereRaycaster : MonoBehaviour
+public class PlayerRaycasting : MonoBehaviour
 {
     [SerializeField] private Camera playerCamera;
     [SerializeField] private SoundscapePlayerEditor editor;
@@ -18,6 +18,7 @@ public class SphereRaycaster : MonoBehaviour
             if(obj != null && obj.CompareTag("AudioSource"))
             {
                 editor.SelectAudioSource(obj);
+                obj.GetComponent<WorldAudioSource>().FlipMuteState();
                 return;
             }
             editor.FirstPlaceAudio(RaycastSphere());

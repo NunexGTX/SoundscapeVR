@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class WorldAudioSource: MonoBehaviour
 {
@@ -10,10 +12,12 @@ public class WorldAudioSource: MonoBehaviour
     public bool debug = true;
 
     public SoundscapeWrapper soundscapeWrapper;
+    public GameObject canvas;
     public SoundscapeLibrary library;
     public VrStateData vrStateData;
     public AudioListeningType playbackType;
     public ReapyControllerCommunication reaperController;
+
 
     public Guid GetUUID()
     {
@@ -36,14 +40,21 @@ public class WorldAudioSource: MonoBehaviour
             reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.loop);
             updateReaperTrackPosition();
         }
+        //if audiosource is visible -> we want to render the icon, not the cube.
+        GetComponent<MeshRenderer>().enabled = !audioSource.visible;
+        if (audioSource.visible && !debug)
+        {
+            Texture2D soundIcon = library.GetIconForAudio(audioSource.GetAudioId());
+            canvas.SetActive(true);
+            canvas.GetComponent<RawImage>().texture = soundIcon;
+            SetIconEnabledState(audioSource.mute);
+        }
     }
 
     void OnDestroy()
     {
         if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
-        {
             deleteReaperTrack();
-        }
     }
 
     void updateReaperTrackPosition()
@@ -62,14 +73,7 @@ public class WorldAudioSource: MonoBehaviour
 
     bool isWorldSourceAmbisonic()
     {
-        if (library.GetAudioType(audioSource.GetAudioId()) == Audio.TYPE_AMBISONIC)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return library.GetAudioType(audioSource.GetAudioId()) == Audio.TYPE_AMBISONIC;
     }
 
     //called when playing or replaying audio source.
@@ -91,9 +95,27 @@ public class WorldAudioSource: MonoBehaviour
             src.spatialize = false;
             src.spatialBlend = 0;
         }
+        src.mute = audioSource.mute;
         src.loop = audioSource.loop;
         src.time = 0;
         src.PlayDelayed(audioSource.delaySeconds);
         return;
     }
+
+    public void SetIconEnabledState(bool isMuted)
+    {
+        Color color = canvas.GetComponent<RawImage>().color;
+        color.a = isMuted ? 0.4f : 1f;
+    }
+    
+    public void FlipMuteState()
+    {
+        if(!audioSource.visible) return;
+        if(soundscapeWrapper.inEditMode) return;
+        bool newMute = !audioSource.mute;
+        SetIconEnabledState(newMute);
+        audioSource.mute = newMute;
+        gameObject.GetComponent<UnityEngine.AudioSource>().mute = newMute;
+    }
+
 }
