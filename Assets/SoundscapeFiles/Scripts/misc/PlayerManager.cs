@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SteamAudio;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -43,6 +44,7 @@ public class PlayerManager : MonoBehaviour
         StartCoroutine(VRSwitcher.EnableXRCoroutine());
         #endif
         vrStateData.IsInVr = true;
+        SteamAudioManager.NotifyAudioListenerChanged();
         #if UNITY_EDITOR
         EditorUtility.SetDirty(vrStateData);
         #endif
@@ -57,6 +59,7 @@ public class PlayerManager : MonoBehaviour
         VRSwitcher.DisableXR();
         //FixOptions();
         vrStateData.IsInVr = false;
+        SteamAudioManager.NotifyAudioListenerChanged();
         #if UNITY_EDITOR
         EditorUtility.SetDirty(vrStateData);
         #endif
