@@ -35,8 +35,8 @@ transcoding_settings = {
     "frame-rate-variable": 'cfr', #crf keeps the frame rate constant
     
     #audio
-    "audio_codec": "mp3",
-    "audio_bitrate": "320k",
+    "audio_codec": "libopus",
+    "audio_bitrate": "256k",
     
     #Metadata
     "map_metadata": 0
@@ -64,7 +64,7 @@ unity_debug_vp8_transcoding_settings = {
     
     #audio
     "audio_codec": "libopus",
-    "audio_bitrate": "160k",
+    "audio_bitrate": "256k",
     
     #Metadata
     "map_metadata": 0
@@ -97,7 +97,7 @@ def video_picker() -> str:
     root = tk.Tk()
     root.withdraw()
 
-    video_extensions = "*.mp4 *.mov *.avi *.mkv *.wmv *.flv *.mpeg *.mpg" #common video extensions
+    video_extensions = "*.mp4 *.mov *.avi *.mkv *.wmv *.flv *.mpeg *.mpg *.webm" #common video extensions
 
     file_path = filedialog.askopenfilename(
         title="Pick your video file",
