@@ -29,7 +29,9 @@ public class VideoSoundscape : Soundscape
     }
     public override Soundscape Copy()
     {
-        return new VideoSoundscape(audioSources, title, timeSeconds, staticPath, encompassingPath, projectionType, loop);
+        return new VideoSoundscape(
+        audioSources.ConvertAll(src => new AudioSource(src)), 
+        title, timeSeconds, staticPath, encompassingPath, projectionType, loop);
     }
 
     public override GameObject TryGetVisuals(VisualType visualType)

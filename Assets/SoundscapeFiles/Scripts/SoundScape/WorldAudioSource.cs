@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -40,10 +41,11 @@ public class WorldAudioSource: MonoBehaviour
             reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.loop);
             updateReaperTrackPosition();
         }
-        //if audiosource is visible -> we want to render the icon, not the cube.
-        GetComponent<MeshRenderer>().enabled = !audioSource.visible;
+        //if audiosource is visible -> we want to render the icon, not the cube, in display mode.
+        //otherside, just render the cube
         if (audioSource.visible && !debug)
         {
+            GetComponent<MeshRenderer>().enabled = false;
             Texture2D soundIcon = library.GetIconForAudio(audioSource.GetAudioId());
             canvas.SetActive(true);
             canvas.GetComponent<RawImage>().texture = soundIcon;
@@ -106,6 +108,7 @@ public class WorldAudioSource: MonoBehaviour
     {
         Color color = canvas.GetComponent<RawImage>().color;
         color.a = isMuted ? 0.4f : 1f;
+        canvas.GetComponent<RawImage>().color = color;
     }
     
     public void FlipMuteState()
@@ -117,5 +120,7 @@ public class WorldAudioSource: MonoBehaviour
         audioSource.mute = newMute;
         gameObject.GetComponent<UnityEngine.AudioSource>().mute = newMute;
     }
+
+    public bool IsVisible(){return audioSource.visible;}
 
 }

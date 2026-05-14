@@ -29,7 +29,7 @@ public class PlayerRaycasting : MonoBehaviour
     {
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 1000f, UiLayer))
+        if (Physics.Raycast(ray, out hit, 1000f, soundSourcesLayer))
         {
             GameObject sourceFound = hit.collider.gameObject;
             return sourceFound;

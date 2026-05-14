@@ -1579,7 +1579,7 @@ MonoBehaviour:
   vrGravity: {fileID: 935133053}
   cameraHideMask:
     serializedVersion: 2
-    m_Bits: 352
+    m_Bits: 1376
   debugCameraHideMask:
     serializedVersion: 2
     m_Bits: 320
@@ -2652,7 +2652,7 @@ PrefabInstance:
     - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_UIScroll
       value: 
-      objectReference: {fileID: -8666952849799569744, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+      objectReference: {fileID: -6756787485274679044, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_TeleportMode
       value: 
@@ -2676,6 +2676,10 @@ PrefabInstance:
     - target: {fileID: 2556648708419447538, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_RayInteractorChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2763817294847212894, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_RaycastMask.m_Bits
+      value: 2147484193
       objectReference: {fileID: 0}
     - target: {fileID: 3325226854019162143, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_GripInput.m_InputActionReference
@@ -2864,6 +2868,10 @@ PrefabInstance:
     - target: {fileID: 4750419575962273167, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -23
+      objectReference: {fileID: 0}
+    - target: {fileID: 5137354377943704513, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_RaycastMask.m_Bits
+      value: 2147484193
       objectReference: {fileID: 0}
     - target: {fileID: 5193502429546757832, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_MaxRaycastDistance
@@ -4026,41 +4034,6 @@ CharacterController:
   m_CorrespondingSourceObject: {fileID: 4295892835532738850, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
   m_PrefabInstance: {fileID: 1373153106}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1634525463
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1634525464}
-  m_Layer: 5
-  m_Name: Canvas
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1634525464
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1634525463}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 506, y: 226.5}
-  m_SizeDelta: {x: 1012, y: 453}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1675231311
 GameObject:
   m_ObjectHideFlags: 0
@@ -5093,6 +5066,9 @@ MonoBehaviour:
   audioSourceObject: {fileID: 1728820851829268507, guid: b7b851fdf3be6ff4ca7f8c7a2db404d7, type: 3}
   soundscapeLibrary: {fileID: 1891192195}
   reapyController: {fileID: 1891192197}
+  untargetableSoundSourceLayer:
+    serializedVersion: 2
+    m_Bits: 0
   leaveSoundscapeAction: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   loadingManager: {fileID: 657310051}
 --- !u!4 &1891192194
@@ -5407,4 +5383,3 @@ SceneRoots:
   - {fileID: 468564580}
   - {fileID: 505680499}
   - {fileID: 1491958399}
-  - {fileID: 1634525464}

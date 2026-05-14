@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 910421821952713553}
   - component: {fileID: 2013553953514860987}
   - component: {fileID: 2480258698525180206}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: WorldAudioSource
   m_TagString: AudioSource
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1728820851829268507}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -455,7 +455,7 @@ GameObject:
   - component: {fileID: 5671114735643573997}
   - component: {fileID: 7968391906200746224}
   - component: {fileID: 6672478406035030928}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -564,7 +564,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 7cc9ac47d8502d44ebe0e270776339b6, type: 2}
   m_Color: {r: 0.6784314, g: 0.8470589, b: 0.9019608, a: 0.42745098}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -591,3 +591,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: defa585915fdd2a4d83639bfbee90360, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LookAtCamera
+  manager: {fileID: 0}

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Video;
@@ -16,6 +17,7 @@ public class SoundscapeWrapper: MonoBehaviour
     public GameObject audioSourceObject;
     public SoundscapeLibrary soundscapeLibrary;
     public ReapyControllerCommunication reapyController;
+    public LayerMask untargetableSoundSourceLayer;
     private bool videoPlaying = false;
     private bool edited = false;
     private Dictionary<Guid, GameObject> placedAudios = new();
@@ -41,6 +43,7 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         if (edited && currentSoundscape != null)
         {
+            Debug.Log("Saving Soundscape");
             soundscapeLibrary.ReplaceOrAddSoundscape(currentSoundscape);
             edited = false;            
         }
@@ -127,6 +130,8 @@ public class SoundscapeWrapper: MonoBehaviour
         worldSrc.library = soundscapeLibrary;
         worldSrc.playbackType = vrStateData.GetCurrentAudio();
         worldSrc.reaperController = reapyController;
+
+        if(!inEditMode && !worldSrc.IsVisible()) gameObject.SetLayerRecursively(untargetableSoundSourceLayer);
 
         src.ApplyEffects(go);
         placedAudios.Add(worldSrc.GetUUID(), go);

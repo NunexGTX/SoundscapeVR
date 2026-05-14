@@ -15,6 +15,18 @@ public class AudioSource : ISerializationCallbackReceiver
     public float volume = 1f;
     public List<AudioEffectInstance> audioEffects = new();
 
+    public AudioSource(AudioSource other)
+    {
+        this.audioId = other.audioId;
+        this.sourceId = Guid.NewGuid().ToString(); // new UUID for the clone
+        this.spherePosition = new(other.spherePosition.ToVector3());
+        this.loop = other.loop;
+        this.mute = other.mute;
+        this.visible = other.visible;
+        this.delaySeconds = other.delaySeconds;
+        this.volume = other.volume;
+        this.audioEffects = new(other.audioEffects); // shallow copy of effects list
+    }
     public AudioSource(string audioId, Vector3 spherePosition, Guid uuid)
     {
         this.audioId = audioId;
