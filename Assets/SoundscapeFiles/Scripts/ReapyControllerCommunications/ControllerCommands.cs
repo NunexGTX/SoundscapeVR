@@ -12,6 +12,7 @@ public class NewTrack: ReapyControllerCommand {
     public string AudioID;
 
     public bool Loop;
+    public uint Delay;
 }
 
 public class SourcePosition: ReapyControllerCommand

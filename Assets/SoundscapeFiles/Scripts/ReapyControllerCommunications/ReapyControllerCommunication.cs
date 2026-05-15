@@ -55,9 +55,9 @@ public class ReapyControllerCommunication : MonoBehaviour
     //Command functions
 
     //New audio source
-    public void NewTrack(string audioID, Guid soundUUID, bool loop)
+    public void NewTrack(string audioID, Guid soundUUID, bool loop, uint delay)
     {
-        var msg = new NewTrack {command = newTrackCommand, AudioID = audioID, SoundUUID = soundUUID.ToString(), Loop = loop};
+        var msg = new NewTrack {command = newTrackCommand, AudioID = audioID, SoundUUID = soundUUID.ToString(), Loop = loop, Delay = delay};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);

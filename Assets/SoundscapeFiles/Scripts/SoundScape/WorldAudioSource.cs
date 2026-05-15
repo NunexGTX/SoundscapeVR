@@ -38,7 +38,7 @@ public class WorldAudioSource: MonoBehaviour
         {            
             //Tell reaper the audio source was created so it makes the new track
             Debug.Log("Sending Audio Source to Reaper");
-            reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.loop);
+            reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.loop,(uint)audioSource.delaySeconds);
             updateReaperTrackPosition();
         }
         //if audiosource is visible -> we want to render the icon, not the cube, in display mode.
