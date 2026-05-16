@@ -2870,6 +2870,10 @@ PrefabInstance:
       value: -23
       objectReference: {fileID: 0}
     - target: {fileID: 5137354377943704513, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_CastDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5137354377943704513, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_RaycastMask.m_Bits
       value: 2147484193
       objectReference: {fileID: 0}
@@ -5068,7 +5072,7 @@ MonoBehaviour:
   reapyController: {fileID: 1891192197}
   untargetableSoundSourceLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   leaveSoundscapeAction: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   loadingManager: {fileID: 657310051}
 --- !u!4 &1891192194
@@ -5134,7 +5138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb384dca29586ebbb995ce16505d9b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReapyControllerCommunication
-  ServerIP: 192.168.1.64
+  ServerIP: 10.65.13.24
   ReapyCommunicationPort: 6337
   newTrackCommand: new_track
   sourcePositionCommand: source_position
