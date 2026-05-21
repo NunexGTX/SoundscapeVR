@@ -10,6 +10,7 @@ public class ReapyControllerCommunication : MonoBehaviour
 {
     public string ServerIP;
     public int ReapyCommunicationPort = 6337;
+    public bool EnableCommunication = false;
     private TcpClient client;
     private NetworkStream stream;
 
@@ -29,8 +30,13 @@ public class ReapyControllerCommunication : MonoBehaviour
     void Start()
     {
         //TODO: start the TCP connection when a button is pressed and not on start
-        client = new TcpClient(ServerIP, ReapyCommunicationPort); 
-        stream = client.GetStream();
+        /*client = new TcpClient(ServerIP, ReapyCommunicationPort); 
+        stream = client.GetStream();*/
+        if (EnableCommunication)
+        {
+            client = new TcpClient(ServerIP, ReapyCommunicationPort); 
+            stream = client.GetStream();
+        }
     }
 
     async void message_beeboop(string command) //All communication to server needs to be async to not freeze the entire game
