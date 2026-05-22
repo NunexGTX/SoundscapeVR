@@ -2,15 +2,18 @@ using UnityEngine;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using System;
 using UnityEditor.VersionControl;
 
 
 public class ReapyControllerCommunication : MonoBehaviour
 {
-    public string ServerIP;
+    public bool EnableCommunication = true;
+    private string ServerIP;
     public int ReapyCommunicationPort = 6337;
-    public bool EnableCommunication = false;
+    public Int32 connectionTimeOutMillis = 5000;
+    public VrStateData vrStateData;
     private TcpClient client;
     private NetworkStream stream;
 
@@ -22,6 +25,12 @@ public class ReapyControllerCommunication : MonoBehaviour
     private string sourcePositionCommand = "source_position";
 
     [SerializeField]
+    private string muteCommand = "mute";
+
+    [SerializeField]
+    private string unmuteCommand = "unmute";
+
+    [SerializeField]
     private string deleteTrackCommand = "delete_track";
 
     [SerializeField]
@@ -29,13 +38,42 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     void Start()
     {
-        //TODO: start the TCP connection when a button is pressed and not on start
-        /*client = new TcpClient(ServerIP, ReapyCommunicationPort); 
-        stream = client.GetStream();*/
-        if (EnableCommunication)
+        setServerIP(vrStateData.CurrentReaperControllerServerIP);
+    }
+
+    public void startReaperCommunication()
+    {
+        if (EnableCommunication && ServerIP != null)
         {
-            client = new TcpClient(ServerIP, ReapyCommunicationPort); 
+            ConnectAsync();
+        }else if(ServerIP == null)
+        {
+            Debug.LogError("Reaper Communication can't start since no server IP was set");
+        }
+    }
+
+    async void ConnectAsync()
+    {
+        try
+        {
+            client = new TcpClient();
+            
+            var connectTask = client.ConnectAsync(ServerIP, ReapyCommunicationPort);
+            var timeoutTask = System.Threading.Tasks.Task.Delay(connectionTimeOutMillis);
+
+            if (await System.Threading.Tasks.Task.WhenAny(connectTask, timeoutTask) == timeoutTask)
+            {
+                Debug.Log("Reaper Controller: Connection timed out");
+                client.Close();
+                return;
+            }
+
             stream = client.GetStream();
+            Debug.Log("Reaper Controller: Connected!");
+        }
+        catch (SocketException e)
+        {
+            Debug.Log("Reaper Controller: Connection failed - " + e.Message);
         }
     }
 
@@ -43,7 +81,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     {
         if(stream == null)
         {
-            //Debug.LogWarning($"[SoundscapeVR] No stream object was found. Failed to send message to Reaper Controller Server.\nAddress:{ServerIP}:{ReapyCommunicationPort}");
+            Debug.LogWarning($"[SoundscapeVR] No stream object was found. Failed to send message to Reaper Controller Server.\nAddress:{ServerIP}:{ReapyCommunicationPort}");
             return;
         }
         byte[] message = Encoding.UTF8.GetBytes(command);
@@ -61,9 +99,9 @@ public class ReapyControllerCommunication : MonoBehaviour
     //Command functions
 
     //New audio source
-    public void NewTrack(string audioID, Guid soundUUID, bool loop, uint delay)
+    public void NewTrack(string audioID, Guid soundUUID, float volume, bool loop, uint delay)
     {
-        var msg = new NewTrack {command = newTrackCommand, AudioID = audioID, SoundUUID = soundUUID.ToString(), Loop = loop, Delay = delay};
+        var msg = new NewTrack {command = newTrackCommand, AudioID = audioID, SoundUUID = soundUUID.ToString(), Volume = volume, Loop = loop, Delay = delay};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);
@@ -73,6 +111,23 @@ public class ReapyControllerCommunication : MonoBehaviour
     public void UpdateSourcePosition(Guid soundUUID, float azim, float elev, float Distance)
     {
         var msg = new SourcePosition {command = sourcePositionCommand, SoundUUID = soundUUID.ToString(), azim = azim, elev = elev, distance = Distance};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
+    //Mute Track
+    public void MuteTrack(Guid soundUUID)
+    {
+        var msg = new MuteTrack {command = muteCommand, SoundUUID = soundUUID.ToString()};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
+    public void UnmuteTrack(Guid soundUUID)
+    {
+        var msg = new MuteTrack {command = unmuteCommand, SoundUUID = soundUUID.ToString()};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);
@@ -94,6 +149,14 @@ public class ReapyControllerCommunication : MonoBehaviour
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);
+    }
+
+    //Set Server IP
+    public void setServerIP(string ip)
+    {
+        ServerIP = ip;
+        //TODO: instead of starting the server when the ip is set, make a button that directly calls the start connection function
+        startReaperCommunication();
     }
     
 }

@@ -5138,10 +5138,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb384dca29586ebbb995ce16505d9b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReapyControllerCommunication
-  ServerIP: 10.65.13.24
+  EnableCommunication: 1
   ReapyCommunicationPort: 6337
+  vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   newTrackCommand: new_track
   sourcePositionCommand: source_position
+  muteCommand: mute
+  unmuteCommand: unmute
   deleteTrackCommand: delete_track
   resetCommand: RESET
 --- !u!1 &2037751217

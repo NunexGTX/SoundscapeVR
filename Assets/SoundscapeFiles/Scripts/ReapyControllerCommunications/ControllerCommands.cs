@@ -10,6 +10,7 @@ public abstract class ReapyControllerCommand
 public class NewTrack: ReapyControllerCommand {
     
     public string AudioID;
+    public float Volume;
 
     public bool Loop;
     public uint Delay;
@@ -24,7 +25,13 @@ public class SourcePosition: ReapyControllerCommand
 
 public class DeleteTrack: ReapyControllerCommand{}
 
+public class MuteTrack: ReapyControllerCommand{}
+
+public class UnmuteTrack: ReapyControllerCommand{}
+
 public class ResetReapyController
 {
     public string command;
 }
+
+//Effects

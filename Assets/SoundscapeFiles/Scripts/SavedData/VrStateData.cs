@@ -11,6 +11,8 @@ public class VrStateData : ScriptableObject
     VisualType currentVisual = VisualType.ENCOMPASSING;
     [SerializeField, DontCreateProperty]
     AudioListeningType currentAudio = AudioListeningType.BINAURAL;
+    [SerializeField, DontCreateProperty]
+    string ReaperControllerIP;
 
     [CreateProperty]
     public bool IsInVr
@@ -32,6 +34,16 @@ public class VrStateData : ScriptableObject
     {
         get => (int)currentAudio;
         set => currentAudio = (AudioListeningType) value;
+    }
+
+    [CreateProperty]
+    public string CurrentReaperControllerServerIP
+    {
+        get => ReaperControllerIP;
+        set {
+            ReaperControllerIP = value;
+            FindFirstObjectByType<ReapyControllerCommunication>().setServerIP(ReaperControllerIP);
+        }
     }
 
     public VisualType GetCurrentVisuals()

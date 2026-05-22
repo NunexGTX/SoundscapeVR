@@ -38,8 +38,19 @@ public class WorldAudioSource: MonoBehaviour
         {            
             //Tell reaper the audio source was created so it makes the new track
             Debug.Log("Sending Audio Source to Reaper");
-            reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.loop,(uint)audioSource.delaySeconds);
+            reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.volume,audioSource.loop,(uint)audioSource.delaySeconds);
+            
             updateReaperTrackPosition();
+
+            //Apply mute/unmute
+            if (audioSource.mute)
+            {
+                reaperController.MuteTrack(GetUUID());
+            }
+            else
+            {
+                reaperController.UnmuteTrack(GetUUID());
+            }
         }
         //if audiosource is visible -> we want to render the icon, not the cube, in display mode.
         //otherside, just render the cube
@@ -56,7 +67,11 @@ public class WorldAudioSource: MonoBehaviour
     void OnDestroy()
     {
         if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
+        {
             deleteReaperTrack();
+        }
+
+        Debug.Log("World Audio Source has been destroyed");
     }
 
     void updateReaperTrackPosition()
