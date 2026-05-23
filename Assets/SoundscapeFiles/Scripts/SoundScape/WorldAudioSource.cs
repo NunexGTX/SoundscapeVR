@@ -51,6 +51,9 @@ public class WorldAudioSource: MonoBehaviour
             {
                 reaperController.UnmuteTrack(GetUUID());
             }
+
+            //Send effects that are being used
+            reaperSendAudioEffects();
         }
         //if audiosource is visible -> we want to render the icon, not the cube, in display mode.
         //otherside, just render the cube
@@ -66,12 +69,7 @@ public class WorldAudioSource: MonoBehaviour
 
     void OnDestroy()
     {
-        if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
-        {
-            deleteReaperTrack();
-        }
 
-        Debug.Log("World Audio Source has been destroyed");
     }
 
     void updateReaperTrackPosition()
@@ -86,6 +84,17 @@ public class WorldAudioSource: MonoBehaviour
     void deleteReaperTrack()
     {
         reaperController.DeleteTrack(audioSource.GetUUID());
+    }
+
+    void reaperSendAudioEffects()
+    {
+        List<AudioEffectInstance> audioSourceEffects = audioSource.audioEffects;
+        
+        foreach(AudioEffectInstance audioEffectInstance in audioSourceEffects)
+        {
+            reaperController.AddEffectToAudio(audioSource.GetUUID(),audioEffectInstance);
+        }
+        
     }
 
     bool isWorldSourceAmbisonic()

@@ -35,3 +35,13 @@ public class ResetReapyController
 }
 
 //Effects
+public class AudioEffect: ReapyControllerCommand
+{
+    public string EffectName;
+    public string[] EffectParams;
+}
+
+public class removeAudioEffect: ReapyControllerCommand
+{
+    public string EffectName;
+}

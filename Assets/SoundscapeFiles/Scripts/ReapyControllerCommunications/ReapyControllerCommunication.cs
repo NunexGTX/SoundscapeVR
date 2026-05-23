@@ -36,6 +36,14 @@ public class ReapyControllerCommunication : MonoBehaviour
     [SerializeField]
     private string resetCommand = "RESET";
 
+    [SerializeField]
+    private string addEffectCommand = "add_effect";
+
+    [SerializeField]
+    private string removeEffectCommand = "remove_effect";
+
+    private string newTrackCreatedSuccesfullyMessage = "Track Created in Reaper";
+
     void Start()
     {
         setServerIP(vrStateData.CurrentReaperControllerServerIP);
@@ -54,27 +62,35 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     async void ConnectAsync()
     {
-        try
-        {
-            client = new TcpClient();
-            
-            var connectTask = client.ConnectAsync(ServerIP, ReapyCommunicationPort);
-            var timeoutTask = System.Threading.Tasks.Task.Delay(connectionTimeOutMillis);
+        client = new TcpClient();
+        var connectTask = client.ConnectAsync(ServerIP, ReapyCommunicationPort);
+        var timeoutTask = System.Threading.Tasks.Task.Delay(connectionTimeOutMillis);
 
-            if (await System.Threading.Tasks.Task.WhenAny(connectTask, timeoutTask) == timeoutTask)
+        if (await System.Threading.Tasks.Task.WhenAny(connectTask, timeoutTask) == timeoutTask)
+        {
+            Debug.Log("Reaper Controller: Connection timed out");
+            client.Close();
+
+            // Observe the background task so its exception doesn't go unhandled
+            _ = connectTask.ContinueWith(t =>
             {
-                Debug.Log("Reaper Controller: Connection timed out");
-                client.Close();
-                return;
-            }
+                if (t.IsFaulted)
+                    Debug.Log("Reaper Controller: Late connect fault (ignored): " + t.Exception?.GetBaseException().Message);
+            }, TaskScheduler.Default);
 
-            stream = client.GetStream();
-            Debug.Log("Reaper Controller: Connected!");
+            return;
         }
-        catch (SocketException e)
+
+        // connectTask won — but it may have faulted (e.g. refused), so check it
+        if (connectTask.IsFaulted)
         {
-            Debug.Log("Reaper Controller: Connection failed - " + e.Message);
+            Debug.Log("Reaper Controller: Connection failed - " + connectTask.Exception?.GetBaseException().Message);
+            client.Close();
+            return;
         }
+
+        stream = client.GetStream();
+        Debug.Log("Reaper Controller: Connected!");
     }
 
     async void message_beeboop(string command) //All communication to server needs to be async to not freeze the entire game
@@ -94,6 +110,28 @@ public class ReapyControllerCommunication : MonoBehaviour
         string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
         Debug.Log($"Reaper Controller Server response: {response} \n"
         + $"Command: {command}");
+
+    }
+
+    //This is for us to save a reference of the soundUUID in case the response is meaningful
+    async void message_beeboop(string command, Guid soundMessangerUUID)
+    {
+        if(stream == null)
+        {
+            Debug.LogWarning($"[SoundscapeVR] No stream object was found. Failed to send message to Reaper Controller Server.\nAddress:{ServerIP}:{ReapyCommunicationPort}");
+            return;
+        }
+        byte[] message = Encoding.UTF8.GetBytes(command);
+        stream.Write(message, 0, message.Length); //Send message
+        Debug.Log($"Sent {message} to Reaper Controller Server at {ServerIP}:{ReapyCommunicationPort}");
+
+        // Wait for and read the response
+        byte[] buffer = new byte[1024];
+        int bytesRead = stream.Read(buffer, 0, buffer.Length);
+        string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+        //TODO: interpret responses to be useful for something
+        Debug.Log($"Reaper Controller Server response: {response} \n"
+        + $"Command: {command}");
     }
 
     //Command functions
@@ -104,7 +142,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         var msg = new NewTrack {command = newTrackCommand, AudioID = audioID, SoundUUID = soundUUID.ToString(), Volume = volume, Loop = loop, Delay = delay};
         string json = JsonUtility.ToJson(msg);
 
-        message_beeboop(json);
+        message_beeboop(json, soundUUID);
     }
 
     //Update Audio Source Position
@@ -113,7 +151,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         var msg = new SourcePosition {command = sourcePositionCommand, SoundUUID = soundUUID.ToString(), azim = azim, elev = elev, distance = Distance};
         string json = JsonUtility.ToJson(msg);
 
-        message_beeboop(json);
+        message_beeboop(json, soundUUID);
     }
 
     //Mute Track
@@ -122,7 +160,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         var msg = new MuteTrack {command = muteCommand, SoundUUID = soundUUID.ToString()};
         string json = JsonUtility.ToJson(msg);
 
-        message_beeboop(json);
+        message_beeboop(json, soundUUID);
     }
 
     public void UnmuteTrack(Guid soundUUID)
@@ -130,7 +168,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         var msg = new MuteTrack {command = unmuteCommand, SoundUUID = soundUUID.ToString()};
         string json = JsonUtility.ToJson(msg);
 
-        message_beeboop(json);
+        message_beeboop(json, soundUUID);
     }
 
     //Delete Track
@@ -139,7 +177,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         var msg = new DeleteTrack {command = deleteTrackCommand, SoundUUID = soundUUID.ToString()};
         string json = JsonUtility.ToJson(msg);
 
-        message_beeboop(json);
+        message_beeboop(json, soundUUID);
     }
 
     //Reset
@@ -157,6 +195,40 @@ public class ReapyControllerCommunication : MonoBehaviour
         ServerIP = ip;
         //TODO: instead of starting the server when the ip is set, make a button that directly calls the start connection function
         startReaperCommunication();
+    }
+
+    //Effects
+    public void AddEffectToAudio(Guid soundUUID, AudioEffectInstance audioEffectInstance)
+    {
+
+        string[] effectParams = trackEffectParams(audioEffectInstance); //Gather effect params that are valid to use in reaper controller
+
+        if (effectParams == null)
+        {
+            return;
+        }
+
+        var msg = new AudioEffect {command = addEffectCommand, SoundUUID = soundUUID.ToString(), EffectName = audioEffectInstance.effectId, EffectParams = effectParams};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json, soundUUID);
+    }
+
+    string[] trackEffectParams(AudioEffectInstance audioEffectInstance)
+    {
+        switch (audioEffectInstance.effectId)
+        {
+            default:
+                Debug.LogWarning("The effect you were trying to add to the track in Reaper was not yet implemented. Skipping...");
+                return null;
+
+            case AudioEffectInstance.Echo:
+                return new string[] {"true", audioEffectInstance.echoEffectData.delay_ms.ToString(),audioEffectInstance.echoEffectData.decay_ratio.ToString(),audioEffectInstance.echoEffectData.dry_mix.ToString(),audioEffectInstance.echoEffectData.wet_mix.ToString()};
+
+            case AudioEffectInstance.Occlusion:
+                return new string[] {"true", audioEffectInstance.occlusionEffectData.frequency_dependent.ToString(), audioEffectInstance.occlusionEffectData.occlusion_low_freq.ToString(),audioEffectInstance.occlusionEffectData.occlusion_mid_freq.ToString(), audioEffectInstance.occlusionEffectData.occlusion_high_freq.ToString()};
+            
+        }
     }
     
 }
