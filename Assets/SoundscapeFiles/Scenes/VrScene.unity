@@ -5139,7 +5139,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReapyControllerCommunication
   EnableCommunication: 1
+  autoconnect: 1
   ReapyCommunicationPort: 6337
+  connectionTimeOutMillis: 5000
   vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   newTrackCommand: new_track
   sourcePositionCommand: source_position
@@ -5147,6 +5149,8 @@ MonoBehaviour:
   unmuteCommand: unmute
   deleteTrackCommand: delete_track
   resetCommand: RESET
+  addEffectCommand: add_effect
+  removeEffectCommand: remove_effect
 --- !u!1 &2037751217
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,12 +10,16 @@ using System.Threading.Tasks;
 public class ReapyControllerCommunication : MonoBehaviour
 {
     public bool EnableCommunication = true;
+    public bool autoconnect = true;
     private string ServerIP;
-    public int ReapyCommunicationPort = 6337;
+    [SerializeField]
+    private int ReapyCommunicationPort = 6337;
     public Int32 connectionTimeOutMillis = 5000;
     public VrStateData vrStateData;
     private TcpClient client;
     private NetworkStream stream;
+    private string connectionStatus = "not_connected";
+    private string[] connectionTypes = new string[] {"not_connected", "connecting", "connected", "failed"};
     private CancellationTokenSource _cts = new CancellationTokenSource();
     private bool _isReconnecting = false;
     private const int MaxReconnectAttempts = 5;
@@ -51,7 +55,7 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     void Start()
     {
-        setServerIP(vrStateData.CurrentReaperControllerServerIP);
+        if (autoconnect) setAndConnectIP(vrStateData.CurrentReaperControllerServerIP);
     }
 
     public void startReaperCommunication()
@@ -75,6 +79,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         client = new TcpClient();
         var connectTask = client.ConnectAsync(ServerIP, ReapyCommunicationPort);
         var timeoutTask = Task.Delay(connectionTimeOutMillis, ct);
+        set_connection_status(connectionTypes[1]);
 
         if (await Task.WhenAny(connectTask, timeoutTask) == timeoutTask)
         {
@@ -87,12 +92,14 @@ public class ReapyControllerCommunication : MonoBehaviour
                     Debug.Log("Reaper Controller: Late connect fault (ignored): " + t.Exception?.GetBaseException().Message);
             }, TaskScheduler.Default);
 
+            set_connection_status(connectionTypes[0]);
             return false;
         }
 
         if (connectTask.IsFaulted)
         {
             Debug.Log("Reaper Controller: Connection failed - " + connectTask.Exception?.GetBaseException().Message);
+            set_connection_status(connectionTypes[3]);
             client.Close();
             return false;
         }
@@ -100,6 +107,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         stream = client.GetStream();
         stream.ReadTimeout = ReadTimeoutMs;
         Debug.Log("Reaper Controller: Connected!");
+        set_connection_status(connectionTypes[2]);
         return true;
     }
 
@@ -175,6 +183,46 @@ public class ReapyControllerCommunication : MonoBehaviour
         client?.Close();
     }
 
+    //Set Server IP
+    public void setServerIP(string ip)
+    {
+        ServerIP = ip;
+        
+    }
+
+    public void setAndConnectIP(string ip)
+    {
+        ServerIP = ip;
+        if(ip != null) startReaperCommunication();
+    }
+
+    public string getServerIP()
+    {
+        return ServerIP;
+    }
+
+    public int getPort()
+    {
+        return ReapyCommunicationPort;
+    }
+
+    public string connection_status()
+    {
+        return connectionStatus;
+    }
+
+    void set_connection_status(string connect_status)
+    {
+        connectionStatus = connect_status;
+
+        //Set UI if available
+        ConfigScript configUI = FindFirstObjectByType<ConfigScript>();
+        if (configUI != null)
+        {
+            configUI.setConnectionMessage(connectionStatus);
+        }
+    }
+
     //Command functions
 
     //New audio source
@@ -228,14 +276,6 @@ public class ReapyControllerCommunication : MonoBehaviour
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);
-    }
-
-    //Set Server IP
-    public void setServerIP(string ip)
-    {
-        ServerIP = ip;
-        //TODO: instead of starting the server when the ip is set, make a button that directly calls the start connection function
-        startReaperCommunication();
     }
 
     //Effects
