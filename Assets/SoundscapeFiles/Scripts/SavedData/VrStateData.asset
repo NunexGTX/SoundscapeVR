@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VrStateData
   vrEnabled: 0
   currentVisual: 2
-  currentAudio: 1
-  ReaperControllerIP: 192.168.1.67
+  currentAudio: 2
+  ReaperControllerIP: 192.168.1.124

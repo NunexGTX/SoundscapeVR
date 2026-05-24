@@ -1,10 +1,10 @@
 using UnityEngine;
-using System.Text;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading.Tasks;
 using System;
-using UnityEditor.VersionControl;
+using System.IO;
+using System.Text;
+using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 
 public class ReapyControllerCommunication : MonoBehaviour
@@ -16,6 +16,11 @@ public class ReapyControllerCommunication : MonoBehaviour
     public VrStateData vrStateData;
     private TcpClient client;
     private NetworkStream stream;
+    private CancellationTokenSource _cts = new CancellationTokenSource();
+    private bool _isReconnecting = false;
+    private const int MaxReconnectAttempts = 5;
+    private const int ReadTimeoutMs = 3000;
+    private const int BaseReconnectDelayMs = 1000;
 
     //Commands
     [SerializeField]
@@ -60,78 +65,114 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
     }
 
-    async void ConnectAsync()
+    async void ConnectAsync() => await TryConnectAsync(_cts.Token);
+
+    private async Task<bool> TryConnectAsync(CancellationToken ct)
     {
+        stream?.Close(); stream = null;
+        client?.Close();
+
         client = new TcpClient();
         var connectTask = client.ConnectAsync(ServerIP, ReapyCommunicationPort);
-        var timeoutTask = System.Threading.Tasks.Task.Delay(connectionTimeOutMillis);
+        var timeoutTask = Task.Delay(connectionTimeOutMillis, ct);
 
-        if (await System.Threading.Tasks.Task.WhenAny(connectTask, timeoutTask) == timeoutTask)
+        if (await Task.WhenAny(connectTask, timeoutTask) == timeoutTask)
         {
             Debug.Log("Reaper Controller: Connection timed out");
             client.Close();
 
-            // Observe the background task so its exception doesn't go unhandled
             _ = connectTask.ContinueWith(t =>
             {
                 if (t.IsFaulted)
                     Debug.Log("Reaper Controller: Late connect fault (ignored): " + t.Exception?.GetBaseException().Message);
             }, TaskScheduler.Default);
 
-            return;
+            return false;
         }
 
-        // connectTask won — but it may have faulted (e.g. refused), so check it
         if (connectTask.IsFaulted)
         {
             Debug.Log("Reaper Controller: Connection failed - " + connectTask.Exception?.GetBaseException().Message);
             client.Close();
-            return;
+            return false;
         }
 
         stream = client.GetStream();
+        stream.ReadTimeout = ReadTimeoutMs;
         Debug.Log("Reaper Controller: Connected!");
+        return true;
     }
 
-    async void message_beeboop(string command) //All communication to server needs to be async to not freeze the entire game
-    {
-        if(stream == null)
-        {
-            Debug.LogWarning($"[SoundscapeVR] No stream object was found. Failed to send message to Reaper Controller Server.\nAddress:{ServerIP}:{ReapyCommunicationPort}");
-            return;
-        }
-        byte[] message = Encoding.UTF8.GetBytes(command);
-        stream.Write(message, 0, message.Length); //Send message
-        Debug.Log($"Sent {message} to Reaper Controller Server at {ServerIP}:{ReapyCommunicationPort}");
-
-        // Wait for and read the response
-        byte[] buffer = new byte[1024];
-        int bytesRead = stream.Read(buffer, 0, buffer.Length);
-        string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-        Debug.Log($"Reaper Controller Server response: {response} \n"
-        + $"Command: {command}");
-
-    }
+    async void message_beeboop(string command)
+        => await SendMessageAsync(command, _cts.Token);
 
     //This is for us to save a reference of the soundUUID in case the response is meaningful
     async void message_beeboop(string command, Guid soundMessangerUUID)
+        => await SendMessageAsync(command, _cts.Token);
+
+    private async Task SendMessageAsync(string command, CancellationToken ct)
     {
-        if(stream == null)
+        if (stream == null)
         {
-            Debug.LogWarning($"[SoundscapeVR] No stream object was found. Failed to send message to Reaper Controller Server.\nAddress:{ServerIP}:{ReapyCommunicationPort}");
+            Debug.LogWarning($"[SoundscapeVR] No stream. Cannot send to {ServerIP}:{ReapyCommunicationPort}");
             return;
         }
-        byte[] message = Encoding.UTF8.GetBytes(command);
-        stream.Write(message, 0, message.Length); //Send message
-        Debug.Log($"Sent {message} to Reaper Controller Server at {ServerIP}:{ReapyCommunicationPort}");
+        try
+        {
+            byte[] msg = Encoding.UTF8.GetBytes(command);
+            await stream.WriteAsync(msg, 0, msg.Length, ct);
+            Debug.Log($"Sent command to Reaper Controller at {ServerIP}:{ReapyCommunicationPort}");
 
-        // Wait for and read the response
-        byte[] buffer = new byte[1024];
-        int bytesRead = stream.Read(buffer, 0, buffer.Length);
-        string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-        //TODO: interpret responses to be useful for something
-        Debug.Log($"Reaper Controller Server response: {response} \n"
-        + $"Command: {command}");
+            byte[] buf = new byte[1024];
+            int n = await stream.ReadAsync(buf, 0, buf.Length, ct);
+            string response = Encoding.UTF8.GetString(buf, 0, n);
+            //TODO: interpret responses to be useful for something
+            Debug.Log($"Reaper Controller response: {response}\nCommand: {command}");
+        }
+        catch (OperationCanceledException)
+        {
+            Debug.Log("Reaper Controller: SendMessageAsync cancelled (shutdown).");
+        }
+        catch (Exception ex) when (ex is IOException || ex is SocketException)
+        {
+            Debug.LogWarning($"Reaper Controller: I/O error — {ex.Message}. Triggering reconnect.");
+            _ = ReconnectAsync();
+        }
+    }
+
+    private async Task ReconnectAsync()
+    {
+        if (_isReconnecting) return;
+        _isReconnecting = true;
+
+        stream?.Close(); stream = null;
+        client?.Close(); client = null;
+
+        int delayMs = BaseReconnectDelayMs;
+        for (int attempt = 1; attempt <= MaxReconnectAttempts; attempt++)
+        {
+            if (_cts.IsCancellationRequested) break;
+            Debug.Log($"Reaper Controller: Reconnect attempt {attempt}/{MaxReconnectAttempts} in {delayMs}ms...");
+            try { await Task.Delay(delayMs, _cts.Token); }
+            catch (OperationCanceledException) { break; }
+
+            if (await TryConnectAsync(_cts.Token))
+            {
+                Debug.Log("Reaper Controller: Reconnected successfully.");
+                _isReconnecting = false;
+                return;
+            }
+            delayMs = Math.Min(delayMs * 2, 30000);
+        }
+        Debug.LogError($"Reaper Controller: Failed to reconnect after {MaxReconnectAttempts} attempts.");
+        _isReconnecting = false;
+    }
+
+    void OnDestroy()
+    {
+        _cts.Cancel();
+        stream?.Close();
+        client?.Close();
     }
 
     //Command functions
@@ -226,8 +267,9 @@ public class ReapyControllerCommunication : MonoBehaviour
                 return new string[] {"true", audioEffectInstance.echoEffectData.delay_ms.ToString(),audioEffectInstance.echoEffectData.decay_ratio.ToString(),audioEffectInstance.echoEffectData.dry_mix.ToString(),audioEffectInstance.echoEffectData.wet_mix.ToString()};
 
             case AudioEffectInstance.Occlusion:
-                return new string[] {"true", audioEffectInstance.occlusionEffectData.frequency_dependent.ToString(), audioEffectInstance.occlusionEffectData.occlusion_low_freq.ToString(),audioEffectInstance.occlusionEffectData.occlusion_mid_freq.ToString(), audioEffectInstance.occlusionEffectData.occlusion_high_freq.ToString()};
+                return new string[] {"true", audioEffectInstance.occlusionEffectData.frequency_dependent.ToString(), audioEffectInstance.occlusionEffectData.occlusion_value.ToString(), audioEffectInstance.occlusionEffectData.occlusion_low_freq.ToString(),audioEffectInstance.occlusionEffectData.occlusion_mid_freq.ToString(), audioEffectInstance.occlusionEffectData.occlusion_high_freq.ToString()};
             
+            //TODO: add new effects like LOW HIGH Pass
         }
     }
     
