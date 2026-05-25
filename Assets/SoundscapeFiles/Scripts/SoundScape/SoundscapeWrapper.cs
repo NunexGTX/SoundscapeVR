@@ -85,10 +85,17 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         if(srcObject == null) return;
         WorldAudioSource worldAudioSource = srcObject.GetComponent<WorldAudioSource>();
+        UpdateSource((worldAudioSource == null) ? null : worldAudioSource.GetUUID(), worldAudioSource.audioSource);
+    }
+    public void UpdateSource(Guid? sourceId, AudioSource audioSource)
+    {
+        if(sourceId != null && !sourceId.HasValue)
+            Debug.LogWarning("Warning!: give source UUID is not null but has no value! Consider changing UpdateSource() method!");
+        if(sourceId == null || !sourceId.HasValue) return;
         //1. remove it
-        DeleteAudio(worldAudioSource);
+        DeleteAudio(sourceId.Value);
         //2. add it.
-        PlaceNewAudioSource(worldAudioSource.audioSource);
+        PlaceNewAudioSource(audioSource);
     }
 
     public void DeleteAudio(Guid audioId)

@@ -31,8 +31,9 @@ public class ImageSoundscape : Soundscape
     public override Soundscape Copy()
     {
         return new ImageSoundscape(
-        audioSources.ConvertAll(src => new AudioSource(src)), 
-        title, timeSeconds, staticPath, encompassingPath, loop, projectionType);
+            audioSources.ConvertAll(src => new AudioSource(src)), 
+            title, timeSeconds, staticPath, encompassingPath, loop, projectionType
+        );
     }
 
     public override GameObject TryGetVisuals(VisualType visualType)

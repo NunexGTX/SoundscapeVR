@@ -31,13 +31,23 @@ public class SoundscapePlayerEditor: MonoBehaviour
     private Audio currentPickedAudio;
     private AudioSource pickedAudioAsSource;
     private GameObject currentSelectedSourceObject;
+    private AudioSource.AudioData copiedAudioData = null;
     private enum State
     {
+        //standby
         Standby,
+        //has selected audio from library, is placing down (azimuth, zenith)
         TryPlace,
+        //has placed down (azimuth, zenith), deciding distance
         AdjustPlace,
+        //first tap to delete. does nothing, its for user experience. they must delete again, then it returns to standby
         TryRemove,
-        Select
+        //has selected an audio
+        Select,
+        //try place but for when moving audio
+        TryMove,
+        //adjust place but for when moving audio
+        AdjustMove
 
     }
     private State currentState = State.Standby;
@@ -146,21 +156,16 @@ public class SoundscapePlayerEditor: MonoBehaviour
         src.GetComponent<MeshRenderer>().material = selectingMaterial;
         currentSelectedSourceObject = src;
         effectFiltersUi.editor = this;
-        effectFiltersUi.SetValues(src);
+        effectFiltersUi.SetValues(src.GetComponent<WorldAudioSource>().audioSource.audioData);
         effectFiltersUi.gameObject.SetActive(true);
         currentState = State.Select;
         Debug.Log("State changed to select");
     }
 
     //called by audio effect UI to collect the data from it and write it into currentSelectedSourceObject
-    public void UpdateSourceData(List<AudioEffectInstance> effectInstances, float volume, int delaySeconds, bool loop, bool mute, bool visible){
+    public void UpdateSourceData(AudioSource.AudioData audioData){
         AudioSource src = currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource;
-        src.audioEffects = effectInstances;
-        src.volume = volume;
-        src.loop = loop;
-        src.delaySeconds = delaySeconds;
-        src.mute = mute;
-        src.visible = visible;
+        src.PasteDataFrom(audioData);
         soundscapeWrapper.UpdateSource(currentSelectedSourceObject);
         UnselectSource();
         currentState = State.Standby;
@@ -273,5 +278,24 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(currentTextAsset == null)
             currentTextAsset = Instantiate(distanceTextAsset);
         currentTextAsset.GetComponent<DistText>().SetAndPlace(worldPos);
+    }
+
+    public void CopyData(AudioSource.AudioData audioData)
+    {
+        copiedAudioData = audioData with {audioId = currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource.GetAudioId()};
+    }
+
+    //paste data from copiedAudioData, and returns the data
+    public AudioSource.AudioData PasteData()
+    {
+        if(copiedAudioData == null) return null;
+        currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource.PasteDataFrom(copiedAudioData);
+        return copiedAudioData;
+    }
+
+    public string GetCopiedName()
+    {
+        if(copiedAudioData == null) return "";
+        else return copiedAudioData.audioId;
     }
 }

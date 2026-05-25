@@ -1,4 +1,4 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
-    <ui:Button text="Button" name="button" class="buttonStyle"/>
+    <ui:Button text="Button" name="button" class="disable_buttons"/>
 </ui:UXML>

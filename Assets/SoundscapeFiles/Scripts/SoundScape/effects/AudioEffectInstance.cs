@@ -19,6 +19,13 @@ public class AudioEffectInstance
         this.effectId = effectId;
         this.occlusionEffectData = occlusionEffectData;
     }
+
+    public AudioEffectInstance(AudioEffectInstance other)
+    {
+        effectId = other.effectId;
+        if(other.echoEffectData != null) echoEffectData = new(other.echoEffectData);
+        if(other.occlusionEffectData != null) occlusionEffectData = new(other.occlusionEffectData);
+    }
     public void ApplyEffectToSource(GameObject audioClipObject)
     {
         switch (effectId)

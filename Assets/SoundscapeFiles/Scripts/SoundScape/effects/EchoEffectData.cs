@@ -24,6 +24,14 @@ public class EchoEffectData
         dry_mix = dry;
         wet_mix = wet;
     }
+
+    public EchoEffectData(EchoEffectData other)
+    {
+        delay_ms = other.delay_ms;
+        decay_ratio = other.decay_ratio;
+        dry_mix = other.dry_mix;
+        wet_mix = other.wet_mix;
+    }
     
     public void ApplyEffectToSource(GameObject audioClipObject)
     {

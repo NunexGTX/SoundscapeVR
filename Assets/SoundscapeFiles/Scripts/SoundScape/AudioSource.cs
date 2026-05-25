@@ -2,30 +2,73 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// Source - https://stackoverflow.com/a/64749403
+// Posted by Kinin Roza, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-05-24, License - CC BY-SA 4.0
+// required to make record classes work
+namespace System.Runtime.CompilerServices
+{
+    internal static class IsExternalInit {}
+}
+
 [Serializable]
 public class AudioSource : ISerializationCallbackReceiver
 {
-    [SerializeField] private string audioId;
+    //id of the audio file it uses
+    [SerializeField] private string audioId = "";
+    //id of the source itself
     [SerializeField] private string sourceId;
     [SerializeField] private SerializableVector3 spherePosition;
-    public bool loop = true;
-    public bool mute = true;
-    public bool visible = false;
-    public int delaySeconds = 0;
-    public float volume = 1f;
-    public List<AudioEffectInstance> audioEffects = new();
+    
+    private AudioData _audioData = new();
+
+    public AudioData audioData
+    {
+        get => _audioData with { audioId = this.audioId };
+        private set => _audioData = value;
+    }
+
+    /*public List<AudioEffectInstance> audioEffects
+    {
+        get => audioData.effectInstances;
+    }
+    public float volume
+    {
+        get => audioData.volume;
+    }
+    public bool mute
+    {
+        get => audioData.mute;
+    }
+    public int delaySeconds
+    {
+        get => audioData.delaySeconds;
+    }
+    public bool loop
+    {
+        get => audioData.loop;
+    }
+    public bool visible
+    {
+        get => audioData.visible;
+    }*/
 
     public AudioSource(AudioSource other)
     {
         this.audioId = other.audioId;
-        this.sourceId = Guid.NewGuid().ToString(); // new UUID for the clone
+        this.sourceId = Guid.NewGuid().ToString();
         this.spherePosition = new(other.spherePosition.ToVector3());
-        this.loop = other.loop;
-        this.mute = other.mute;
-        this.visible = other.visible;
-        this.delaySeconds = other.delaySeconds;
-        this.volume = other.volume;
-        this.audioEffects = new(other.audioEffects); // shallow copy of effects list
+
+        // Deep copy the properties from the other source's record
+        this.audioData = new AudioData(
+            CloneEffectsFrom(other.audioData.effectInstances),
+            other.audioData.volume,
+            other.audioData.delaySeconds,
+            other.audioData.loop,
+            other.audioData.mute,
+            other.audioData.visible
+        );
     }
     public AudioSource(string audioId, Vector3 spherePosition, Guid uuid)
     {
@@ -55,16 +98,100 @@ public class AudioSource : ISerializationCallbackReceiver
 
     public void ApplyEffects(GameObject go)
     {
-        foreach(AudioEffectInstance effect in audioEffects) effect.ApplyEffectToSource(go);
-        go.GetComponent<UnityEngine.AudioSource>().volume = volume;
-        go.GetComponent<UnityEngine.AudioSource>().loop = loop;
+        var effects = audioData.effectInstances ?? new List<AudioEffectInstance>();
+        
+        foreach(AudioEffectInstance effect in effects) effect.ApplyEffectToSource(go);
+        go.GetComponent<UnityEngine.AudioSource>().volume = audioData.volume;
+        go.GetComponent<UnityEngine.AudioSource>().loop = audioData.loop;
     }
 
-    public void OnBeforeSerialize(){}
 
+    //shadow fields for JSON serialization without changing the entire .json format we have until now.
+    //these are not to be used, only shaded. the real, defacto values are in audioData
+    [SerializeField] private bool loop = true;
+    [SerializeField] private bool mute = false;
+    [SerializeField] private bool visible = false;
+    [SerializeField] private int delaySeconds = 0;
+    [SerializeField] private float volume = 1f;
+    [SerializeField] private List<AudioEffectInstance> audioEffects = new();
+    // public "read only" properties (Expression-bodied members) for external use
+    public bool Loop => audioData.loop;
+    public bool Mute => audioData.mute;
+    public bool Visible => audioData.visible;
+    public int DelaySeconds => audioData.delaySeconds;
+    public float Volume => audioData.volume;
+    public List<AudioEffectInstance> AudioEffects => audioData.effectInstances;
+
+    //called before unity serializes the class into json.
+    //we basically want to fill in the shadow methods
+    public void OnBeforeSerialize()
+    {
+        loop = _audioData.loop;
+        mute = _audioData.mute;
+        visible = _audioData.visible;
+        delaySeconds = _audioData.delaySeconds;
+        volume = _audioData.volume;
+        audioEffects = _audioData.effectInstances ?? new List<AudioEffectInstance>();
+    }
+
+    //called after unity deserialized the class from json
+    //we want to update the real values based on the shadow ones
     public void OnAfterDeserialize()
     {
         if(string.IsNullOrEmpty(sourceId))
             sourceId = Guid.NewGuid().ToString();
+            
+        _audioData = new AudioData(
+            audioEffects,
+            volume,
+            delaySeconds,
+            loop,
+            mute,
+            visible
+        );
     }
+
+    public void PasteDataFrom(AudioSource other)
+    {
+        PasteDataFrom(other.audioData);
+    }
+
+    public void PasteDataFrom(AudioData otherData)
+    {
+        this.audioData = otherData with 
+        { 
+            effectInstances = CloneEffectsFrom(otherData.effectInstances)
+        };
+    }
+
+    public void SetMute(bool newMute)
+    {
+        this.audioData = audioData with
+        {
+            mute = newMute
+        };
+    }
+    private List<AudioEffectInstance> CloneEffectsFrom(List<AudioEffectInstance> effectInstances)
+    {
+        List<AudioEffectInstance> newList = new();
+        if (effectInstances == null) return newList;
+
+        foreach(AudioEffectInstance effect in effectInstances)
+        {
+            newList.Add(new(effect));
+        }
+        return newList;
+    }
+
+    public record AudioData(
+        List<AudioEffectInstance> effectInstances = default, 
+        float volume = 1f, 
+        int delaySeconds = 0, 
+        bool loop = true, 
+        bool mute = false, 
+        bool visible = false,
+        string audioId = ""
+    );
 }
+
+

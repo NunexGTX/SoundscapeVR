@@ -29,8 +29,10 @@ public class PlayerManager : MonoBehaviour
 
     public void Start()
     {
+        #if !UNITY_ANDROID
         if(vrStateData.IsInVr) EnterVR();
-        else ExitVR();
+        #endif
+        //else ExitVR();
     }
     public void EnterVR()
     {

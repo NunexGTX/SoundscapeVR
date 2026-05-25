@@ -21,6 +21,14 @@ public class OcclusionEffectData
         occlusion_mid_freq = midFreqOcc;
         occlusion_high_freq = highFreqOcc;
     }
+    public OcclusionEffectData(OcclusionEffectData other)
+    {
+        frequency_dependent = other.frequency_dependent;
+        occlusion_value = other.occlusion_value;
+        occlusion_low_freq = other.occlusion_low_freq;
+        occlusion_mid_freq = other.occlusion_mid_freq;
+        occlusion_high_freq = other.occlusion_high_freq;
+    }
     
     public void ApplyEffectToSource(GameObject audioClipObject)
     {

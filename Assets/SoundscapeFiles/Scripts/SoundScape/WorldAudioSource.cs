@@ -38,12 +38,11 @@ public class WorldAudioSource: MonoBehaviour
         {            
             //Tell reaper the audio source was created so it makes the new track
             Debug.Log("Sending Audio Source to Reaper");
-            reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.volume,audioSource.loop,(uint)audioSource.delaySeconds);
-            
+            reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.Volume, audioSource.Loop, (uint)audioSource.DelaySeconds);
             updateReaperTrackPosition();
 
             //Apply mute/unmute
-            if (audioSource.mute)
+            if (audioSource.Mute)
             {
                 reaperController.MuteTrack(GetUUID());
             }
@@ -57,13 +56,13 @@ public class WorldAudioSource: MonoBehaviour
         }
         //if audiosource is visible -> we want to render the icon, not the cube, in display mode.
         //otherside, just render the cube
-        if (audioSource.visible && !debug)
+        if (audioSource.Visible && !debug)
         {
             GetComponent<MeshRenderer>().enabled = false;
             Texture2D soundIcon = library.GetIconForAudio(audioSource.GetAudioId());
             canvas.SetActive(true);
             canvas.GetComponent<RawImage>().texture = soundIcon;
-            SetIconEnabledState(audioSource.mute);
+            SetIconEnabledState(audioSource.Mute);
         }
     }
 
@@ -88,7 +87,7 @@ public class WorldAudioSource: MonoBehaviour
 
     void reaperSendAudioEffects()
     {
-        List<AudioEffectInstance> audioSourceEffects = audioSource.audioEffects;
+        List<AudioEffectInstance> audioSourceEffects = audioSource.AudioEffects;
         
         foreach(AudioEffectInstance audioEffectInstance in audioSourceEffects)
         {
@@ -121,10 +120,10 @@ public class WorldAudioSource: MonoBehaviour
             src.spatialize = false;
             src.spatialBlend = 0;
         }
-        src.mute = audioSource.mute;
-        src.loop = audioSource.loop;
+        src.mute = audioSource.Mute;
+        src.loop = audioSource.Loop;
         src.time = 0;
-        src.PlayDelayed(audioSource.delaySeconds);
+        src.PlayDelayed(audioSource.DelaySeconds);
         return;
     }
 
@@ -137,14 +136,18 @@ public class WorldAudioSource: MonoBehaviour
     
     public void FlipMuteState()
     {
-        if(!audioSource.visible) return;
+        if(!audioSource.Visible) return;
         if(soundscapeWrapper.inEditMode) return;
-        bool newMute = !audioSource.mute;
+        bool newMute = !audioSource.Mute;
         SetIconEnabledState(newMute);
-        audioSource.mute = newMute;
+        audioSource.SetMute(newMute);
         gameObject.GetComponent<UnityEngine.AudioSource>().mute = newMute;
     }
 
-    public bool IsVisible(){return audioSource.visible;}
+    public bool IsVisible(){return audioSource.Visible;}
 
+    public void PasteDataFrom(AudioSource copiedAudioSource)
+    {
+        audioSource.PasteDataFrom(copiedAudioSource);
+    }
 }

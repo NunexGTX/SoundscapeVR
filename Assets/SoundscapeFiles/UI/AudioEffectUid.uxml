@@ -3,6 +3,13 @@
     <Style src="project://database/Assets/SoundscapeFiles/UI/styles/sliderStyle.uss?fileID=7433441132597879392&amp;guid=12ecb2eb793a3264f84d7d10dce03e48&amp;type=3#sliderStyle"/>
     <ui:ScrollView name="ScrollView" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden">
         <ui:Label text="Audio Name" name="audioName" style="margin-top: 5px; -unity-text-align: upper-center;"/>
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row; flex-wrap: nowrap; justify-content: space-around;">
+            <ui:Button text="Copy" enabled="true" name="copy" class="disable_buttons" style="width: auto; -unity-background-scale-mode: stretch-to-fill; align-items: stretch; align-self: auto; align-content: flex-start; height: auto; margin-top: 14px; margin-bottom: 9px;"/>
+            <ui:Button text="Paste" enabled="true" name="paste" class="disable_buttons"/>
+            <ui:Button text="Move" enabled="true" name="move" class="disable_buttons"/>
+        </ui:VisualElement>
+        <ui:Button text="Save Effects" name="saveBtn" class="buttonStyle"/>
+        <ui:Label text="" name="copiedLabel" style="align-self: center;"/>
         <ui:Slider label="Volume" value="1" high-value="1" show-input-field="true" fill="true" name="volume"/>
         <ui:SliderInt label="Start Delay (s)" value="0" high-value="300" show-input-field="true" fill="true" low-value="0" name="delay"/>
         <ui:Toggle label="Loop Audio" name="loop"/>
@@ -16,7 +23,7 @@
             <ui:Slider label="Dry Mix" value="1" high-value="1" show-input-field="true" fill="true" low-value="0" name="echoDry"/>
             <ui:Slider label="Wet Mix" value="1" high-value="1" show-input-field="true" fill="true" name="echoWet"/>
         </ui:Foldout>
-        <ui:Foldout text="Occlusion" name="occlusionFoldout" value="true" style="background-color: rgba(0, 0, 0, 0.1); margin-top: 5px; padding: 5px;">
+        <ui:Foldout text="Occlusion" name="occlusionFoldout" value="false" style="background-color: rgba(0, 0, 0, 0.1); margin-top: 5px; padding: 5px;">
             <ui:Toggle label="Apply Occlusion" name="occlusionToggle"/>
             <ui:Toggle label="Frequency Dependent" name="freqToggle"/>
             <ui:Label text="Frequency dependent will apply separate attenuation for low, mid, and high frequencies, added to the result of general occlusion.&#10;If general occlusion is set to 1, the sound will still be heard clearly." triple-click-selects-line="false" double-click-selects-word="false" display-tooltip-when-elided="false" name="Label" style="flex-wrap: wrap; flex-direction: column; white-space: normal; width: auto; left: -25px;"/>
@@ -27,5 +34,4 @@
             <ui:Slider label="High Freq." value="1" high-value="1" show-input-field="true" fill="true" name="highFreqOcc"/>
         </ui:Foldout>
     </ui:ScrollView>
-    <ui:Button text="Save Effects" name="saveBtn" class="buttonStyle"/>
 </ui:UXML>
