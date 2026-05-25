@@ -29,17 +29,33 @@ public class PlayerManager : MonoBehaviour
 
     public void Start()
     {
-        #if !UNITY_ANDROID
+        #if !UNITY_ANDROID || UNITY_EDITOR
         if(vrStateData.IsInVr) EnterVR();
+        EnsureVrState(vrStateData.IsInVr);
+        #else
+        EnsureVrState(true);
         #endif
         //else ExitVR();
     }
+    private void EnsureVrState(bool isInVr)
+    {
+        if (isInVr)
+        {
+            playerCamera.SetActive(false);
+            vrCamera.SetActive(true);
+            crosshairCanvas.SetActive(false);
+            canvas.worldCamera = vrUICamera;
+        } else
+        {
+            playerCamera.SetActive(true);
+            vrCamera.SetActive(false);
+            crosshairCanvas.SetActive(true);
+            canvas.worldCamera = playerUICamera;
+        }
+    }
     public void EnterVR()
     {
-        playerCamera.SetActive(false);
-        vrCamera.SetActive(true);
-        crosshairCanvas.SetActive(false);
-        canvas.worldCamera = vrUICamera;
+        EnsureVrState(true);
         #if !UNITY_ANDROID
         StartCoroutine(VRSwitcher.EnableXRCoroutine());
         #endif
@@ -52,10 +68,7 @@ public class PlayerManager : MonoBehaviour
 
     public void ExitVR()
     {
-        playerCamera.SetActive(true);
-        vrCamera.SetActive(false);
-        crosshairCanvas.SetActive(true);
-        canvas.worldCamera = playerUICamera;
+        EnsureVrState(false);
         VRSwitcher.DisableXR();
         //FixOptions();
         vrStateData.IsInVr = false;

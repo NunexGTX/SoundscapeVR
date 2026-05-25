@@ -24,10 +24,14 @@ public class SoundscapeLibrary: MonoBehaviour
     private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
     private async void Start()
     {
+        Debug.Log("[SoundscapeVR] Loading files...");
         //await CheckPermissions();
         await LoadFiles(GetSoundscapeFilePath(), GetAudioFilePath(), GetFormFilePath());
+        Debug.Log("[SoundscapeVR] Files loaded. Loading audio icons...");
 
         _ = LoadAudioIcons(audioList.GetAudios(), loadingManager);
+        Debug.Log("[SoundscapeVR] Audio icons loaded.");
+
     }
     public void ReplaceOrAddSoundscape(Soundscape updatedSoundscape)
     {
