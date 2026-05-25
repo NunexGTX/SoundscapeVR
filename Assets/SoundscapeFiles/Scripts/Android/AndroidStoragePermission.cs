@@ -4,6 +4,8 @@ using UnityEngine.Android;
 public class AndroidStoragePermission : MonoBehaviour
 {
     private bool waiting_for_user_permission = false;
+    public int maxPermissionTries = 3; //This is the max amount of times it is allowed to show the permission requets before it starts being ignored
+    private int permissionTryCounter = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -11,7 +13,7 @@ public class AndroidStoragePermission : MonoBehaviour
         #if UNITY_ANDROID && !UNITY_EDITOR
             if (!checkManageStoragePermission())
             {
-                Debug.LogWarning("User does not have Storage Permissions. Please show the user the instructions on how to give the Storage Permission");
+                Debug.LogWarning("User does not have Storage Permissions. Please show the user the prompt to give the Storage Permission");
                 waiting_for_user_permission = true;
                 RequestManageStoragePermission();
             }else{
@@ -38,8 +40,16 @@ public class AndroidStoragePermission : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("Storage Permission was not granted...");
-                //If the user does not give the permission, allow to be skipped in the UI and call directly the main scene loader
+                if (permissionTryCounter < maxPermissionTries)
+                {
+                    waiting_for_user_permission = true;
+                    RequestManageStoragePermission();
+                }
+                else
+                {
+                    Application.Quit();
+                }
+                
             }
 
         }
@@ -67,8 +77,8 @@ public class AndroidStoragePermission : MonoBehaviour
 
     public void RequestManageStoragePermission()
     {
-
         #if UNITY_ANDROID && !UNITY_EDITOR
+        permissionTryCounter++;
         using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
         using (AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
         using (AndroidJavaObject intent = new AndroidJavaObject("android.content.Intent"))
@@ -87,7 +97,6 @@ public class AndroidStoragePermission : MonoBehaviour
 
     void permissionSuccessful()
     {
-        //TODO: Show a cute UI animation that tells the user the permission was given successfully before loading the main scene
         SoundscapeSceneLoad.LoadMainScene();
     }
 
