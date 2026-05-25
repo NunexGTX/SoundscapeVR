@@ -4,35 +4,24 @@ using UnityEngine.Android;
 public class AndroidStoragePermission : MonoBehaviour
 {
     private bool waiting_for_user_permission = false;
-    public GameObject permissionsMenu;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        permissionsMenu.SetActive(false);
         #if UNITY_ANDROID && !UNITY_EDITOR
             if (!checkManageStoragePermission())
             {
                 Debug.LogWarning("User does not have Storage Permissions. Please show the user the instructions on how to give the Storage Permission");
                 waiting_for_user_permission = true;
-                showStoragePermissionQuestTutorial();
-                //skipStoragePermissions(); //remove this when the tutorial menu is done
+                RequestManageStoragePermission();
             }else{
                 SoundscapeSceneLoad.LoadMainScene();
             }
-        #elif UNITY_EDITOR
-            showStoragePermissionQuestTutorial();
         #else
-            Debug.LogWarning("This system is not running Android. Please remove the Android Permission Scene from this build");
+            Debug.LogWarning("This system is not running on Meta Oculus Quest. Please remove the Android Permission Scene from this build");
             SoundscapeSceneLoad.LoadMainScene();
         #endif
 
-    }
-
-    void showStoragePermissionQuestTutorial()
-    {
-        //TODO: Make tutorial instructions for the storage permission in the Meta Quest
-        permissionsMenu.SetActive(true);
     }
 
     //Should be called when the user comes back from Android settings page
@@ -59,13 +48,41 @@ public class AndroidStoragePermission : MonoBehaviour
 
     public static bool checkManageStoragePermission()
     {
-        /*
-        string ManageStorage = "android.permission.MANAGE_EXTERNAL_STORAGE";
-        return Permission.HasUserAuthorizedPermission(ManageStorage); //New manage storage API (doesn't work with Meta's storage permissions)*/
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        using (AndroidJavaClass buildVersion = new AndroidJavaClass("android.os.Build$VERSION"))
+        {
+            // MANAGE_EXTERNAL_STORAGE is an AppOps permission — Permission.HasUserAuthorizedPermission
+            // always returns false for it on API 30+. Environment.isExternalStorageManager() is the correct check.
+            if (buildVersion.GetStatic<int>("SDK_INT") >= 30)
+            {
+                using (AndroidJavaClass environment = new AndroidJavaClass("android.os.Environment"))
+                    return environment.CallStatic<bool>("isExternalStorageManager");
+            }
+        }
+        return Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead);
+        #else
+        return true;
+        #endif
+    }
 
-        //The meta quest actually uses the old ExternalStorageReadWrite permissions
-        //but we don't have access in unity to prompt the user to give that permission automatically
-        return Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) && Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite);
+    public void RequestManageStoragePermission()
+    {
+
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        using (AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+        using (AndroidJavaObject intent = new AndroidJavaObject("android.content.Intent"))
+        using (AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
+        {
+            string packageName = activity.Call<string>("getPackageName");
+            using (AndroidJavaObject uri = uriClass.CallStatic<AndroidJavaObject>("parse", "package:" + packageName))
+            {
+                intent.Call<AndroidJavaObject>("setAction", "android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION");
+                intent.Call<AndroidJavaObject>("setData", uri);
+                activity.Call("startActivity", intent);
+            }
+        }
+        #endif
     }
 
     void permissionSuccessful()

@@ -1,6 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
     <ui:VisualElement enabled="true" name="VisualElement" style="flex-grow: 1; background-color: rgb(36, 35, 35);">
+        <ui:Image source="project://database/Assets/SoundscapeFiles/UI/icons/hvencPlugin.png?fileID=2800000&amp;guid=cae5e0a954ccba535b00845dccae2ae9&amp;type=3#hvencPlugin" style="height: 400px;"/>
         <ui:Label text="HEVC Video Extension is not installed" style="color: rgb(255, 255, 255); font-size: 132px; -unity-text-align: upper-center; align-items: stretch;"/>
         <ui:Label text="Without it, H.265 videos cannot be played" style="-unity-text-align: upper-center; color: rgb(255, 255, 255); font-size: 131px;"/>
         <ui:Label text="Get it for free from the Microsoft Store, or skip to use VP8 videos instead" style="-unity-text-align: upper-center; color: rgb(255, 255, 255); font-size: 131px;"/>
