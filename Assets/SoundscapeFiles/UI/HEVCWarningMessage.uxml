@@ -1,0 +1,13 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <ui:VisualElement enabled="true" name="VisualElement" style="flex-grow: 1; background-color: rgb(36, 35, 35);">
+        <ui:Label text="HEVC Video Extension is not installed" style="color: rgb(255, 255, 255); font-size: 132px; -unity-text-align: upper-center; align-items: stretch;"/>
+        <ui:Label text="Without it, H.265 videos cannot be played" style="-unity-text-align: upper-center; color: rgb(255, 255, 255); font-size: 131px;"/>
+        <ui:Label text="Get it for free from the Microsoft Store, or skip to use VP8 videos instead" style="-unity-text-align: upper-center; color: rgb(255, 255, 255); font-size: 131px;"/>
+        <ui:GroupBox usage-hints="None" focusable="false" style="font-size: 73px; opacity: 1; flex-direction: row; flex-wrap: nowrap; align-items: stretch; justify-content: space-evenly; align-self: auto; align-content: flex-start;">
+            <ui:Button name="skip-button" text="Skip"/>
+            <ui:Button text="Get Extension" name="get-hevc"/>
+            <ui:Button name="quit" text="Quit" style="width: auto; position: relative; left: auto; flex-direction: column; align-items: stretch; align-self: auto;"/>
+        </ui:GroupBox>
+    </ui:VisualElement>
+</ui:UXML>
