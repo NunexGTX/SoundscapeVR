@@ -126,6 +126,7 @@ public class AudioSource : ISerializationCallbackReceiver
     //we basically want to fill in the shadow methods
     public void OnBeforeSerialize()
     {
+        if(_audioData == null) _audioData = new();
         loop = _audioData.loop;
         mute = _audioData.mute;
         visible = _audioData.visible;

@@ -101,3 +101,13 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Ignore everything inside the folder
+ExportedAssetBundles/*
+AssetBundles/*
+Resources/*
+
+# Except for the .gitkeep file (which forces Git to track the empty folder)
+!AssetBundles/.gitkeep
+Assets/SoundscapeFiles/AssetBundles/FirstBundle/ambisonic birds.wav
+Assets/SoundscapeFiles/AssetBundles/FirstBundle/ambisonic birds.wav.meta
