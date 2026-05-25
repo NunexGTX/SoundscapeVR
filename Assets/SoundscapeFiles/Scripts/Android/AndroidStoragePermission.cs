@@ -4,20 +4,24 @@ using UnityEngine.Android;
 public class AndroidStoragePermission : MonoBehaviour
 {
     private bool waiting_for_user_permission = false;
+    public GameObject permissionsMenu;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        permissionsMenu.SetActive(false);
         #if UNITY_ANDROID && !UNITY_EDITOR
             if (!checkManageStoragePermission())
             {
                 Debug.LogWarning("User does not have Storage Permissions. Please show the user the instructions on how to give the Storage Permission");
                 waiting_for_user_permission = true;
                 showStoragePermissionQuestTutorial();
-                skipStoragePermissions(); //TODO: remove this when the tutorial menu is done
+                //skipStoragePermissions(); //remove this when the tutorial menu is done
             }else{
                 SoundscapeSceneLoad.LoadMainScene();
-            }   
+            }
+        #elif UNITY_EDITOR
+            showStoragePermissionQuestTutorial();
         #else
             Debug.LogWarning("This system is not running Android. Please remove the Android Permission Scene from this build");
             SoundscapeSceneLoad.LoadMainScene();
@@ -28,7 +32,7 @@ public class AndroidStoragePermission : MonoBehaviour
     void showStoragePermissionQuestTutorial()
     {
         //TODO: Make tutorial instructions for the storage permission in the Meta Quest
-        
+        permissionsMenu.SetActive(true);
     }
 
     //Should be called when the user comes back from Android settings page
