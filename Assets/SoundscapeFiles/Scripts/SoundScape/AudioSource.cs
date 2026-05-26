@@ -192,7 +192,9 @@ public class AudioSource : ISerializationCallbackReceiver
         bool mute = false, 
         bool visible = false,
         string audioId = ""
-    );
+    ){
+        public List<AudioEffectInstance> effectInstances { get; init; } = effectInstances ?? new();
+    }
 }
 
 
