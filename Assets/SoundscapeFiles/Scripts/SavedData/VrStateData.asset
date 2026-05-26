@@ -15,4 +15,4 @@ MonoBehaviour:
   vrEnabled: 0
   currentVisual: 2
   currentAudio: 2
-  ReaperControllerIP: 10.65.13.12
+  ReaperControllerIP: 192.168.1.124

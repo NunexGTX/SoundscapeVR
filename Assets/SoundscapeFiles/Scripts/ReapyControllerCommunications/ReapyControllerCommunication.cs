@@ -21,6 +21,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     private string connectionStatus = "not_connected";
     private string[] connectionTypes = new string[] {"not_connected", "connecting", "connected", "failed"};
     private CancellationTokenSource _cts = new CancellationTokenSource();
+    private readonly SemaphoreSlim _streamLock = new SemaphoreSlim(1, 1);
     private bool _isReconnecting = false;
     private const int MaxReconnectAttempts = 5;
     private const int ReadTimeoutMs = 3000;
@@ -125,6 +126,7 @@ public class ReapyControllerCommunication : MonoBehaviour
             Debug.LogWarning($"[SoundscapeVR] No stream. Cannot send to {ServerIP}:{ReapyCommunicationPort}");
             return;
         }
+        await _streamLock.WaitAsync(ct);
         try
         {
             byte[] msg = Encoding.UTF8.GetBytes(command);
@@ -145,6 +147,10 @@ public class ReapyControllerCommunication : MonoBehaviour
         {
             Debug.LogWarning($"Reaper Controller: I/O error — {ex.Message}. Triggering reconnect.");
             _ = ReconnectAsync();
+        }
+        finally
+        {
+            _streamLock.Release();
         }
     }
 
