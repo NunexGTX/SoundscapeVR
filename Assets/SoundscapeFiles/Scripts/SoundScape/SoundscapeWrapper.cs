@@ -103,9 +103,10 @@ public class SoundscapeWrapper: MonoBehaviour
         if(currentSoundscape == null) return;
         if (placedAudios.ContainsKey(audioId))
         {
-            AudioSource src = placedAudios[audioId].GetComponent<WorldAudioSource>().audioSource;
+            WorldAudioSource worldSrc = placedAudios[audioId].GetComponent<WorldAudioSource>();
+            AudioSource src = worldSrc.audioSource;
             EditSoundscape(src, false);
-            Destroy(placedAudios[audioId]);
+            worldSrc.DestroySource();
             placedAudios.Remove(audioId);
             return;
         }
@@ -137,6 +138,7 @@ public class SoundscapeWrapper: MonoBehaviour
         worldSrc.library = soundscapeLibrary;
         worldSrc.playbackType = vrStateData.GetCurrentAudio();
         worldSrc.reaperController = reapyController;
+        worldSrc.loadingManager = loadingManager;
 
         if(!inEditMode && !worldSrc.IsVisible()) gameObject.SetLayerRecursively(untargetableSoundSourceLayer);
 
@@ -239,16 +241,32 @@ public class SoundscapeWrapper: MonoBehaviour
         StartSoundscape();
     }
 
-    private void StartSoundscape()
+    private async void StartSoundscape()
     {
-        foreach(AudioSource src in currentSoundscape.GetAudioSources())
+        while (!loadingManager.CanLoad(true))
+        {
+            await Task.Delay(100);
+        }
+        List<AudioSource> audioSources = currentSoundscape.GetAudioSources();
+        loadingManager.SetToStart(audioSources.Count);
+        loadingManager.SetInfo("Playing audios...");
+        loadingManager.OnLoaded(() =>
+        {
+            currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
+            Debug.Log("All audios loaded. yay");
+            StartLoopCoroutine();
+        });
+        reapyController.loadingManager = loadingManager;
+        foreach(AudioSource src in audioSources)
         {
             //if an audio isnt loaded here, that means it could not be loaded, so we dont instantiate it.
-            if(!soundscapeLibrary.IsAudioLoaded(src.GetAudioId())) continue;
+            if (!soundscapeLibrary.IsAudioLoaded(src.GetAudioId()) && vrStateData.GetCurrentAudio() == AudioListeningType.BINAURAL)
+            {
+                loadingManager.Increment();
+                continue;  
+            } 
             PlaceSoundscapeAudioSource(src, inEditMode);
         }
-        currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
-        StartLoopCoroutine();
     }
 
     //function to start counting time to loop the SS.
@@ -314,7 +332,7 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         foreach(GameObject go in placedAudios.Values)
         {
-            Destroy(go);
+            go.GetComponent<WorldAudioSource>().DestroySource();
         }
         placedAudios = new();
     }

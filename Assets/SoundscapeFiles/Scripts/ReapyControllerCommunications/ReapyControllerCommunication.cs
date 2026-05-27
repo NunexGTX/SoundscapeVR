@@ -26,6 +26,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     private const int MaxReconnectAttempts = 5;
     private const int ReadTimeoutMs = 3000;
     private const int BaseReconnectDelayMs = 1000;
+    public LoadingManager loadingManager = null;
 
     //Commands
     [SerializeField]
@@ -152,6 +153,13 @@ public class ReapyControllerCommunication : MonoBehaviour
         {
             _streamLock.Release();
         }
+    }
+
+    //TODO
+    private void OnReaperReceive()
+    {
+        //correr quando receber ack ou error de tocar uma fonte de audio
+        //if(loadingManage != null) loadingManager.Increment();
     }
 
     private async Task ReconnectAsync()

@@ -35,8 +35,7 @@ public class PlayerManager : MonoBehaviour
         if(vrStateData.IsInVr) EnterVR();
         EnsureVrState(vrStateData.IsInVr);
         #else
-        vrStateData.IsInVr = true;
-        EnsureVrState(true);
+        EnterVR();
         #endif
         //else ExitVR();
     }
@@ -59,7 +58,7 @@ public class PlayerManager : MonoBehaviour
     public void EnterVR()
     {
         EnsureVrState(true);
-        #if !UNITY_ANDROID
+        #if !UNITY_ANDROID || UNITY_EDITOR
         StartCoroutine(VRSwitcher.EnableXRCoroutine());
         #endif
         vrStateData.IsInVr = true;

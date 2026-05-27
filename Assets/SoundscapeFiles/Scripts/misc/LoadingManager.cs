@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -14,10 +15,16 @@ public class LoadingManager : MonoBehaviour
     private float end = 1f;
     private bool softConcurrencyCheck = false;
     private bool queued = false;
+    private Action onLoadingFinished = null;
 
     public void SetInfo(string text)
     {
         infoText.text = text;
+    }
+
+    public void OnLoaded(Action action)
+    {
+        onLoadingFinished = action;
     }
 
     public bool CanLoad(bool queueUp){
@@ -69,6 +76,8 @@ public class LoadingManager : MonoBehaviour
         if(queued) return;
         image.gameObject.SetActive(false);
         player.SetPlayerRotation(true);
+        if(onLoadingFinished != null) onLoadingFinished.Invoke();
+        onLoadingFinished = null;
     }
 
     private float time = 0f;

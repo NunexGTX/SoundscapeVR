@@ -18,6 +18,7 @@ public class WorldAudioSource: MonoBehaviour
     public VrStateData vrStateData;
     public AudioListeningType playbackType;
     public ReapyControllerCommunication reaperController;
+    public LoadingManager loadingManager;
 
 
     public Guid GetUUID()
@@ -34,6 +35,7 @@ public class WorldAudioSource: MonoBehaviour
         if (playbackType.Equals(AudioListeningType.BINAURAL))
         {
           _ = PlayAudio();
+          loadingManager.Increment();
         }else if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
         {            
             //Tell reaper the audio source was created so it makes the new track
@@ -66,9 +68,10 @@ public class WorldAudioSource: MonoBehaviour
         }
     }
 
-    void OnDestroy()
+    public void DestroySource()
     {
-
+        deleteReaperTrack();
+        Destroy(gameObject);
     }
 
     void updateReaperTrackPosition()
@@ -142,6 +145,11 @@ public class WorldAudioSource: MonoBehaviour
         SetIconEnabledState(newMute);
         audioSource.SetMute(newMute);
         gameObject.GetComponent<UnityEngine.AudioSource>().mute = newMute;
+
+        if(newMute)
+            reaperController.MuteTrack(GetUUID());
+        else 
+            reaperController.UnmuteTrack(GetUUID());
     }
 
     public bool IsVisible(){return audioSource.Visible;}

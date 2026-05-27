@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 public class ConfigScript : MonoBehaviour
 {
-    public PlayerManager XRSwitcher;
+    public PlayerManager playerManager;
     [SerializeField] private GameObject mainMenu;
     private TextField reaperControllerAddressField;
     private Button reaperControllerConnect;
@@ -124,10 +124,10 @@ public class ConfigScript : MonoBehaviour
     {
         if (evt.newValue)
         {
-            XRSwitcher.EnterVR();
+            playerManager.EnterVR();
         } else
         {
-            XRSwitcher.ExitVR();
+            playerManager.ExitVR();
         }
     }
 
