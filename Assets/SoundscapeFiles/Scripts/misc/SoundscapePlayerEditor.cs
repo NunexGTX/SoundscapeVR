@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.XR.CoreUtils;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,6 +27,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     [SerializeField] private EditScript editUi;
     [SerializeField] private AudioEffectScript effectFiltersUi;
     [SerializeField] private PlayerManager playerManager;
+    [SerializeField] private List<GameObject> screensToHideOnSphere;
     private GameObject currentPlacingObject;
     private GameObject currentTextAsset = null;
 
@@ -83,9 +85,22 @@ public class SoundscapePlayerEditor: MonoBehaviour
     {
         aimingSphere.SetActive(isActive);
         if (isActive)
+        {
             playerManager.HideCameraLayers(PlayerManager.HIDE_PLACING);
+            foreach(GameObject go in screensToHideOnSphere)
+            {
+                go.SetLayerRecursively(2);
+            }            
+        }
         else
+        {            
             playerManager.ShowCameraLayers(PlayerManager.HIDE_PLACING);
+            foreach(GameObject go in screensToHideOnSphere)
+            {
+                go.SetLayerRecursively(5);
+            }            
+        }
+        
     }
 
     public void FirstPlaceAudio(ActivateEventArgs eventArgs)

@@ -99,7 +99,7 @@ public class SoundscapeEditor
 
         debugLabel.text = $"Created soundscape {titleField.value}";
         Soundscape newSS = Soundscape.CreateSoundscape(titleField.value, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], loopToggle.value, videoToggle.value);
-        ssWrapper.SetSoundscape(newSS);
+        ssWrapper.SetAndStartSoundscape(newSS);
         ssWrapper.MarkEdited();
         if(runOnCreate != null) runOnCreate.Invoke(newSS);
     }
@@ -149,6 +149,8 @@ public class SoundscapeEditor
         newSS.CopySourcesFrom(currentSelectedSoundscape);
         library.UpdateSoundscapeData(oldTitle, newSS);
         if(runOnSave != null) runOnSave.Invoke(oldTitle, newSS);
+
+        ssWrapper.SetAndStartSoundscape(newSS);
     }
 
     private void ResetDeleteCounter()

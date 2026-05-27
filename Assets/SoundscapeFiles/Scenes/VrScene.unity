@@ -1629,6 +1629,10 @@ MonoBehaviour:
   editUi: {fileID: 1404888078}
   effectFiltersUi: {fileID: 2125151702}
   playerManager: {fileID: 657310048}
+  screensToHideOnSphere:
+  - {fileID: 1404888071}
+  - {fileID: 2125151695}
+  - {fileID: 86987618}
 --- !u!114 &657310051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2470,6 +2474,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -6595512345416212934, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
     - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      propertyPath: m_EnableUIInteraction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1644703820982035308, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_AllowHoveredActivate
       value: 1
       objectReference: {fileID: 0}
@@ -2683,7 +2691,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2763817294847212894, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_RaycastMask.m_Bits
-      value: 2147484193
+      value: 2147483648
       objectReference: {fileID: 0}
     - target: {fileID: 3325226854019162143, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_GripInput.m_InputActionReference
