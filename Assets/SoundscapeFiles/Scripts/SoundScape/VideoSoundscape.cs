@@ -104,13 +104,13 @@ public class VideoSoundscape : Soundscape
 
     public override void ClearVisualsBinding()
     {
+        videoPlayer.prepareCompleted -= OnVideoPrepared;
+        videoPlayer.prepareCompleted -= AdaptEncompassingToScreen;
         base.ClearVisualsBinding();
     }
 
     public override void RestartVisuals(GameObject ssVisual, VisualType visualType)
     {
-        videoPlayer.prepareCompleted -= OnVideoPrepared;
-        videoPlayer.prepareCompleted -= AdaptEncompassingToScreen;
         ssVisual.GetComponent<VideoPlayer>().Stop();
         ssVisual.GetComponent<VideoPlayer>().Play();
     }

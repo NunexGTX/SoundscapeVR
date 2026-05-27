@@ -159,13 +159,19 @@ public class SoundscapePlayerEditor: MonoBehaviour
     
     private Vector3 GetSelectionPoint(ActivateEventArgs args)
     {
-        if (args.interactorObject is NearFarInteractor nearFar)
+        if (args.interactorObject is NearFarInteractor nearFar &&
+            nearFar.farInteractionCaster is ICurveInteractionCaster farCaster)
         {
-            if (nearFar.farInteractionCaster is ICurveInteractionCaster farCaster)
+            Vector3 origin = farCaster.castOrigin.position;
+            Vector3 direction = (farCaster.lastSamplePoint - origin).normalized;
+
+            if (Physics.Raycast(origin, direction, out RaycastHit hit, Mathf.Infinity))
             {
-                return farCaster.lastSamplePoint;
+                Debug.Log($"Hit: {hit.point} on {hit.collider.gameObject.name}");
+                return hit.point;
             }
         }
+
         throw new("Invalid arguments provided: " + args);
     }
 

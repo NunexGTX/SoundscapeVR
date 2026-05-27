@@ -35,7 +35,6 @@ public class WorldAudioSource: MonoBehaviour
         if (playbackType.Equals(AudioListeningType.BINAURAL))
         {
           _ = PlayAudio();
-          loadingManager.Increment();
         }else if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
         {            
             //Tell reaper the audio source was created so it makes the new track
@@ -112,6 +111,7 @@ public class WorldAudioSource: MonoBehaviour
         IAudioGenerator gen = await library.GetClipForAudio(audioSource.GetAudioId());
         if(gen == null)
         {
+            //TODO fix this, cant be null bc of the map in wrapper
             Destroy(gameObject);            
             return;
         }
@@ -127,6 +127,7 @@ public class WorldAudioSource: MonoBehaviour
         src.loop = audioSource.Loop;
         src.time = 0;
         src.PlayDelayed(audioSource.DelaySeconds);
+        loadingManager.Increment();
         return;
     }
 

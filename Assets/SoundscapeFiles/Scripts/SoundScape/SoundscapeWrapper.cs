@@ -186,7 +186,7 @@ public class SoundscapeWrapper: MonoBehaviour
         
         currentSoundscape.OnVisualsFail(() =>
         {
-            _ = OnVisualFail(currentSoundscape.title);
+            _ = OnVisualFail($"Failed to load visuals for: {currentSoundscape.title}");
         });
         currentSoundscape.OnVisualsLoaded(() =>
         {
@@ -194,21 +194,26 @@ public class SoundscapeWrapper: MonoBehaviour
             loadingManager.EndLoading();  
             _ = PrepareAudiosAndPlaySoundscape();
         } );
+        Debug.Log($"[SoundscapeVR] Preparing soundscape {currentSoundscape.title}");
         try
         {
             ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());         
         }
         catch
         {
-            Debug.LogWarning("Caught an error trying to load the visuals of a soundscape");
+            Debug.LogWarning("[SoundscapeVR] Caught an error trying to load the visuals of a soundscape");
             _ = OnVisualFail($"Failed to load visuals {currentSoundscape.title}");
+            StopSoundscape();
+            return;
         }
+        Debug.Log($"[SoundscapeVR] Gotten visuals for soundscape {currentSoundscape.title}");
         screen = currentSoundscape.GetScreenObject();
         currentSoundscape.SetEdit(inEditMode);
         videoPlaying = true;
         if(ssVisual == null)
         {
             videoPlaying = false;
+            Debug.LogWarning($"[SoundscapeVR] Could not load visuals for {currentSoundscape.title}");
             _ = OnVisualFail($"Visuals could not be loaded for {currentSoundscape.title}", stopSoundscape: false);
         }
         return;
@@ -217,6 +222,7 @@ public class SoundscapeWrapper: MonoBehaviour
 
     private async Task OnVisualFail(string errorMessage, bool stopSoundscape = true)
     {
+        Debug.LogWarning($"[SoundscapeVR] Failed to load visuals for soundscape. {errorMessage}");
         loadingManager.SetInfo(errorMessage); 
         int increments = 10;
         for(int i = 0; i < increments; i++)
@@ -231,13 +237,18 @@ public class SoundscapeWrapper: MonoBehaviour
 
     private async Task PrepareAudiosAndPlaySoundscape()
     {
+        Debug.Log($"[SoundscapeVR] Loading audios for soundscape.");
         List<string> audioIds = new();
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
         {
             audioIds.Add(src.GetAudioId());
         }
-        soundscapeLibrary.ClearAudioCache(currentSoundscape.title);
-        await soundscapeLibrary.LoadAudioClipsAsync(audioIds);
+        if(vrStateData.GetCurrentAudio() == AudioListeningType.BINAURAL)
+        {
+            soundscapeLibrary.ClearAudioCache(currentSoundscape.title);
+            //ja gere o loadingManager dentro
+            await soundscapeLibrary.LoadAudioClipsAsync(audioIds);   
+        }
         StartSoundscape();
     }
 
@@ -247,15 +258,22 @@ public class SoundscapeWrapper: MonoBehaviour
         {
             await Task.Delay(100);
         }
+        Debug.Log($"[SoundscapeVR] Playing audios");
         List<AudioSource> audioSources = currentSoundscape.GetAudioSources();
         loadingManager.SetToStart(audioSources.Count);
         loadingManager.SetInfo("Playing audios...");
         loadingManager.OnLoaded(() =>
         {
+            //corre quando tudo carrega
             currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
             Debug.Log("All audios loaded. yay");
             StartLoopCoroutine();
         });
+        if(vrStateData.GetCurrentAudio() == AudioListeningType.NONE)
+        {
+            loadingManager.EndLoading();
+            return;
+        }        
         reapyController.loadingManager = loadingManager;
         foreach(AudioSource src in audioSources)
         {

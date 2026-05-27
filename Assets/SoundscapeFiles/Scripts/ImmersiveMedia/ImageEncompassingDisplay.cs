@@ -20,6 +20,7 @@ public class ImageEncompassingDisplay : MonoBehaviour
     
     private IEnumerator LoadAndApply()
     {
+        imagePath = "file://" + imagePath;
         DownloadedTextureParams downloadParams = DownloadedTextureParams.Default;
         downloadParams.mipmapChain = false;
         using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath, downloadParams))
@@ -28,7 +29,7 @@ public class ImageEncompassingDisplay : MonoBehaviour
 
             if (uwr.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError("Image load failed: " + uwr.error);
+                Debug.LogError($"[SoundscapeVR] Soundscape Image {imagePath} load failed: " + uwr.error);
                 if(onImageFailed != null) onImageFailed.Invoke();
                 yield break;
             }
@@ -44,7 +45,13 @@ public class ImageEncompassingDisplay : MonoBehaviour
             }
 
             // 2. Create the material
-            skyboxMaterial = new Material(Shader.Find("Skybox/Panoramic"));
+            var shader = Shader.Find("Skybox/Panoramic");
+            if (shader == null)
+            {
+                Debug.LogError("[SoundscapeVR] Skybox/Panoramic shader not found — was it stripped?");
+                yield break;
+            }
+            skyboxMaterial = new Material(shader);
             
             Debug.Log(skyboxMaterial);
             skyboxMaterial.SetTexture("_MainTex", loadedTexture);

@@ -99,18 +99,16 @@ public class SoundscapeLibrary: MonoBehaviour
     
     public static string GetStreamingPath(string fileName = "")
     {
-        string filePath = fileName;
-
         #if UNITY_EDITOR || UNITY_STANDALONE_WIN
             // Standard PC StreamingAssets path
-            return string.IsNullOrWhiteSpace(fileName) ? Application.streamingAssetsPath : Path.Combine(Application.streamingAssetsPath, filePath);
+            return string.IsNullOrWhiteSpace(fileName) ? Application.streamingAssetsPath : Path.Combine(Application.streamingAssetsPath, fileName);
         #elif UNITY_ANDROID
             if(HasPermissions())
-                return string.IsNullOrWhiteSpace(fileName) ? GetAndroidPath() : Path.Combine(GetAndroidPath(), filePath);
+                return string.IsNullOrWhiteSpace(fileName) ? GetAndroidPath() : Path.Combine(GetAndroidPath(), fileName);
             else
-                return Path.Combine(Application.streamingAssetsPath, filePath); 
+                return Path.Combine(Application.streamingAssetsPath, fileName); 
         #else
-            return Path.Combine(Application.streamingAssetsPath, filePath);
+            return Path.Combine(Application.streamingAssetsPath, fileName);
         #endif
     }
     private static string GetStreamingConfigPath(string fileName)
@@ -280,7 +278,7 @@ public class SoundscapeLibrary: MonoBehaviour
 
                     if (uwr.result != UnityWebRequest.Result.Success)
                     {
-                        Debug.LogError("Image load failed: " + uwr.error);
+                        Debug.LogError($"[SoundscapeVR] Audio Icon {audio.fileName} load failed: " + uwr.error);
                     }
                     else
                     {

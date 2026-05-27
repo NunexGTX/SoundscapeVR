@@ -104,7 +104,7 @@ public class ImageSoundscape : Soundscape
     {
         DownloadedTextureParams downloadParams = DownloadedTextureParams.Default;
         downloadParams.mipmapChain = false;
-        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath, downloadParams))
+        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture("file://" + imagePath, downloadParams))
         {
             var operation = uwr.SendWebRequest();
             while (!operation.isDone)
