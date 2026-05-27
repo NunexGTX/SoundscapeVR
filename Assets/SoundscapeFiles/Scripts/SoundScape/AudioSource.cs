@@ -91,9 +91,10 @@ public class AudioSource : ISerializationCallbackReceiver
         return spherePosition.ToVector3(); 
     }
 
-    public void WithNewPosition(Vector3 newCoords)
+    public AudioSource WithNewPosition(Vector3 newCoords)
     {
         this.spherePosition = new(newCoords);
+        return this;
     }
 
     public void ApplyEffects(GameObject go)

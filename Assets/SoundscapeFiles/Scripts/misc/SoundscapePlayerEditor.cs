@@ -25,6 +25,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     [SerializeField] private GameObject distanceTextAsset;
     [SerializeField] private EditScript editUi;
     [SerializeField] private AudioEffectScript effectFiltersUi;
+    [SerializeField] private PlayerManager playerManager;
     private GameObject currentPlacingObject;
     private GameObject currentTextAsset = null;
 
@@ -74,8 +75,17 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(!soundscapeWrapper.HasSoundscape() || currentState != State.Standby) return false;
         currentPickedAudio = audio;
         currentState = State.TryPlace;
-        aimingSphere.SetActive(true);
+        SetSphereActive(true);
         return true;
+    }
+
+    private void SetSphereActive(bool isActive)
+    {
+        aimingSphere.SetActive(isActive);
+        if (isActive)
+            playerManager.HideCameraLayers(PlayerManager.HIDE_PLACING);
+        else
+            playerManager.ShowCameraLayers(PlayerManager.HIDE_PLACING);
     }
 
     public void FirstPlaceAudio(ActivateEventArgs eventArgs)
@@ -88,24 +98,41 @@ public class SoundscapePlayerEditor: MonoBehaviour
     //Called by the Sphere to set azimuth and latitude
     public void FirstPlaceAudio(Vector3 worldPos)
     {
-        if(!soundscapeWrapper.HasSoundscape()) return;
-        if(currentState != State.TryPlace) return;
         if(worldPos.Equals(INVALID_VEC_POS)) return;
-        if(currentPickedAudio == null)
-        {
-            UnselectLibraryAudio();
-            CancelState();
-            Debug.LogError("Tried to place a null audio");
-            return;
-        }
-        Debug.Log("Placing audio: " + currentPickedAudio.id + " at " + worldPos);
+        if(!soundscapeWrapper.HasSoundscape()) return;
+        if(currentState != State.TryPlace && currentState != State.TryMove) return;
         Vector3 sphereCoords = SoundscapeLibrary.WorldToSphere(worldPos);
-        pickedAudioAsSource = new(currentPickedAudio.id, sphereCoords);
+        if(currentState == State.TryPlace)
+        {    
+            if(currentPickedAudio == null)
+            {
+                UnselectLibraryAudio();
+                CancelState();
+                Debug.LogError("Tried to place a null audio");
+                return;
+            }
+            Debug.Log("Placing audio: " + currentPickedAudio.id + " at " + worldPos);
+            pickedAudioAsSource = new(currentPickedAudio.id, sphereCoords);
+            //change state
+            currentState = State.AdjustPlace;
+        } else if (currentState == State.TryMove)
+        {
+            if(currentSelectedSourceObject == null)
+            {
+                UnselectLibraryAudio();
+                CancelState();
+                Debug.LogError("Tried to move a null world audio source");
+                return;
+            }
+            WorldAudioSource src = currentSelectedSourceObject.GetComponent<WorldAudioSource>();
+            Debug.Log("Moving audio source: " + src.audioSource.GetAudioId() + " to " + worldPos);
+            pickedAudioAsSource = new AudioSource(src.audioSource).WithNewPosition(sphereCoords);
+            //change state
+            currentState = State.AdjustMove;
+        }
         CreatePlaceholderPlacer(worldPos);
-        //change state
-        currentState = State.AdjustPlace;
-        aimingSphere.SetActive(false);
         DistanceFeedback(worldPos);
+        SetSphereActive(false);
     }
 
     private void CreatePlaceholderPlacer(Vector3 worldPos)
@@ -130,7 +157,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     // called by this script for confirming/selecting
     private void ConfirmAction(InputAction.CallbackContext context)
     {
-        if(currentState == State.AdjustPlace)
+        if(currentState == State.AdjustPlace || currentState == State.AdjustMove)
             FinalizePlaceAudio();
     }
 
@@ -140,10 +167,17 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(!soundscapeWrapper.HasSoundscape()) return;
         Debug.Log("Finalizing audio placement.");
         Destroy(currentPlacingObject);
-        soundscapeWrapper.PlaceNewAudioSource(pickedAudioAsSource);
+        if(currentSelectedSourceObject != null)
+        {
+            AudioSource src = currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource;
+            soundscapeWrapper.UpdateSource(src.GetUUID(), pickedAudioAsSource);
+            currentSelectedSourceObject = null;
+        } else 
+            soundscapeWrapper.PlaceNewAudioSource(pickedAudioAsSource);
         currentState = State.Standby;
         DestroyTextAsset();
         UnselectLibraryAudio();
+        UnselectSource(goExists: false);
     }
 
     //called by the world source objects
@@ -196,6 +230,16 @@ public class SoundscapePlayerEditor: MonoBehaviour
         effectFiltersUi.gameObject.SetActive(false);
     }
 
+    //called by audio effect UI button to move the source.
+    //means that we're moving the currently selected source.
+    public void MoveAudioSource()
+    {
+        if(!soundscapeWrapper.HasSoundscape() || currentState != State.Select) return;
+        currentState = State.TryMove;
+        SetSphereActive(true); 
+        return;
+    }
+
     
     //called by this script to cancel the current state and return to standby
     private void CancelAction(InputAction.CallbackContext context){CancelState();}
@@ -220,7 +264,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
                 Destroy(currentPlacingObject);       
                 currentPlacingObject = null;
             }
-            aimingSphere.SetActive(false);
+            SetSphereActive(false);
             DestroyTextAsset();
         }
     }
@@ -228,10 +272,10 @@ public class SoundscapePlayerEditor: MonoBehaviour
     //called to scroll the audio position
     private void ScrollAction(InputAction.CallbackContext context)
     {
-        if(currentState != State.AdjustPlace) return;
+        if(currentState != State.AdjustPlace && currentState != State.AdjustMove) return;
         Vector2 scrollValue = context.ReadValue<Vector2>();
         float scrollY = scrollValue.y;
-        if(math.abs(scrollY) < 0.5) return;
+        if(math.abs(scrollY) < 0.5) return;    
         Vector3 sphereCoords = pickedAudioAsSource.GetSpherePosition();
         Vector3 newCoords = new()
         {
@@ -240,7 +284,6 @@ public class SoundscapePlayerEditor: MonoBehaviour
             x = sphereCoords.x + (scrollY > 0 ? 1 : -1) * scrollStep
         };
         Vector3 worldPos = SoundscapeLibrary.SphereToWorld(newCoords);
-
         Destroy(currentPlacingObject);
         CreatePlaceholderPlacer(worldPos);
         pickedAudioAsSource.WithNewPosition(newCoords);

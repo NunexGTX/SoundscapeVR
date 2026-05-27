@@ -26,6 +26,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private LayerMask cameraHideMask = new();
     //what to mask if debugging
     [SerializeField] private LayerMask debugCameraHideMask = new();
+    //what to mask when placing the audio
+    [SerializeField] private LayerMask placingAudioMask = new();
 
     public void Start()
     {
@@ -33,6 +35,7 @@ public class PlayerManager : MonoBehaviour
         if(vrStateData.IsInVr) EnterVR();
         EnsureVrState(vrStateData.IsInVr);
         #else
+        vrStateData.IsInVr = true;
         EnsureVrState(true);
         #endif
         //else ExitVR();
@@ -109,24 +112,30 @@ public class PlayerManager : MonoBehaviour
         return playerCamera.GetComponent<Camera>();
     }
 
-    private int GetCameraMask(bool debug)
+    public const int HIDE_ALL = 0; 
+    public const int HIDE_EDITING = 1; 
+    public const int HIDE_PLACING = 2; 
+
+    private int GetCameraMask(int type)
     {
-        if (debug)
+        return type switch
         {
-            return debugCameraHideMask;
-        } 
-        return cameraHideMask;
+            HIDE_ALL => cameraHideMask,
+            HIDE_EDITING => debugCameraHideMask,
+            HIDE_PLACING => placingAudioMask,
+            _ => cameraHideMask
+        };
     }
 
-    public void ShowCameraLayers()
+    public void ShowCameraLayers(int mask = HIDE_ALL)
     {
         //show stuff
-        Camera.main.cullingMask |= GetCameraMask(false);
+        Camera.main.cullingMask |= GetCameraMask(mask);
     }
-    public void HideCameraLayers(bool debug)
+    public void HideCameraLayers(int type)
     {
         //hide stuff
-        Camera.main.cullingMask &= ~GetCameraMask(debug);
+        Camera.main.cullingMask &= ~GetCameraMask(type);
 
     }
 }

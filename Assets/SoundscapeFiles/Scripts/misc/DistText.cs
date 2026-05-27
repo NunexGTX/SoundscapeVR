@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -21,7 +22,7 @@ public class DistText : MonoBehaviour
     public void SetAndPlace(Vector3 worldPos)
     {
         //magnitude > 2 so it doesnt render inside the block
-        float dist = worldPos.magnitude;
+        float dist = (float) Math.Round(worldPos.magnitude, 1);
         if(dist >= 3)
         {
             renderHalfway = true;

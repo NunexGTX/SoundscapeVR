@@ -168,7 +168,7 @@ public class SoundscapeWrapper: MonoBehaviour
     public async Task PrepareSoundscape(bool debug)
     {
         inEditMode = debug;
-        playerManager.HideCameraLayers(inEditMode);
+        playerManager.HideCameraLayers(inEditMode ? PlayerManager.HIDE_EDITING : PlayerManager.HIDE_ALL);
         /*if (debug)
         {
             StartSoundscape(debug);

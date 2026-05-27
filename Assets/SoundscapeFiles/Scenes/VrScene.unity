@@ -1078,7 +1078,7 @@ GameObject:
   - component: {fileID: 468564578}
   - component: {fileID: 468564581}
   - component: {fileID: 468564582}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: AimingSphere
   m_TagString: AimingSphere
   m_Icon: {fileID: 0}
@@ -1582,7 +1582,10 @@ MonoBehaviour:
     m_Bits: 1376
   debugCameraHideMask:
     serializedVersion: 2
-    m_Bits: 320
+    m_Bits: 64
+  placingAudioMask:
+    serializedVersion: 2
+    m_Bits: 32
 --- !u!4 &657310049
 Transform:
   m_ObjectHideFlags: 0
@@ -1625,6 +1628,7 @@ MonoBehaviour:
   distanceTextAsset: {fileID: 7548355003463832129, guid: efdbd5ff3a559644a85935edef2b1f1d, type: 3}
   editUi: {fileID: 1404888078}
   effectFiltersUi: {fileID: 2125151702}
+  playerManager: {fileID: 657310048}
 --- !u!114 &657310051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2875,7 +2879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5137354377943704513, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_RaycastMask.m_Bits
-      value: 2147484193
+      value: 2147484449
       objectReference: {fileID: 0}
     - target: {fileID: 5193502429546757832, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
       propertyPath: m_MaxRaycastDistance

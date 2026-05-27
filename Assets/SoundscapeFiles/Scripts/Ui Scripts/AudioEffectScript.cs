@@ -137,6 +137,6 @@ public class AudioEffectScript: MonoBehaviour
 
     private void MoveAudio()
     {
-        //editor.MoveAudio();
+        editor.MoveAudioSource();
     }
 }
