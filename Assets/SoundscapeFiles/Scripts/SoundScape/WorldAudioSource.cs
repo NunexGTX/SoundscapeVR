@@ -32,11 +32,8 @@ public class WorldAudioSource: MonoBehaviour
     }
 
     void OnEnable(){
-        if (playbackType.Equals(AudioListeningType.BINAURAL))
+        if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
         {
-          _ = PlayAudio();
-        }else if (playbackType.Equals(AudioListeningType.ENCOMPASSING))
-        {            
             //Tell reaper the audio source was created so it makes the new track
             Debug.Log("Sending Audio Source to Reaper");
             reaperController.NewTrack(audioSource.GetAudioId(),GetUUID(),audioSource.Volume, audioSource.Loop, (uint)audioSource.DelaySeconds);
@@ -54,7 +51,9 @@ public class WorldAudioSource: MonoBehaviour
 
             //Send effects that are being used
             reaperSendAudioEffects();
-        }
+        } else
+          _ = PlayAudio();
+
         //if audiosource is visible -> we want to render the icon, not the cube, in display mode.
         //otherside, just render the cube
         if (audioSource.Visible && !debug)
@@ -107,26 +106,29 @@ public class WorldAudioSource: MonoBehaviour
     public async Task PlayAudio()
     {
         gameObject.GetComponent<MeshRenderer>().enabled = debug;
-        UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
-        IAudioGenerator gen = await library.GetClipForAudio(audioSource.GetAudioId());
-        if(gen == null)
+        if(playbackType == AudioListeningType.BINAURAL)
         {
-            //TODO fix this, cant be null bc of the map in wrapper
-            Destroy(gameObject);            
-            return;
+            UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
+            IAudioGenerator gen = await library.GetClipForAudio(audioSource.GetAudioId());
+            if(gen == null)
+            {
+                //TODO fix this, cant be null bc of the map in wrapper
+                Destroy(gameObject);            
+                return;
+            }
+            src.generator = gen;
+            src.time = 0;
+            if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
+            {
+                src.spatializePostEffects = false;
+                src.spatialize = false;
+                src.spatialBlend = 0;
+            }
+            src.mute = audioSource.Mute;
+            src.loop = audioSource.Loop;
+            src.time = 0;
+            src.PlayDelayed(audioSource.DelaySeconds);
         }
-        src.generator = gen;
-        src.time = 0;
-        if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
-        {
-            src.spatializePostEffects = false;
-            src.spatialize = false;
-            src.spatialBlend = 0;
-        }
-        src.mute = audioSource.Mute;
-        src.loop = audioSource.Loop;
-        src.time = 0;
-        src.PlayDelayed(audioSource.DelaySeconds);
         loadingManager.Increment();
         return;
     }

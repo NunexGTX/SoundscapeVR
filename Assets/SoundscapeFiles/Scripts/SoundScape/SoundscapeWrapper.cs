@@ -268,12 +268,7 @@ public class SoundscapeWrapper: MonoBehaviour
             currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
             Debug.Log("All audios loaded. yay");
             StartLoopCoroutine();
-        });
-        if(vrStateData.GetCurrentAudio() == AudioListeningType.NONE)
-        {
-            loadingManager.EndLoading();
-            return;
-        }        
+        }); 
         reapyController.loadingManager = loadingManager;
         foreach(AudioSource src in audioSources)
         {
