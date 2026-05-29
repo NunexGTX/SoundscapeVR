@@ -589,6 +589,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ConfigScript
   playerManager: {fileID: 657310048}
   mainMenu: {fileID: 812061678}
+  connectionTimeout: 0
 --- !u!114 &88210267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5133,7 +5134,7 @@ MonoBehaviour:
     description: 
     questions: []
   loadingManager: {fileID: 657310051}
-  defaultAudioIcon: {fileID: 2800000, guid: 14347192edc0e544abfefae7af9ea5b5, type: 3}
+  defaultAudioIcon: {fileID: 2800000, guid: b0b01c10fba73b34a8c9c4d64854c714, type: 3}
 --- !u!114 &1891192196
 MonoBehaviour:
   m_ObjectHideFlags: 0
