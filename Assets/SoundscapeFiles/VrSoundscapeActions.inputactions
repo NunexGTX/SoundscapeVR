@@ -2393,6 +2393,50 @@
                 },
                 {
                     "name": "",
+                    "id": "d7571932-5c23-402d-97f1-62ca8619aa20",
+                    "path": "<OculusTouchController>/thumbstick",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=3,sweepBehavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f02f6eed-5248-425b-8445-d688eb814d24",
+                    "path": "<QuestTouchPlusController>/thumbstick",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=3,sweepBehavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9115ca6c-11dc-4f08-b561-ec888d42ed32",
+                    "path": "<QuestProTouchController>/thumbstick",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=3,sweepBehavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4f30bd63-6885-4ab3-add1-bfd6462a0fdb",
+                    "path": "<XRController>/thumbstick",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=3,sweepBehavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "d8258e49-f7cc-44d7-bc27-77c2161e2005",
                     "path": "<XRController>{RightHand}/{Primary2DAxisClick}",
                     "interactions": "",
