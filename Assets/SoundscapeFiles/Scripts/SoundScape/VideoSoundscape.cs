@@ -38,6 +38,7 @@ public class VideoSoundscape : Soundscape
     {
         if(visualType == VisualType.NONE)
         {
+            MakeSkyDark();
             onVisualsLoaded.Invoke();
             return new GameObject("NoVideo");        
         }

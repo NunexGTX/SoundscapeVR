@@ -75,13 +75,18 @@ public abstract class Soundscape
         audioSources = new(other.audioSources);
     }
 
-    protected void CreateScreenAdapter(bool createCanvas)
+    protected void MakeSkyDark()
     {
-        Debug.Log("Creating cinema adapter");
         Material skyboxMat = new Material(Shader.Find("Skybox/Panoramic"));
         skyboxMat.SetColor("_Tint", new Color(0, 0, 0));
         RenderSettings.skybox = skyboxMat;
         DynamicGI.UpdateEnvironment();
+    }
+
+    protected void CreateScreenAdapter(bool createCanvas)
+    {
+        Debug.Log("Creating cinema adapter");
+        MakeSkyDark();
         
         screenMat = new Material(Shader.Find("Custom/CinemaStereoProjection"));
         screenObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
