@@ -2764,6 +2764,61 @@
                 },
                 {
                     "name": "",
+                    "id": "2d88a016-ace7-4f19-aec1-3ecf9a1ad72c",
+                    "path": "<XRController>/thumbstick",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=3,sweepBehavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cd91870f-b0bd-42b2-aaf9-7d636991462e",
+                    "path": "<XRController>{RightHand}/{Primary2DAxis}",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=3,sweepBehavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eab02e6a-d472-444b-99c5-7cf8f33f429a",
+                    "path": "<OculusTouchController>/thumbstick",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=3,sweepBehavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e98a3bf0-11ad-4fef-b0dc-01513579e928",
+                    "path": "<QuestTouchPlusController>/thumbstick",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=3,sweepBehavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f590ac24-cbe7-48d8-b6b1-4acfc14cc9da",
+                    "path": "<QuestProTouchController>/thumbstick",
+                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=3,sweepBehavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "fb2286cc-fa20-4564-bff6-9f790f12cf6b",
                     "path": "<Mouse>/middleButton",
                     "interactions": "",
