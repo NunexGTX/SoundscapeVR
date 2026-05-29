@@ -1,0 +1,55 @@
+:root {
+}
+
+.btn {
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    background-color: rgb(178, 178, 178);
+    color: rgb(0, 0, 0);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    font-size: 65px;
+    -unity-font-style: normal;
+    -unity-font-definition: url("project://database/Assets/SoundscapeFiles/UI/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf?fileID=12800000&guid=02204c9fcf73f8c0aad0eef2fae3c36c&type=3#Roboto-VariableFont_wdth,wght");
+}
+
+.btn:hover {
+    background-color: rgb(32, 255, 0);
+}
+
+.btnQuit {
+    width: auto;
+    position: relative;
+    left: auto;
+    flex-direction: column;
+    align-items: stretch;
+    align-self: auto;
+    background-color: rgb(113, 41, 48);
+    color: rgb(226, 182, 182);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-text-auto-size: none;
+}
+
+.btnQuit:hover {
+    width: auto;
+    position: relative;
+    left: auto;
+    flex-direction: column;
+    align-items: stretch;
+    align-self: auto;
+    background-color: rgb(219, 44, 55);
+    color: rgb(255, 255, 255);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-text-auto-size: none;
+}
+
+.btnGetExtension {
+    background-color: rgb(53, 82, 173);
+    color: rgb(255, 255, 255);
+}
+
+.btnGetExtension:hover {
+    background-color: rgb(34, 50, 236);
+    color: rgb(255, 255, 255);
+}

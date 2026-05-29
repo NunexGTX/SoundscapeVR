@@ -90,3 +90,6 @@
     width: auto;
     flex-direction: row;
 }
+
+.btn {
+}

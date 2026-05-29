@@ -1,14 +1,17 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
-    <ui:VisualElement enabled="true" name="VisualElement" style="flex-grow: 1; background-color: rgb(36, 35, 35);">
-        <ui:Image source="project://database/Assets/SoundscapeFiles/UI/icons/hvencPlugin.png?fileID=2800000&amp;guid=cae5e0a954ccba535b00845dccae2ae9&amp;type=3#hvencPlugin" style="height: 400px;"/>
-        <ui:Label text="HEVC Video Extension is not installed" style="color: rgb(255, 255, 255); font-size: 132px; -unity-text-align: upper-center; align-items: stretch;"/>
-        <ui:Label text="Without it, H.265 videos cannot be played" style="-unity-text-align: upper-center; color: rgb(255, 255, 255); font-size: 131px;"/>
-        <ui:Label text="Get it for free from the Microsoft Store, or skip to use VP8 videos instead" style="-unity-text-align: upper-center; color: rgb(255, 255, 255); font-size: 131px;"/>
-        <ui:GroupBox usage-hints="None" focusable="false" style="font-size: 73px; opacity: 1; flex-direction: row; flex-wrap: nowrap; align-items: stretch; justify-content: space-evenly; align-self: auto; align-content: flex-start;">
-            <ui:Button name="skip-button" text="Skip"/>
-            <ui:Button text="Get Extension" name="get-hevc"/>
-            <ui:Button name="quit" text="Quit" style="width: auto; position: relative; left: auto; flex-direction: column; align-items: stretch; align-self: auto;"/>
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/UISplashWarning.uss?fileID=7433441132597879392&amp;guid=b85d540bb547489bfb97815eff167a13&amp;type=3#UISplashWarning"/>
+    <ui:VisualElement enabled="true" name="VisualElement" style="flex-grow: 1; background-color: rgb(36, 35, 35); align-items: center; justify-content: space-evenly;">
+        <ui:GroupBox style="flex-direction: column; margin-top: 120px;">
+            <ui:Image source="project://database/Assets/SoundscapeFiles/UI/icons/HEVCExtensions-icon.svg?fileID=7388822144124034973&amp;guid=31a763a33a4755f49adc1c7b1902ee61&amp;type=3#HEVCExtensions-icon" style="height: 400px; font-size: 59px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 50px; margin-right: 0; margin-bottom: 50px; margin-left: 0;"/>
+            <ui:Label text="HEVC Video Extension&#10;Required for H.265 videos" style="color: rgb(255, 255, 255); font-size: 79px; -unity-text-align: upper-center; align-items: stretch; -unity-paragraph-spacing: 7px; -unity-font-definition: url(&quot;project://database/Assets/SoundscapeFiles/UI/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf?fileID=12800000&amp;guid=02204c9fcf73f8c0aad0eef2fae3c36c&amp;type=3#Roboto-VariableFont_wdth,wght&quot;); word-spacing: 2px;"/>
+        </ui:GroupBox>
+        <ui:GroupBox style="width: 100%; justify-content: flex-end; align-items: center; margin-top: -15px;">
+            <ui:Label text="For a complete experience installing the extension is recommended" style="color: rgb(120, 120, 120); font-size: 46px; -unity-font-style: normal; margin-bottom: 24px; -unity-font-definition: url(&quot;project://database/Assets/SoundscapeFiles/UI/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf?fileID=12800000&amp;guid=02204c9fcf73f8c0aad0eef2fae3c36c&amp;type=3#Roboto-VariableFont_wdth,wght&quot;);"/>
+            <ui:GroupBox usage-hints="None" focusable="false" style="font-size: 117px; opacity: 1; flex-direction: row; flex-wrap: nowrap; align-items: stretch; justify-content: space-evenly; align-self: auto; align-content: flex-start; width: 70%; margin-bottom: 120px;">
+                <ui:Button name="quit" text="Quit" class="btn btnQuit" style="border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0);"/>
+                <ui:Button text="Get Extension" name="get-hevc" class="btn btnGetExtension" style="border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0);"/>
+                <ui:Button name="skip-button" text="Skip " enable-rich-text="false" class="btn" style="border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0);"/>
+            </ui:GroupBox>
         </ui:GroupBox>
     </ui:VisualElement>
 </ui:UXML>

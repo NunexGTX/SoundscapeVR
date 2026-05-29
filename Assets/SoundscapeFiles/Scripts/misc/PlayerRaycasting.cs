@@ -21,6 +21,7 @@ public class PlayerRaycasting : MonoBehaviour
                 obj.GetComponent<WorldAudioSource>().FlipMuteState();
                 return;
             }
+            
             editor.FirstPlaceAudio(RaycastSphere());
         }
     }

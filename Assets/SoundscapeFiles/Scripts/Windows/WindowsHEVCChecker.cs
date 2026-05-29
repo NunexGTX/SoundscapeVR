@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 public class WindowsHEVC : MonoBehaviour
 {
-    //TODO: Test this script
+    [SerializeField] private VrStateData vrStateData;
     private static readonly IntPtr HKLM = new(unchecked((int)0x80000002));
     private static readonly IntPtr HKCU = new(unchecked((int)0x80000001));
 
@@ -28,17 +28,20 @@ public class WindowsHEVC : MonoBehaviour
     static extern int RegCloseKey(IntPtr hKey);
 
     public bool IsAvailable { get; private set; }
-    public GameObject HEVCWarning;
+    public GameObject[] HEVCWarnings;
+    public GameObject HEVCWarningUI;
 
     void Start()
     {
-        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+        #if UNITY_STANDALONE_WIN
             IsAvailable = Check();
             Debug.Log($"[WindowsHEVCChecker] HEVC Video Extensions available: {IsAvailable}");
             if (IsAvailable)
                 SoundscapeSceneLoad.LoadMainScene();
             else
                 ShowNoPluginMessage();
+        #elif UNITY_EDITOR
+            ShowNoPluginMessage();
         #else
             Debug.LogWarning("This system is not running Microsoft Windows (or maybe a really old one). Please remove the Windows HEVC Checker scene from this build");
             SoundscapeSceneLoad.LoadMainScene();
@@ -84,14 +87,43 @@ public class WindowsHEVC : MonoBehaviour
 
     void ShowNoPluginMessage()
     {
-        HEVCWarning.SetActive(true);
+        if (vrStateData.IsInVr)
+        {
+            foreach (GameObject HEVCWarning in HEVCWarnings)
+            {
+                HEVCWarning.SetActive(true);
+                registerButtonsEvents(HEVCWarning);
+            }
+        }
+        else
+        {
+            HEVCWarningUI.SetActive(true);
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            registerButtonsEvents(HEVCWarningUI);
+        }
+    }
 
-        VisualElement root = HEVCWarning.GetComponent<UIDocument>().rootVisualElement;
-        root.Q<Button>("skip-button").clicked += SoundscapeSceneLoad.LoadMainScene;
-        root.Q<Button>("get-hevc").clicked += () => 
-            Application.OpenURL("ms-windows-store://pdp/?ProductId=9nmzlz57r3t7");
-        root.Q<Button>("exit").clicked += () => Application.Quit();
-            
-            
+    void registerButtonsEvents(GameObject uiSource)
+    {
+        VisualElement root = uiSource.GetComponent<UIDocument>().rootVisualElement;
+        
+        root.Q<Button>("skip-button").RegisterCallback<ClickEvent>(e => SoundscapeSceneLoad.LoadMainScene());
+        root.Q<Button>("get-hevc").RegisterCallback<ClickEvent>(e => getExtensionAndQuit());
+        root.Q<Button>("quit").RegisterCallback<ClickEvent>(e => Quit());
+    }
+
+    void getExtensionAndQuit()
+    {
+        Application.OpenURL("http://dl.delivery.mp.microsoft.com/filestreamingservice/files/c59271a2-7509-4a90-b8fb-ab8512b78135");
+        Quit();
+    }
+
+    static void Quit()
+    {
+        #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+        #else
+                Application.Quit();
+        #endif
     }
 }
