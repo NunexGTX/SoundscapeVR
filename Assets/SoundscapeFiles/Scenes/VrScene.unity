@@ -2227,14 +2227,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.20705767, g: 0.9339623, b: 0.22553365, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 8c89ed5746a4faa48bb97701cc2f2e35, type: 3}
+  m_Texture: {fileID: 2800000, guid: 30a9256eb7d98ad4188fe103a8e7143b, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -5164,6 +5164,7 @@ MonoBehaviour:
   connectionTimeOutMillis: 5000
   vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   loadingManager: {fileID: 0}
+  startSoundscapeCommand: start_soundscape
   newTrackCommand: new_track
   sourcePositionCommand: source_position
   muteCommand: mute
