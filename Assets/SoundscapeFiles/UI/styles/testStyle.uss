@@ -135,6 +135,17 @@
     width: 5px;
     background-color: rgba(0, 0, 0, 0);
     margin-right: 3px;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.4s;
+    transition-delay: 0.8s;
+}
+
+/* Show scroller while hovering the scroll view, hide shortly after */
+.unity-scroll-view:hover .unity-scroller--vertical {
+    opacity: 1;
+    transition-delay: 0s;
+    transition-duration: 0.15s;
 }
 
 /* Horizontal scroller height */
