@@ -1,6 +1,59 @@
-:root {
+/* Scroller Minimalist */
+.unity-scroller__low-button,
+.unity-scroller__high-button {
+    display: none;
 }
 
-.unity-base-slider__text-field {
-    width: 75px;
+.unity-scroller__slider {
+    margin: 0px;
+}
+
+/* Scroller track */
+.unity-scroller__slider .unity-base-slider__tracker {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+
+/* Dragger thumb */
+.unity-scroller__slider .unity-base-slider__dragger {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-width: 0;
+    border-radius: 3px;
+    width: 5px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+/* Thumb hover */
+.unity-scroller__slider .unity-base-slider__dragger:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Thumb active/dragging */
+.unity-scroller__slider .unity-base-slider__dragger:active {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Vertical scroller width */
+.unity-scroller--vertical {
+    width: 5px;
+    background-color: rgba(0, 0, 0, 0);
+    margin-right: 3px;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.4s;
+    transition-delay: 0.8s;
+}
+
+/* Show scroller while hovering the scroll view, hide shortly after */
+.unity-scroll-view:hover .unity-scroller--vertical {
+    opacity: 1;
+    transition-delay: 0s;
+    transition-duration: 0.15s;
+}
+
+/* Horizontal scroller height */
+.unity-scroller--horizontal {
+    height: 5px;
+    background-color: rgba(0, 0, 0, 0);
 }

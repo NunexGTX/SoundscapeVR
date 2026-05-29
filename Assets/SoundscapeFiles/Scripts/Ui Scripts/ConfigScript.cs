@@ -10,6 +10,7 @@ public class ConfigScript : MonoBehaviour
     private Button reaperControllerConnect;
     private Label reaperConnectionStatusMessage;
     private float connectionMessageTimeout = 4;
+    public bool connectionTimeout = false;
     private IEnumerator messageClearCoroutine;
     private ReapyControllerCommunication reapyControllerCommunication;
     private Toggle VRToggle;
@@ -88,8 +89,11 @@ public class ConfigScript : MonoBehaviour
         }
 
         reaperConnectionStatusMessage.visible = true;
-        messageClearCoroutine = connectionMessageClear();
-        StartCoroutine(messageClearCoroutine);
+        if (connectionTimeout)
+        {
+            messageClearCoroutine = connectionMessageClear();
+            StartCoroutine(messageClearCoroutine);
+        }
     }
 
     IEnumerator connectionMessageClear()
