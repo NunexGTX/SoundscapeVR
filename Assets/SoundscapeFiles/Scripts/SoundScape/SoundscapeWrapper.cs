@@ -267,9 +267,14 @@ public class SoundscapeWrapper: MonoBehaviour
             //corre quando tudo carrega
             currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
             Debug.Log("All audios loaded. yay");
-            StartLoopCoroutine();
+            if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)StartLoopCoroutine();
         }); 
-        reapyController.loadingManager = loadingManager;
+        //Send to reaper a message with loop and timing information
+        if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING){
+            reapyController.loadingManager = loadingManager;
+            ReaperSendSoundscapeInformation(currentSoundscape.timeSeconds,currentSoundscape.loop);
+        }
+
         foreach(AudioSource src in audioSources)
         {
             //if an audio isnt loaded here, that means it could not be loaded, so we dont instantiate it.
@@ -280,6 +285,11 @@ public class SoundscapeWrapper: MonoBehaviour
             } 
             PlaceSoundscapeAudioSource(src, inEditMode);
         }
+    }
+
+    private void ReaperSendSoundscapeInformation(int duration, bool loop)
+    {
+        reapyController.StartSoundscape(duration, loop);
     }
 
     //function to start counting time to loop the SS.

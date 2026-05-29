@@ -30,6 +30,8 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     //Commands
     [SerializeField]
+    private string startSoundscapeCommand = "start_soundscape";
+    [SerializeField]
     private string newTrackCommand = "new_track";
 
     [SerializeField]
@@ -53,7 +55,8 @@ public class ReapyControllerCommunication : MonoBehaviour
     [SerializeField]
     private string removeEffectCommand = "remove_effect";
 
-    private string newTrackCreatedSuccesfullyMessage = "Track Created in Reaper";
+    [SerializeField]
+    private const string newTrackCreatedSuccesfullyMessage = "Track Created in Reaper";
 
     void Start()
     {
@@ -137,7 +140,7 @@ public class ReapyControllerCommunication : MonoBehaviour
             byte[] buf = new byte[1024];
             int n = await stream.ReadAsync(buf, 0, buf.Length, ct);
             string response = Encoding.UTF8.GetString(buf, 0, n);
-            //TODO: interpret responses to be useful for something
+            OnReaperReceive(response);
             Debug.Log($"Reaper Controller response: {response}\nCommand: {command}");
         }
         catch (OperationCanceledException)
@@ -155,11 +158,16 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
     }
 
-    //TODO
-    private void OnReaperReceive()
+    private void OnReaperReceive(string ReaperResponse)
     {
         //correr quando receber ack ou error de tocar uma fonte de audio
-        //if(loadingManage != null) loadingManager.Increment();
+        switch (ReaperResponse)
+        {
+            case newTrackCreatedSuccesfullyMessage:
+                if(loadingManager != null) loadingManager.Increment();
+                break;
+        }
+            
     }
 
     private async Task ReconnectAsync()
@@ -238,6 +246,14 @@ public class ReapyControllerCommunication : MonoBehaviour
     }
 
     //Command functions
+    //Soundscape Commands
+    public void StartSoundscape(int duration, bool loop)
+    {
+        var msg = new StartSoundscape {command = startSoundscapeCommand, Duration = duration, Loop = loop};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
 
     //New audio source
     public void NewTrack(string audioID, Guid soundUUID, float volume, bool loop, uint delay)

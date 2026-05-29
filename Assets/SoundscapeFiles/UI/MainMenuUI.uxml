@@ -3,7 +3,7 @@
     <ui:VisualElement style="flex-grow: 1;">
         <ui:ScrollView scroll-deceleration-rate="-0.03" style="align-items: flex-start; justify-content: center; align-self: auto;">
             <ui:Button text="Guided Questionnaire" name="formBtn" class="buttonStyle"/>
-            <ui:Button text="Choose Soundscape" name="ssBtn" class="buttonStyle"/>
+            <ui:Button text="Choose Soundscape" name="ssBtn" class="buttonStyle" style="display: flex;"/>
             <ui:Button text="Edit Soundscapes" name="editSsBtn" class="buttonStyle"/>
             <ui:Button text="Configuration" name="configBtn" class="buttonStyle"/>
             <ui:Button text="Exit" name="exitBtn" class="buttonStyle"/>
