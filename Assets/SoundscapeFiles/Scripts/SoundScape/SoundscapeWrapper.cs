@@ -120,10 +120,10 @@ public class SoundscapeWrapper: MonoBehaviour
         EditSoundscape(src, add: true);
     }
     
-    private void PlaceSoundscapeAudioSource(AudioSource src, bool debug)
+    private void PlaceSoundscapeAudioSource(AudioSource src)
     {
         if(currentSoundscape == null) return;
-        PlaceBaseSource(src, debug);
+        PlaceBaseSource(src, inEditMode);
     }
 
     private void PlaceBaseSource(AudioSource src, bool debug)
@@ -140,7 +140,18 @@ public class SoundscapeWrapper: MonoBehaviour
         worldSrc.reaperController = reapyController;
         worldSrc.loadingManager = loadingManager;
 
-        if(!inEditMode && !worldSrc.IsVisible()) gameObject.SetLayerRecursively(untargetableSoundSourceLayer);
+        if(!inEditMode && !worldSrc.IsVisible())
+        {
+            try
+            {
+                Debug.LogWarning($"Applying layer {untargetableSoundSourceLayer.GetFirstLayerIndex()} to audioSource {src.GetAudioId()}");
+                gameObject.SetLayerRecursively(untargetableSoundSourceLayer.GetFirstLayerIndex());                        
+            }
+            catch
+            {
+                Debug.LogWarning($"Caught an error trying to set layer recursively: {untargetableSoundSourceLayer} for audioSource {src.GetAudioId()}");
+            }
+        } 
 
         src.ApplyEffects(go);
         placedAudios.Add(worldSrc.GetUUID(), go);
@@ -283,7 +294,7 @@ public class SoundscapeWrapper: MonoBehaviour
                 loadingManager.Increment();
                 continue;  
             } 
-            PlaceSoundscapeAudioSource(src, inEditMode);
+            PlaceSoundscapeAudioSource(src);
         }
     }
 
