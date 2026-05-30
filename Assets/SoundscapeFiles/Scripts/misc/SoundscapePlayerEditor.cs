@@ -78,13 +78,18 @@ public class SoundscapePlayerEditor: MonoBehaviour
         currentPickedAudio = audio;
         currentState = State.TryPlace;
         SetSphereActive(true);
+        SetUIVisibility(false);
         return true;
     }
 
     private void SetSphereActive(bool isActive)
     {
         aimingSphere.SetActive(isActive);
-        if (isActive)
+    }
+
+    private void SetUIVisibility(bool visible)
+    {
+        if (!visible)
         {
             playerManager.HideCameraLayers(PlayerManager.HIDE_PLACING);
             foreach(GameObject go in screensToHideOnSphere)
@@ -100,7 +105,6 @@ public class SoundscapePlayerEditor: MonoBehaviour
                 go.SetLayerRecursively(5);
             }            
         }
-        
     }
 
     public void FirstPlaceAudio(ActivateEventArgs eventArgs)
@@ -199,6 +203,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         DestroyTextAsset();
         UnselectLibraryAudio();
         UnselectSource(goExists: false);
+        SetUIVisibility(true);
     }
 
     //called by the world source objects
@@ -246,7 +251,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     private void UnselectSource(bool goExists = true)
     {
         if(goExists && currentSelectedSourceObject != null)
-            currentSelectedSourceObject.GetComponent<MeshRenderer>().material = defaultMaterial;
+            currentSelectedSourceObject.GetComponent<WorldAudioSource>().ResetMaterial(defaultMaterial);
         currentSelectedSourceObject = null;
         effectFiltersUi.gameObject.SetActive(false);
     }
@@ -258,6 +263,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(!soundscapeWrapper.HasSoundscape() || currentState != State.Select) return;
         currentState = State.TryMove;
         SetSphereActive(true); 
+        SetUIVisibility(false);
         return;
     }
 
@@ -288,6 +294,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
             SetSphereActive(false);
             DestroyTextAsset();
         }
+        SetUIVisibility(true);
     }
 
     //called to scroll the audio position

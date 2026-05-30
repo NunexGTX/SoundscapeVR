@@ -15,7 +15,7 @@ public class PlayerRaycasting : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame && !vrStateData.IsInVr)
         {
             GameObject obj = RaycastAudioSources();
-            if(obj != null && obj.CompareTag("AudioSource"))
+            if(obj != null)
             {
                 editor.SelectAudioSource(obj);
                 obj.GetComponent<WorldAudioSource>().FlipMuteState();
@@ -30,10 +30,12 @@ public class PlayerRaycasting : MonoBehaviour
     {
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 1000f, soundSourcesLayer))
+        int combinedLayerMask = soundSourcesLayer | UiLayer;
+
+        if (Physics.Raycast(ray, out hit, 100f, combinedLayerMask))
         {
             GameObject sourceFound = hit.collider.gameObject;
-            return sourceFound;
+            return !sourceFound.CompareTag("AudioSource") ? null : sourceFound;
         }
         return null;
     }
@@ -43,7 +45,8 @@ public class PlayerRaycasting : MonoBehaviour
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 1000f, sphereLayer))
+        int combinedLayerMask = sphereLayer | UiLayer;
+        if (Physics.Raycast(ray, out hit, 100f, combinedLayerMask))
         {
             Vector3 hitPoint = hit.point;
             GameObject sourceFound = hit.collider.gameObject;

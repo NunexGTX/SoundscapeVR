@@ -51,8 +51,7 @@ public class WorldAudioSource: MonoBehaviour
 
             //Send effects that are being used
             reaperSendAudioEffects();
-        } else
-          _ = PlayAudio();
+        } else _ = PlayAudio();
 
         //if audiosource is visible -> we want to render the icon, not the cube, in display mode.
         //otherside, just render the cube
@@ -63,6 +62,9 @@ public class WorldAudioSource: MonoBehaviour
             canvas.SetActive(true);
             canvas.GetComponent<RawImage>().texture = soundIcon;
             SetIconEnabledState(audioSource.Mute);
+        } else if (debug)
+        {
+            ResetMaterial(new Material(Shader.Find("Universal Render Pipeline/Lit")));
         }
     }
 
@@ -160,5 +162,12 @@ public class WorldAudioSource: MonoBehaviour
     public void PasteDataFrom(AudioSource copiedAudioSource)
     {
         audioSource.PasteDataFrom(copiedAudioSource);
+    }
+
+    public void ResetMaterial(Material defaultMaterial)
+    {
+        Texture2D icon = library.GetIconForAudio(audioSource.GetAudioId());
+        defaultMaterial.mainTexture = icon;
+        gameObject.GetComponent<MeshRenderer>().material = defaultMaterial;
     }
 }

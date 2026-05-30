@@ -249,6 +249,7 @@ MonoBehaviour:
   vrStateData: {fileID: 0}
   playbackType: 0
   reaperController: {fileID: 0}
+  loadingManager: {fileID: 0}
 --- !u!114 &910421821952713553
 MonoBehaviour:
   m_ObjectHideFlags: 0

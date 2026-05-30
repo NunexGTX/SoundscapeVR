@@ -64,7 +64,7 @@ public class EditScript : MonoBehaviour
             libraryButtons.Add(handler);
 
             txt.text = audio.name;
-            if(audio.HasImage()) icon.image = audio.GetImage();
+            icon.image = library.GetIconForAudio(audio.id);
             libraryList.Add(vElement);
         }
     }
