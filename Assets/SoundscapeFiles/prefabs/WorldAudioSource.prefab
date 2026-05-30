@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 2013553953514860987}
   - component: {fileID: 2480258698525180206}
   - component: {fileID: 7685201259718280277}
-  - component: {fileID: 5499416124871234319}
+  - component: {fileID: 2289754009793061945}
   m_Layer: 9
   m_Name: WorldAudioSource
   m_TagString: AudioSource
@@ -466,16 +466,31 @@ AudioReverbFilter:
   m_LFReference: 250
   m_ReflectionsDelay: 0
   m_ReverbPreset: 18
---- !u!165 &5499416124871234319
-AudioHighPassFilter:
+--- !u!169 &2289754009793061945
+AudioLowPassFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1728820851829268507}
   m_Enabled: 1
-  m_CutoffFrequency: 5000
-  m_HighpassResonanceQ: 1
+  serializedVersion: 3
+  m_LowpassResonanceQ: 1
+  lowpassLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.22727273
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1990678279754878723
 GameObject:
   m_ObjectHideFlags: 0

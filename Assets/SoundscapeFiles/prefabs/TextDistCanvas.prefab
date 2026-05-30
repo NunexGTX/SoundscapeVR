@@ -253,3 +253,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DistText
   playerManager: {fileID: 0}
+  lerperMult: 5

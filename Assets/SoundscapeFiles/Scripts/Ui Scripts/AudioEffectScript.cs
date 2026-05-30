@@ -47,6 +47,9 @@ public class AudioEffectScript: MonoBehaviour
         root.Q<Foldout>("occlusionFoldout").value = false;
         root.Q<Toggle>("occlusionToggle").value = false;
 
+        root.Q<Foldout>("highAndLowPassFoldout").value = false;
+        root.Q<Toggle>("passToggle").value = false;
+
         root.Q<Slider>("volume").value = audioData.volume;
         root.Q<SliderInt>("delay").value = audioData.delaySeconds;
         root.Q<Toggle>("loop").value = audioData.loop;
@@ -74,6 +77,12 @@ public class AudioEffectScript: MonoBehaviour
                     root.Q<Slider>("lowFreqOcc").value = effect.occlusionEffectData.occlusion_low_freq;
                     root.Q<Slider>("midFreqOcc").value = effect.occlusionEffectData.occlusion_mid_freq;
                     root.Q<Slider>("highFreqOcc").value = effect.occlusionEffectData.occlusion_high_freq;
+                    break;
+                case AudioEffectInstance.Pass:
+                    root.Q<Foldout>("highAndLowPassFoldout").value = true;
+                    root.Q<Toggle>("passToggle").value = true;
+                    root.Q<SliderInt>("lowPassFreq").value = effect.passEffectData.lowPassFreq;
+                    root.Q<SliderInt>("highPassFreq").value = effect.passEffectData.highPassFreq;
                     break;
             }
         }
@@ -111,6 +120,12 @@ public class AudioEffectScript: MonoBehaviour
             float midOcc = root.Q<Slider>("midFreqOcc").value;
             float highOcc = root.Q<Slider>("highFreqOcc").value;
             effects.Add(new(AudioEffectInstance.Occlusion, new OcclusionEffectData(dependency, occlusionValue, lowOcc, midOcc, highOcc)));
+        }
+        if (root.Q<Toggle>("passToggle").value)
+        {
+            int lowFreq = root.Q<SliderInt>("lowPassFreq").value;
+            int highFreq = root.Q<SliderInt>("highPassFreq").value;
+            effects.Add(new(AudioEffectInstance.Pass, new HighLowPassEffectData(lowFreq, highFreq)));
         }
         audioData = new(effects, volume, delay, loop, mute, visible);
         return audioData;

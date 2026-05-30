@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 86987620}
   m_Layer: 5
   m_Name: AudioVideoConfig
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -415,7 +415,7 @@ GameObject:
   - component: {fileID: 88210267}
   m_Layer: 5
   m_Name: ConfigMenu
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -616,7 +616,7 @@ GameObject:
   - component: {fileID: 292047922}
   m_Layer: 5
   m_Name: SideMenu
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -655,7 +655,7 @@ GameObject:
   - component: {fileID: 354831913}
   m_Layer: 5
   m_Name: FormMenu
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1586,7 +1586,7 @@ MonoBehaviour:
     m_Bits: 64
   placingAudioMask:
     serializedVersion: 2
-    m_Bits: 36
+    m_Bits: 4
 --- !u!4 &657310049
 Transform:
   m_ObjectHideFlags: 0
@@ -1854,7 +1854,7 @@ GameObject:
   - component: {fileID: 812061683}
   m_Layer: 5
   m_Name: MainMenu
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3361,7 +3361,7 @@ GameObject:
   - component: {fileID: 1404888079}
   m_Layer: 5
   m_Name: Edit Soundscapes
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4075,7 +4075,7 @@ GameObject:
   - component: {fileID: 1675231318}
   m_Layer: 5
   m_Name: SoundscapeMenu
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4636,7 +4636,7 @@ GameObject:
   - component: {fileID: 1716594760}
   m_Layer: 5
   m_Name: MainPanel
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4672,7 +4672,7 @@ GameObject:
   - component: {fileID: 1725830494}
   m_Layer: 5
   m_Name: UI
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5226,7 +5226,7 @@ GameObject:
   - component: {fileID: 2125151702}
   m_Layer: 5
   m_Name: AudioEffects
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

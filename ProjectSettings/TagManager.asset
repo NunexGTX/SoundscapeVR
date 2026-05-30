@@ -8,6 +8,7 @@ TagManager:
   - GForm
   - AudioSource
   - AimingSphere
+  - UI
   layers:
   - Default
   - TransparentFX

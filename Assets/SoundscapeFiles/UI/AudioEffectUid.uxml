@@ -33,5 +33,10 @@
             <ui:Slider label="Mid Freq." value="1" high-value="1" show-input-field="true" fill="true" low-value="0" name="midFreqOcc"/>
             <ui:Slider label="High Freq." value="1" high-value="1" show-input-field="true" fill="true" name="highFreqOcc"/>
         </ui:Foldout>
+        <ui:Foldout text="High And Low Pass Effect" name="highAndLowPassFoldout" value="true" style="background-color: rgba(0, 0, 0, 0.1); margin-top: 5px; padding: 5px;">
+            <ui:Toggle label="Apply Pass Filtering" name="passToggle"/>
+            <ui:SliderInt label="Low Pass Freq." value="22000" high-value="22000" name="lowPassFreq" fill="true" show-input-field="true" low-value="1000" inverted="false" direction="Horizontal" style="flex-wrap: wrap; flex-direction: row; justify-content: center; font-size: 18px; white-space: normal; text-overflow: clip;"/>
+            <ui:SliderInt label="High Pass Freq." value="42" high-value="22000" name="highPassFreq" fill="true" show-input-field="true" low-value="1000"/>
+        </ui:Foldout>
     </ui:ScrollView>
 </ui:UXML>

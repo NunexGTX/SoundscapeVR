@@ -19,10 +19,10 @@ public class EchoEffectData
 
     public EchoEffectData(int delay = 500, float decay = 0.5f, float wet = 1f, float dry = 1f)
     {
-        delay_ms = delay;
-        decay_ratio = decay;
-        dry_mix = dry;
-        wet_mix = wet;
+        delay_ms = Math.Clamp(delay, minDelay, maxDelay);
+        decay_ratio = Math.Clamp(decay, minDecay, maxDecay);
+        dry_mix = Math.Clamp(dry, minDry, maxDry);
+        wet_mix = Math.Clamp(wet, minWet, maxWet);
     }
 
     public EchoEffectData(EchoEffectData other)
