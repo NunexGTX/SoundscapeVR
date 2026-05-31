@@ -269,7 +269,7 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     public void StopSoundscape()
     {
-        var msg = new StopSoundscape {command = startSoundscapeCommand};
+        var msg = new StopSoundscape {command = endSoundscapeCommand};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);

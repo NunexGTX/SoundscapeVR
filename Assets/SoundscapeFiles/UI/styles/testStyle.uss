@@ -146,12 +146,21 @@
     background-color: rgba(0, 0, 0, 0);
 }
 
-
-
 #lowPassFreq.unity-base-slider--horizontal .unity-base-slider__text-field {
     width: 35%;
 }
 
 #highPassFreq.unity-base-slider--horizontal .unity-base-slider__text-field {
     width: 32%;
+}
+
+#saveBtn Image{
+    width: 11%;
+    padding: 0;
+    padding-left: 3%;
+}
+
+#saveBtn TextElement{
+    width: 100%;
+    margin-left: -5%;
 }

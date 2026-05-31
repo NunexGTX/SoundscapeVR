@@ -3,7 +3,7 @@
     <ui:VisualElement style="flex-grow: 1;">
         <ui:ScrollView horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" mouse-wheel-scroll-size="18" style="height: 100%;">
             <ui:Button text="Go Back" name="returnBtn" class="buttonStyle"/>
-            <ui:Button text="Save And Apply Changes" name="saveBtn" class="buttonStyle"/>
+            <ui:Button text="Save And Apply Changes" name="saveBtn" icon-image="project://database/Assets/SoundscapeFiles/UI/icons/diskette-save-svgrepo-com.svg?fileID=7388822144124034973&amp;guid=eb282bdf82f03bf32b68265a70695e61&amp;type=3#diskette-save-svgrepo-com" class="buttonStyle" style="align-self: center; justify-content: space-between; align-items: center; flex-direction: row;"/>
             <ui:Label text="" name="selectedSoundscape"/>
             <ui:Foldout text="Soundscape Settings" value="false" name="settingsFoldout">
                 <ui:TextField label="Title*" placeholder-text="filler text" name="titleInput" style="flex-direction: column;"/>
