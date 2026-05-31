@@ -269,6 +269,12 @@ public class SoundscapeWrapper: MonoBehaviour
         {
             await Task.Delay(100);
         }
+        //Send to reaper a message with loop and timing information
+        if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING){
+            reapyController.loadingManager = loadingManager;
+            ReaperSendSoundscapeInformation(currentSoundscape.timeSeconds,currentSoundscape.loop);
+        }
+
         Debug.Log($"[SoundscapeVR] Playing audios");
         List<AudioSource> audioSources = currentSoundscape.GetAudioSources();
         loadingManager.SetToStart(audioSources.Count);
@@ -279,12 +285,7 @@ public class SoundscapeWrapper: MonoBehaviour
             currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
             Debug.Log("All audios loaded. yay");
             if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)StartLoopCoroutine();
-        }); 
-        //Send to reaper a message with loop and timing information
-        if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING){
-            reapyController.loadingManager = loadingManager;
-            ReaperSendSoundscapeInformation(currentSoundscape.timeSeconds,currentSoundscape.loop);
-        }
+        });
 
         foreach(AudioSource src in audioSources)
         {
@@ -296,11 +297,14 @@ public class SoundscapeWrapper: MonoBehaviour
             } 
             PlaceSoundscapeAudioSource(src);
         }
+
+        //Now reaper can start playing stuff
+        if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)reapyController.StartSoundscape();
     }
 
     private void ReaperSendSoundscapeInformation(int duration, bool loop)
     {
-        reapyController.StartSoundscape(duration, loop);
+        reapyController.NewSoundscape(duration, loop);
     }
 
     //function to start counting time to loop the SS.
@@ -360,6 +364,8 @@ public class SoundscapeWrapper: MonoBehaviour
         RemoveAudioSources();
         currentSoundscape = null;
         if(gameObject != null) StopAllCoroutines();
+
+        if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) reapyController.StopSoundscape();
     }
 
     private void RemoveAudioSources()

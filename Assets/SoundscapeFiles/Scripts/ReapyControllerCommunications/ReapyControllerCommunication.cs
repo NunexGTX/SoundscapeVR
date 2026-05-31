@@ -30,7 +30,11 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     //Commands
     [SerializeField]
+    private string newSoundscapeCommand = "new_soundscape";
+    [SerializeField]
     private string startSoundscapeCommand = "start_soundscape";
+    [SerializeField]
+    private string endSoundscapeCommand = "end_soundscape";
     [SerializeField]
     private string newTrackCommand = "new_track";
 
@@ -247,9 +251,25 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     //Command functions
     //Soundscape Commands
-    public void StartSoundscape(int duration, bool loop)
+    public void NewSoundscape(int duration, bool loop)
     {
-        var msg = new StartSoundscape {command = startSoundscapeCommand, Duration = duration, Loop = loop};
+        var msg = new NewSoundscape {command = newSoundscapeCommand, Duration = duration, Loop = loop};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
+    public void StartSoundscape()
+    {
+        var msg = new StartSoundscape {command = startSoundscapeCommand};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
+    public void StopSoundscape()
+    {
+        var msg = new StopSoundscape {command = startSoundscapeCommand};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);

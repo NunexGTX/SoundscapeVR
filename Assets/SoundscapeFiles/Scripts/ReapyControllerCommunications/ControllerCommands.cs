@@ -11,11 +11,15 @@ public abstract class TrackCommand: ReapyControllerCommand
     public string SoundUUID;
 }
 
-public class StartSoundscape: ReapyControllerCommand
+public class NewSoundscape: ReapyControllerCommand
 {
     public int Duration;
     public bool Loop;
 }
+
+public class StartSoundscape: ReapyControllerCommand{}
+
+public class StopSoundscape: ReapyControllerCommand{}
 
 public class NewTrack: TrackCommand {
     
