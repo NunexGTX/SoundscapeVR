@@ -318,35 +318,52 @@ public class SoundscapeLibrary: MonoBehaviour
             loadingManager.SetInfo($"Loading audio clip {audio.id}: {i++}/{audios.Count}");
             if (!string.IsNullOrWhiteSpace(audio.fileName) && !audioClipCache.IsAudioLoaded(audio.id))
             {
-                AudioType type = GetAudioType(audio.fileType, audio.fileName);
-
-                string url = "file://" + GetStreamingPath(audio.fileName);
-                using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, type))
+                if (audio.IsAmbisonic())
                 {
-                    // We await the request completion
-                    var operation = www.SendWebRequest();
-
-                    while (!operation.isDone)
+                    Debug.Log($"[SoundscapeVR] Loading ambisonic audio {audio.fileName}");
+                    if (string.IsNullOrWhiteSpace(audio.ambisonicAssetName))
                     {
-                        await Task.Yield(); // Returns control to Unity until the next frame
+                        Debug.LogWarning($"[SoundscapeVR] Failed to load ambisonic audio {audio.fileName} because no ambisonic asset name was given");
+                        continue;
                     }
+                    AudioClip downloadedClip = await LoadCustomAudio(audio, audio.fileName, audio.ambisonicAssetName);
+                    audioClipCache.AddAudio(audio.id, downloadedClip);
+                    //TODO deal with unloading asset bundle
+                    //TODO deal with ambisonic audio delays
+                    if(downloadedClip != null) Debug.Log($"[SoundscapeVR] Successfully loaded ambisonic audio: {audio.name}");
+                    else Debug.LogWarning($"[SoundscapeVR] Failed to load ambisonic audio {audio.fileName}");
+                } else
+                {
+                    AudioType type = GetAudioType(audio.fileType, audio.fileName);
 
-                    if (www.result == UnityWebRequest.Result.Success)
+                    string url = "file://" + GetStreamingPath(audio.fileName);
+                    using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, type))
                     {
-                        AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
-                        audioClipCache.AddAudio(audio.id, downloadedClip);
-                        //audio.SetClip(downloadedClip);
-                        Debug.Log($"Successfully loaded: {audio.name}");
-                    }
-                    else
-                    {
-                        HandleLoadError(www, audio);
+                        // We await the request completion
+                        var operation = www.SendWebRequest();
+
+                        while (!operation.isDone)
+                        {
+                            await Task.Yield(); // Returns control to Unity until the next frame
+                        }
+
+                        if (www.result == UnityWebRequest.Result.Success)
+                        {
+                            AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
+                            audioClipCache.AddAudio(audio.id, downloadedClip);
+                            //audio.SetClip(downloadedClip);
+                            Debug.Log($"Successfully loaded: {audio.name}");
+                        }
+                        else
+                        {
+                            HandleLoadError(www, audio);
+                        }
                     }
                 }
             }
 
             loadingManager.Increment();
-            await Task.Yield(); // Equivalent to yield return null
+            await Task.Yield();
         }
 
         loadingManager.EndLoading();
@@ -450,6 +467,40 @@ public class SoundscapeLibrary: MonoBehaviour
         return math.sqrt(math.max(0, distSq));
     }
 
+    private async static Task<AudioClip> LoadCustomAudio(Audio audio, string bundlePath, string assetName)
+    {
+        string fullPath = Path.Combine(GetStreamingPath(), "mods");
+        if(!Directory.Exists(fullPath))
+        {
+            Directory.CreateDirectory(fullPath);
+        }
+        fullPath = Path.Combine(fullPath, bundlePath);
+        if (!File.Exists(fullPath))
+        {
+            Debug.LogWarning($"[SoundscapeVR] Loading Audio {assetName} - File doesn't exist: {fullPath}");
+            return null;
+        } 
+
+        // 1. load bundle
+        AssetBundleCreateRequest bundleRequest = AssetBundle.LoadFromFileAsync(fullPath);
+        while (!bundleRequest.isDone)
+            await Task.Yield();
+        AssetBundle localBundle = bundleRequest.assetBundle;
+        if (localBundle == null)
+        {
+            Debug.LogWarning($"[SoundscapeVR] Loading Audio {assetName} -Local bundle doesn't exist: {fullPath}");
+            return null;
+        } 
+
+        // 2. load audio
+        AssetBundleRequest assetRequest = localBundle.LoadAssetAsync<AudioClip>(assetName);
+        while (!assetRequest.isDone)
+            await Task.Yield();
+        AudioClip customClip = assetRequest.asset as AudioClip;
+
+        audio.bundle = localBundle;
+        return customClip;
+    }
     public string GetAudioType(string audioId)
     {
         foreach(Audio audio in audioList.GetAudios())
@@ -470,7 +521,7 @@ public class SoundscapeLibrary: MonoBehaviour
         {
             if (audio.id.Equals(audioId))
             {
-                Texture2D tex = audio.GetImage();;
+                Texture2D tex = audio.texture2D;
                 return tex == null ? defaultAudioIcon : tex;
             }
         }

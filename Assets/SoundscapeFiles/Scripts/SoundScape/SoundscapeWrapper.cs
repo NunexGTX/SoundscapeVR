@@ -359,14 +359,14 @@ public class SoundscapeWrapper: MonoBehaviour
         }
         RemoveAudioSources();
         currentSoundscape = null;
-        StopAllCoroutines();
+        if(gameObject != null) StopAllCoroutines();
     }
 
     private void RemoveAudioSources()
     {
         foreach(GameObject go in placedAudios.Values)
         {
-            go?.GetComponent<WorldAudioSource>().DestroySource();
+            if(go != null) go.GetComponent<WorldAudioSource>().DestroySource();
         }
         placedAudios = new();
     }

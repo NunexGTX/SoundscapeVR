@@ -8,13 +8,20 @@ public class Audio
     public string fileName;
     public string imagePath;
     public string fileType;
-    private Texture2D texture2D;
-    public Texture2D GetImage()
-    {
-        return texture2D;
-    }
+
+    public string type;
+    public string ambisonicAssetName = "";
+    public AssetBundle bundle = null;
+
+    public Texture2D texture2D{get; private set; }
 
     public void SetTexture(Texture2D texture){this.texture2D = texture;}
+
+    public void UnloadBundle()
+    {
+        if(bundle != null) bundle.Unload(false);
+        bundle = null;
+    }
 
     public bool HasImage()
     {
@@ -23,10 +30,10 @@ public class Audio
     
     public string GetRealAudioPath()
     {        
-            return SoundscapeLibrary.GetStreamingPath(imagePath);
+        return SoundscapeLibrary.GetStreamingPath(imagePath);
     }
 
-    public string type;
+    public bool IsAmbisonic(){return type.Equals(TYPE_AMBISONIC);}
 
     public const string TYPE_STANDARD = "standard";
     public const string TYPE_AMBISONIC = "ambisonic";

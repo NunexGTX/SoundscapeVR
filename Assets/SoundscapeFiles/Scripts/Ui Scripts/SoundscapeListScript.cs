@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -68,11 +67,6 @@ public class SoundscapeListScript : MonoBehaviour
     {
         if (returnBtn != null)
             returnBtn.clicked -= Return;
-
-        if (soundscapeListView != null)
-        {
-            soundscapeListView.Unbind(); 
-        }
     }
 
     private void OnCreateSoundscape(Soundscape soundscape)
