@@ -24,7 +24,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     public Material selectingMaterial;
     [SerializeField] private float scrollStep = 0.2f;
     [SerializeField] private GameObject distanceTextAsset;
-    [SerializeField] private EditScript editUi;
+    [SerializeField] private EditSoundscapeScript editUi;
     [SerializeField] private AudioEffectScript effectFiltersUi;
     [SerializeField] private PlayerManager playerManager;
     [SerializeField] private List<GameObject> screensToHideOnSphere;
@@ -82,7 +82,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         return true;
     }
 
-    private void SetSphereActive(bool isActive)
+    public void SetSphereActive(bool isActive)
     {
         aimingSphere.SetActive(isActive);
     }
@@ -266,11 +266,10 @@ public class SoundscapePlayerEditor: MonoBehaviour
         SetUIVisibility(false);
         return;
     }
-
     
     //called by this script to cancel the current state and return to standby
     private void CancelAction(InputAction.CallbackContext context){CancelState();}
-    private void CancelState(bool leaving = false)
+    public void CancelState(bool leaving = false)
     {
         if(currentState == State.Standby) return;
         

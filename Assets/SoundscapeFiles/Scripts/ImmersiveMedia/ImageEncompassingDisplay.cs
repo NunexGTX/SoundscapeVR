@@ -11,6 +11,7 @@ public class ImageEncompassingDisplay : MonoBehaviour
     private Texture2D loadedTexture;
     public Action onImagePrepared = null;
     public Action onImageFailed = null;
+    public string projectionType = "";
 
     void Start()
     {
@@ -48,10 +49,11 @@ public class ImageEncompassingDisplay : MonoBehaviour
             var shader = Shader.Find("Skybox/Panoramic");
             if (shader == null)
             {
-                Debug.LogError("[SoundscapeVR] Skybox/Panoramic shader not found — was it stripped?");
+                Debug.LogError("[SoundscapeVR] Skybox/Panoramic shader not found");
                 yield break;
             }
             skyboxMaterial = new Material(shader);
+            Soundscape.SetProjectionType(projectionType, skyboxMaterial);
             
             Debug.Log(skyboxMaterial);
             skyboxMaterial.SetTexture("_MainTex", loadedTexture);

@@ -62,15 +62,7 @@ public class VideoSoundscape : Soundscape
             VideoPlayer360 v360 = go.AddComponent<VideoPlayer360>();
             v360.videoFileName = SoundscapeLibrary.GetStreamingPath(encompassingPath);
             Material mat = new Material(Shader.Find("Skybox/Panoramic"));
-            //2f corresponds to over under, 1f to side by side, 0f to none (default)
-            mat.SetFloat("_Layout", 2f);
-            if (!projectionType.Equals("Over Under"))
-            {
-                if(projectionType.Equals("Side by Side"))
-                    mat.SetFloat("_Layout", 1f);
-                else
-                    mat.SetFloat("_Layout", 0f);
-            }
+            SetProjectionType(projectionType, mat);                                      
             v360.Video360Material = mat;
         } else if(!string.IsNullOrWhiteSpace(staticPath))
         {

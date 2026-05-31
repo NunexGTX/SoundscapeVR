@@ -57,6 +57,7 @@ public class ImageSoundscape : Soundscape
             //encompassing
             ImageEncompassingDisplay i360 = go.AddComponent<ImageEncompassingDisplay>();
             i360.imagePath = SoundscapeLibrary.GetStreamingPath(encompassingPath);
+            i360.projectionType = projectionType;
             i360.onImagePrepared = onVisualsLoaded;
             i360.onImageFailed = onVisualsFailed;
             return go;

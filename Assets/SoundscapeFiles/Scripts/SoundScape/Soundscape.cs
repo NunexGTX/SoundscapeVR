@@ -134,6 +134,25 @@ public abstract class Soundscape
         screenObject = null;
         rawImage = null;
     }
+    public static void SetProjectionType(string projectionType, Material mat)
+    {
+        //2f corresponds to over under, 1f to side by side, 0f to none (default)
+        mat.SetFloat("_Layout", 2f);
+        if (!projectionType.Equals("Over Under"))
+        {
+            if(projectionType.Equals("Side by Side"))
+            {
+                mat.SetFloat("_Layout", 1f);
+                Debug.Log($"[SoundscapeVR] Read soundscape projection as Side by Side");                    
+            }
+            else
+            {
+                mat.SetFloat("_Layout", 0f);
+                Debug.Log($"[SoundscapeVR] Read soundscape projection as None (As Is)");                                        
+            }
+        } else 
+            Debug.Log($"[SoundscapeVR] Read soundscape projection as Over Under");  
+    }
 
     public GameObject GetScreenObject(){return screenObject;}
     public void RemoveSource(AudioSource audio){RemoveSource(audio.GetUUID());}

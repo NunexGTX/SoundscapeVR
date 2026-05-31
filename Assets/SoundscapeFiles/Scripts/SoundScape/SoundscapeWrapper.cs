@@ -144,7 +144,7 @@ public class SoundscapeWrapper: MonoBehaviour
         {
             try
             {
-                Debug.LogWarning($"Applying layer {untargetableSoundSourceLayer.GetFirstLayerIndex()} to audioSource {src.GetAudioId()}");
+                Debug.Log($"Applying layer {untargetableSoundSourceLayer.GetFirstLayerIndex()} to audioSource {src.GetAudioId()}");
                 gameObject.SetLayerRecursively(untargetableSoundSourceLayer.GetFirstLayerIndex());                        
             }
             catch
@@ -336,7 +336,7 @@ public class SoundscapeWrapper: MonoBehaviour
     public void StopSoundscape()
     {
         inEditMode = false;
-        SaveCurrentSoundscape();
+        //SaveCurrentSoundscape();
         playerManager.SetPlayerMovement(true);
         playerManager.ShowCameraLayers();
         if (videoPlaying)
@@ -366,7 +366,7 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         foreach(GameObject go in placedAudios.Values)
         {
-            go.GetComponent<WorldAudioSource>().DestroySource();
+            go?.GetComponent<WorldAudioSource>().DestroySource();
         }
         placedAudios = new();
     }
@@ -378,4 +378,9 @@ public class SoundscapeWrapper: MonoBehaviour
     }
 
     public bool HasSoundscape(){return currentSoundscape != null;}
+
+    public Soundscape GetSoundscape()
+    {
+        return currentSoundscape;
+    }
 }

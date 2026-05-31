@@ -14,13 +14,11 @@ public class SoundscapeEditor
     private Label debugLabel;
     private Button createButton;
     private Button destroyButton;
-    private Button saveButton;
     private DropdownField projectionDropdown;
     private int deleteCounter = 0;
     private const int deleteThreshold = 1;
     private Action<Soundscape> runOnCreate = null;
     private Action<string> runOnDestroy = null;
-    private Action<string, Soundscape> runOnSave = null;
     private Soundscape currentSelectedSoundscape = null;
     public SoundscapeEditor(VisualElement foldout, SoundscapeWrapper ssWrapper, SoundscapeLibrary library)
     {   
@@ -36,12 +34,10 @@ public class SoundscapeEditor
         debugLabel = foldout.Q<Label>("debugLabel");
         createButton = foldout.Q<Button>("createBtn");
         destroyButton = foldout.Q<Button>("deleteBtn");
-        saveButton = foldout.Q<Button>("saveBtn");
         projectionDropdown = foldout.Q<DropdownField>("projectionDropdown");
         
-        createButton.clicked += OnCreate;
-        destroyButton.clicked += OnDestroy;
-        saveButton.clicked += OnSave;
+        if(createButton != null) createButton.clicked += OnCreate;
+        if(destroyButton != null) destroyButton.clicked += OnDestroy;
 
     }
 
@@ -57,17 +53,10 @@ public class SoundscapeEditor
         return this;
     }
 
-    public SoundscapeEditor RunOnSave(Action<string, Soundscape> action)
-    {
-        runOnSave = action;
-        return this;
-    }
-
     public void UnbindButtons()
     {
-        createButton.clicked -= OnCreate;
-        destroyButton.clicked -= OnDestroy;
-        saveButton.clicked -= OnSave;
+        if(createButton != null) createButton.clicked -= OnCreate;
+        if(destroyButton != null) destroyButton.clicked -= OnDestroy;
     }
 
     public void SetData(Soundscape soundscape)
@@ -82,6 +71,20 @@ public class SoundscapeEditor
         ResetDeleteCounter();
         debugLabel.text = "";
         currentSelectedSoundscape = soundscape;
+    }
+
+    public void ClearFields()
+    {
+        titleField.value = "";
+        timeField.value = 90;
+        videoToggle.value = false;
+        loopToggle.value = false;
+        staticPath.value = "";
+        encompassingPath.value = "";
+        projectionDropdown.index = 0;
+        ResetDeleteCounter();
+        debugLabel.text = "";
+        currentSelectedSoundscape = null;
     }
 
     private void OnCreate()
@@ -99,9 +102,38 @@ public class SoundscapeEditor
 
         debugLabel.text = $"Created soundscape {titleField.value}";
         Soundscape newSS = Soundscape.CreateSoundscape(titleField.value, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], loopToggle.value, videoToggle.value);
-        ssWrapper.SetAndStartSoundscape(newSS);
-        ssWrapper.MarkEdited();
+        library.ReplaceOrAddSoundscape(newSS);
+        //ssWrapper.SetAndStartSoundscape(newSS);
+        //ssWrapper.MarkEdited();
         if(runOnCreate != null) runOnCreate.Invoke(newSS);
+    }
+    /// <summary>
+    /// Collect SS Settings UI values and return them in an empty Soundscape instance.
+    /// </summary>
+    /// <returns>Soundscape with no audio sources, but all the UI values</returns>
+    public Soundscape CollectUiValues()
+    {
+        //inform user on the SS label that it was saved.
+        //also save the SS as a whole.
+
+        //1. collect UI values
+        //2. tell wrapper to save.
+
+        Soundscape currentSoundscape = ssWrapper.GetSoundscape();
+        string newTitle = titleField.value;
+        if(string.IsNullOrWhiteSpace(newTitle))
+        {
+            debugLabel.text = "No title defined.";
+            return null;
+        }
+        if(!newTitle.Equals(currentSoundscape.title) && library.DoesSoundscapeExist(newTitle))
+        {
+            debugLabel.text = "New title already exists.";
+            return null;
+        }
+        debugLabel.text = $"Soundscape {currentSoundscape.title} saved.";
+        Soundscape newSS = Soundscape.CreateSoundscape(newTitle, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], loopToggle.value, videoToggle.value);
+        return newSS;
     }
     private void OnDestroy()
     {
@@ -125,37 +157,10 @@ public class SoundscapeEditor
         }
         destroyButton.text = $"Delete {ssTitle}?";
     }
-    private void OnSave()
-    {
-        if(currentSelectedSoundscape == null)
-        {
-            debugLabel.text = $"No soundscape selected to save.";
-            return;
-        }
-        string newTitle = titleField.value;
-        if(string.IsNullOrWhiteSpace(newTitle))
-        {
-            debugLabel.text = "No title defined.";
-            return;
-        }
-        if(!newTitle.Equals(currentSelectedSoundscape.title) && library.DoesSoundscapeExist(newTitle))
-        {
-            debugLabel.text = "New title already exists.";
-            return;
-        }
-        debugLabel.text = $"Soundscape {currentSelectedSoundscape.title} saved.";
-        string oldTitle = currentSelectedSoundscape.title;
-        Soundscape newSS = Soundscape.CreateSoundscape(newTitle, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], loopToggle.value, videoToggle.value);
-        newSS.CopySourcesFrom(currentSelectedSoundscape);
-        library.UpdateSoundscapeData(oldTitle, newSS);
-        if(runOnSave != null) runOnSave.Invoke(oldTitle, newSS);
-
-        ssWrapper.SetAndStartSoundscape(newSS);
-    }
 
     private void ResetDeleteCounter()
     {
         deleteCounter = 0;
-        destroyButton.text = "Delete";
+        if(destroyButton != null) destroyButton.text = "Delete";
     }
 }
