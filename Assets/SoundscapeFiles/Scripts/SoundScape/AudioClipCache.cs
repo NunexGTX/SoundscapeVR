@@ -5,6 +5,7 @@ public class AudioClipCache
 {
     private Dictionary<string, AudioClip> cache = new();
     private string lastId = "";
+    private List<AssetBundle> bundles = new();
 
     public void Clear(string id)
     {
@@ -12,9 +13,13 @@ public class AudioClipCache
         lastId = id;
         Clear();
     }
+    public void LoadedBundle(AssetBundle bundle){bundles.Add(bundle);}
     public void Clear()
     {
         cache.Clear();
+        foreach(AssetBundle bundle in bundles)
+            bundle.Unload(false);
+        bundles.Clear();
     }
 
     public bool IsAudioLoaded(string audioId){return cache.ContainsKey(audioId);}

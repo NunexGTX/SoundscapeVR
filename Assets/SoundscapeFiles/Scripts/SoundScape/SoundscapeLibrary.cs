@@ -326,9 +326,8 @@ public class SoundscapeLibrary: MonoBehaviour
                         Debug.LogWarning($"[SoundscapeVR] Failed to load ambisonic audio {audio.fileName} because no ambisonic asset name was given");
                         continue;
                     }
-                    AudioClip downloadedClip = await LoadCustomAudio(audio, audio.fileName, audio.ambisonicAssetName);
+                    AudioClip downloadedClip = await LoadCustomAudio(audioClipCache, audio.fileName, audio.ambisonicAssetName);
                     audioClipCache.AddAudio(audio.id, downloadedClip);
-                    //TODO deal with unloading asset bundle
                     //TODO deal with ambisonic audio delays
                     if(downloadedClip != null) Debug.Log($"[SoundscapeVR] Successfully loaded ambisonic audio: {audio.name}");
                     else Debug.LogWarning($"[SoundscapeVR] Failed to load ambisonic audio {audio.fileName}");
@@ -467,7 +466,7 @@ public class SoundscapeLibrary: MonoBehaviour
         return math.sqrt(math.max(0, distSq));
     }
 
-    private async static Task<AudioClip> LoadCustomAudio(Audio audio, string bundlePath, string assetName)
+    private async static Task<AudioClip> LoadCustomAudio(AudioClipCache cache, string bundlePath, string assetName)
     {
         string fullPath = Path.Combine(GetStreamingPath(), "mods");
         if(!Directory.Exists(fullPath))
@@ -497,8 +496,7 @@ public class SoundscapeLibrary: MonoBehaviour
         while (!assetRequest.isDone)
             await Task.Yield();
         AudioClip customClip = assetRequest.asset as AudioClip;
-
-        audio.bundle = localBundle;
+        cache.LoadedBundle(localBundle);
         return customClip;
     }
     public string GetAudioType(string audioId)
