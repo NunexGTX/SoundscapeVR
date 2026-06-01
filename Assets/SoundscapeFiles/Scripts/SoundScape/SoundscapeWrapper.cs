@@ -193,13 +193,6 @@ public class SoundscapeWrapper: MonoBehaviour
             await Task.Delay(100);
         }
         loadingManager.SetToStart(1);
-        //Send to reaper a message with loop and timing information
-        if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING){
-            reapyController.loadingManager = loadingManager;
-            ReaperSendSoundscapeInformation(currentSoundscape.timeSeconds,currentSoundscape.loop);
-            reapyController.SkipStartSoundscape();
-        }
-        
         loadingManager.SetInfo($"Loading visuals for: {currentSoundscape.title}");
         
         currentSoundscape.OnVisualsFail(() =>
@@ -280,6 +273,7 @@ public class SoundscapeWrapper: MonoBehaviour
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING){
             reapyController.loadingManager = loadingManager;
             ReaperSendSoundscapeInformation(currentSoundscape.timeSeconds,currentSoundscape.loop);
+            //reapyController.SkipStartSoundscape();
         }
 
         Debug.Log($"[SoundscapeVR] Playing audios");
