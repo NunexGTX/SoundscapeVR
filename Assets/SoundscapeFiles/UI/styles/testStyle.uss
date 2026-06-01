@@ -190,16 +190,3 @@ VisualElement > .unity-scroll-view--vertical > #settingsFoldout > #unity-content
 VisualElement > .unity-scroll-view--vertical > #settingsFoldout > #projectionDropdown > .unity-popup-field__input {
     margin-left: 0;
 }
-
-@keyframes blink {
-    0%   { opacity: 1; }
-    50%  { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
-#connectionIcon{
-    animation-name: blink;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
-}
