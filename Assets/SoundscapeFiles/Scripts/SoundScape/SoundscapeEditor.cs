@@ -1,5 +1,6 @@
 using System;
 using UnityEngine.UIElements;
+using UnityEngine;
 
 public class SoundscapeEditor
 {
@@ -100,6 +101,7 @@ public class SoundscapeEditor
             return;
         }
 
+        Debug.Log($"[SoundscapeVR] Created soundscape {titleField.value}");
         debugLabel.text = $"Created soundscape {titleField.value}";
         Soundscape newSS = Soundscape.CreateSoundscape(titleField.value, timeField.value, staticPath.value, encompassingPath.value, projectionDropdown.choices[projectionDropdown.index], loopToggle.value, videoToggle.value);
         library.ReplaceOrAddSoundscape(newSS);

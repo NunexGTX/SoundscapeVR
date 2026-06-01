@@ -4,10 +4,6 @@
         <ui:ScrollView horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" mouse-wheel-scroll-size="18" style="height: 100%;">
             <ui:Button text="Go Back" name="returnBtn" class="buttonStyle"/>
             <ui:Label text="" name="selectedSoundscape"/>
-            <ui:VisualElement name="soundscapes" style="flex-grow: 1; height: auto; max-height: 50%;">
-                <ui:Label text="Soundscapes"/>
-                <ui:ListView name="soundscapeList" virtualization-method="DynamicHeight" show-border="false"/>
-            </ui:VisualElement>
             <ui:Foldout text="Make Soundscape" value="false" name="settingsFoldout">
                 <ui:TextField label="Title*" placeholder-text="filler text" name="titleInput" style="flex-direction: column;"/>
                 <ui:IntegerField label="Time in Seconds" value="90" name="timeInput"/>
@@ -21,6 +17,10 @@
                     <ui:Button text="Create" name="createBtn" style="background-color: rgb(168, 255, 155); margin-top: 11px; height: 42px; width: 322%; align-self: center;"/>
                 </ui:VisualElement>
             </ui:Foldout>
+            <ui:VisualElement name="soundscapes" style="flex-grow: 1; height: auto; max-height: 50%;">
+                <ui:Label text="Soundscapes"/>
+                <ui:ListView name="soundscapeList" virtualization-method="DynamicHeight" show-border="false"/>
+            </ui:VisualElement>
         </ui:ScrollView>
     </ui:VisualElement>
 </ui:UXML>
