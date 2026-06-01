@@ -74,7 +74,7 @@ public class SoundscapeEditor
         currentSelectedSoundscape = soundscape;
     }
 
-    public void ClearFields()
+    public void ClearFields(bool clearLabel = false)
     {
         titleField.value = "";
         timeField.value = 90;
@@ -84,7 +84,7 @@ public class SoundscapeEditor
         encompassingPath.value = "";
         projectionDropdown.index = 0;
         ResetDeleteCounter();
-        debugLabel.text = "";
+        if(clearLabel) debugLabel.text = "";
         currentSelectedSoundscape = null;
     }
 
