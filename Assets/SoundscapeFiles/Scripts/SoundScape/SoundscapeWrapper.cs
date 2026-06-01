@@ -195,25 +195,27 @@ public class SoundscapeWrapper: MonoBehaviour
         loadingManager.SetToStart(1);
         loadingManager.SetInfo($"Loading visuals for: {currentSoundscape.title}");
         
+        //when loading the visuals fails (given path isnt found, other READ-WRITE exceptions)
         currentSoundscape.OnVisualsFail(() =>
         {
             _ = OnVisualFail($"Failed to load visuals for: {currentSoundscape.title}");
         });
+        //when loading the visuals was successful
         currentSoundscape.OnVisualsLoaded(() =>
         {
             loadingManager.Increment();  
             loadingManager.EndLoading();  
             _ = PrepareAudiosAndPlaySoundscape();
         } );
+
         Debug.Log($"[SoundscapeVR] Preparing soundscape {currentSoundscape.title}");
         try
         {
             ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());         
         }
-        catch
+        catch(Exception e)
         {
-            Debug.LogWarning("[SoundscapeVR] Caught an error trying to load the visuals of a soundscape");
-            _ = OnVisualFail($"Failed to load visuals {currentSoundscape.title}");
+            _ = OnVisualFail($"Caught an error trying to load the visuals of soundscape {currentSoundscape.title}\n{e.Message}");
             return;
         }
         Debug.Log($"[SoundscapeVR] Gotten visuals for soundscape {currentSoundscape.title}");
@@ -223,14 +225,13 @@ public class SoundscapeWrapper: MonoBehaviour
         if(ssVisual == null)
         {
             videoPlaying = false;
-            Debug.LogWarning($"[SoundscapeVR] Could not load visuals for {currentSoundscape.title}");
-            _ = OnVisualFail($"Visuals could not be loaded for {currentSoundscape.title}", stopSoundscape: false);
+            _ = OnVisualFail($"Null Visuals for {currentSoundscape.title}");
         }
         return;
 
     }
 
-    private async Task OnVisualFail(string errorMessage, bool stopSoundscape = true)
+    private async Task OnVisualFail(string errorMessage)
     {
         Debug.LogWarning($"[SoundscapeVR] Failed to load visuals for soundscape. {errorMessage}");
         loadingManager.SetInfo(errorMessage); 
@@ -240,9 +241,11 @@ public class SoundscapeWrapper: MonoBehaviour
             await Task.Delay(2000/increments);
             loadingManager.Increment(1f/increments); 
         }
-        if(stopSoundscape)
-            StopSoundscape();
         loadingManager.EndLoading(); 
+        if(inEditMode)
+            _ = PrepareAudiosAndPlaySoundscape();
+        else
+            StopSoundscape();
     }
 
     private async Task PrepareAudiosAndPlaySoundscape()

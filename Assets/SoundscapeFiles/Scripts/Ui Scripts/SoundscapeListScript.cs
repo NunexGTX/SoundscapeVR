@@ -71,10 +71,10 @@ public class SoundscapeListScript : MonoBehaviour
 
     private void OnCreateSoundscape(Soundscape soundscape)
     {
-        soundscapesSource = new(library.soundscapeList.GetSoundscapes());
+        soundscapesSource.Add(soundscape);
+        //soundscapesSource = new(library.soundscapeList.GetSoundscapes());
         soundscapeListView.Rebuild();
         ClearFields();
-        //TODO show label here
     }
 
     private void SelectSoundscape(Soundscape soundscape)
