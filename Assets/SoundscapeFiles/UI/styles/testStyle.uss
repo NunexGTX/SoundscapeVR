@@ -164,3 +164,46 @@
     width: 100%;
     margin-left: -5%;
 }
+
+/* Make the ScrollView itself expand to fit all its content */
+#soundscapeList {
+    flex-shrink: 0;   /* Don't let it compress smaller than its content */
+    height: auto;     /* Grow to fit content naturally */
+    min-height: 0;    /* Let flex take over */
+}
+
+/* Make the viewport not clip overflow */
+#soundscapeList .unity-scroll-view__viewport {
+    overflow: visible;
+}
+
+/* Make the content container also expand freely */
+#soundscapeList #unity-content-and-vertical-scroll-container {
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+VisualElement > .unity-scroll-view--vertical > #settingsFoldout > .unity-foldout__toggle > .unity-foldout__input > #unity-checkmark {
+    background-image: url("project://database/Assets/SoundscapeFiles/UI/icons/sign-plus-circle-svgrepo-com.svg");
+    background-size: contain;        /* or: cover, auto */
+    -unity-background-scale-mode: scale-and-crop;
+    margin-bottom: 1%;
+    -unity-background-image-tint-color: black;
+    rotate: 0deg;
+    transition-property: rotate;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+VisualElement > .unity-scroll-view--vertical > #settingsFoldout > .unity-foldout__toggle:checked > .unity-foldout__input > #unity-checkmark {
+    -unity-background-image-tint-color: #0D7E8A;
+    rotate: 45deg;
+}
+
+VisualElement > .unity-scroll-view--vertical > #settingsFoldout > #unity-content {
+    margin-left: 4%;
+}
+
+VisualElement > .unity-scroll-view--vertical > #settingsFoldout > #projectionDropdown > .unity-popup-field__input {
+    margin-left: 0;
+}
