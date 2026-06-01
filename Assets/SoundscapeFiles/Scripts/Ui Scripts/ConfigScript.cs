@@ -13,6 +13,7 @@ public class ConfigScript : MonoBehaviour
     private float connectionMessageTimeout = 4;
     public bool connectionTimeout = false;
     private IEnumerator messageClearCoroutine;
+    private IEnumerator blinkCoroutine;
     private ReapyControllerCommunication reapyControllerCommunication;
     private Toggle VRToggle;
     private Button returnBtn;
@@ -75,7 +76,8 @@ public class ConfigScript : MonoBehaviour
             default:
                 reaperConnectionStatusMessage.text = "";
                 reaperConnectionStatusMessage.visible = false;
-                reaperConnectionIcon.visible = false;
+                reaperConnectionIcon.style.display = DisplayStyle.None;
+                StopBlink();
                 return; //Dont do anything else
             case "connecting":
                 reaperConnectionStatusMessage.style.color = new StyleColor(Color.orange);
@@ -86,6 +88,7 @@ public class ConfigScript : MonoBehaviour
                 reaperConnectionStatusMessage.style.color = new StyleColor(Color.forestGreen);
                 reaperConnectionIcon.tintColor = Color.forestGreen;
                 reaperConnectionStatusMessage.text = "Connected to Reaper Controller";
+                StartBlink();
                 //reaperConnectionStatusMessage.text = $"Connectied to Reapy Controller at: {reapyControllerCommunication.getServerIP()}:{reapyControllerCommunication.getPort()}";
                 break;
             case "failed":
@@ -94,7 +97,7 @@ public class ConfigScript : MonoBehaviour
                 reaperConnectionStatusMessage.text = "Connection Failed";
                 break;
         }
-        reaperConnectionIcon.visible = true;
+        reaperConnectionIcon.style.display = DisplayStyle.Flex;
         reaperConnectionStatusMessage.visible = true;
         if (connectionTimeout)
         {
@@ -146,5 +149,34 @@ public class ConfigScript : MonoBehaviour
     {
         mainMenu.SetActive(true);
         gameObject.SetActive(false);
+    }
+
+    private void StartBlink()
+    {
+        if (blinkCoroutine != null) StopCoroutine(blinkCoroutine);
+        blinkCoroutine = Blink();
+        StartCoroutine(blinkCoroutine);
+    }
+
+    private void StopBlink()
+    {
+        if (blinkCoroutine != null)
+        {
+            StopCoroutine(blinkCoroutine);
+            blinkCoroutine = null;
+        }
+        reaperConnectionIcon.style.opacity = 1;
+    }
+
+    private IEnumerator Blink()
+    {
+        var wait = new WaitForSeconds(0.8f);
+        while (true)
+        {
+            reaperConnectionIcon.style.opacity = 0;
+            yield return wait;
+            reaperConnectionIcon.style.opacity = 1;
+            yield return wait;
+        }
     }
 }
