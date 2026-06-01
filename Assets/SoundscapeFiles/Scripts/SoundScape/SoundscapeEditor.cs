@@ -120,23 +120,19 @@ public class SoundscapeEditor
         {
             if (evt.newValue)
             {
-                staticPath.style.display = DisplayStyle.Flex;
-                encompassingPath.style.display = DisplayStyle.Flex;
-                projectionDropdown.style.display = DisplayStyle.Flex;
+                staticPath.label = "2D Video Location";
+                encompassingPath.label = "3D Video Location";
             }
             else
             {
-                staticPath.style.display = DisplayStyle.None;
-                encompassingPath.style.display = DisplayStyle.None;
-                projectionDropdown.style.display = DisplayStyle.None;
+                staticPath.label = "2D Image Location";
+                encompassingPath.label = "3D Image Location";
             }
         };
 
         videoToggle.RegisterValueChangedCallback(videoToggleCallback);
-
-        staticPath.style.display = DisplayStyle.None;
-        encompassingPath.style.display = DisplayStyle.None;
-        projectionDropdown.style.display = DisplayStyle.None;
+        staticPath.label = "2D Image Location";
+        encompassingPath.label = "3D Image Location";
     }
 
     public void unresgisterVideoToggleEvents()

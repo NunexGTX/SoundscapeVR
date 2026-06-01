@@ -34,6 +34,7 @@ public class AudioClipCache
     public async Task AddAudio(string audioId, AudioClip clip)
     {
         if(IsAudioInCache(audioId)) return;
+        if(clip == null) return;
         Debug.Log($"[SoundscapeVR] Loading audio data for clip {audioId}");
         if(!clip.LoadAudioData())
             Debug.Log($"[SoundscapeVR] Audio Clip doesn't exist in memory for audio {audioId}");
@@ -46,5 +47,5 @@ public class AudioClipCache
         cache.Add(audioId, clip);
     }
 
-    public AudioClip GetAudioClip(string audioId){return cache[audioId];}
+    public AudioClip GetAudioClip(string audioId){return cache.GetValueOrDefault(audioId, null);}
 }
