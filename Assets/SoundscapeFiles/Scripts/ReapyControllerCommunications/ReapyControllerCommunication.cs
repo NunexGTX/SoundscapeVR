@@ -62,7 +62,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     private string removeEffectCommand = "remove_effect";
 
     [SerializeField]
-    private const string newTrackCreatedSuccesfullyMessage = "Track Created in Reaper";
+    private const string newTrackCreatedSuccesfullyMessage = "track_created";
 
     void Start()
     {
@@ -167,10 +167,14 @@ public class ReapyControllerCommunication : MonoBehaviour
     private void OnReaperReceive(string ReaperResponse)
     {
         //correr quando receber ack ou error de tocar uma fonte de audio
-        switch (ReaperResponse)
+        switch (ReaperResponse.Trim())
         {
             case newTrackCreatedSuccesfullyMessage:
+                Debug.Log($"[SoundscapeVR] Acknowledged track creation - loading manager exists: {loadingManager != null}");
                 if(loadingManager != null) loadingManager.Increment();
+                break;
+            default:
+                Debug.Log($"[SoundscapeVR] other response gotten: {ReaperResponse}");
                 break;
         }
             

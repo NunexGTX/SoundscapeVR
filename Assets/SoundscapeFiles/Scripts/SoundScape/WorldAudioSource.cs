@@ -41,17 +41,15 @@ public class WorldAudioSource: MonoBehaviour
 
             //Apply mute/unmute
             if (audioSource.Mute)
-            {
                 reaperController.MuteTrack(GetUUID());
-            }
             else
-            {
                 reaperController.UnmuteTrack(GetUUID());
-            }
 
             //Send effects that are being used
             reaperSendAudioEffects();
         } else _ = PlayAudio();
+
+        gameObject.GetComponent<MeshRenderer>().enabled = debug;
 
         //if audiosource is visible -> we want to render the icon, not the cube, in display mode.
         //otherside, just render the cube
@@ -107,7 +105,6 @@ public class WorldAudioSource: MonoBehaviour
     //called when playing or replaying audio source.
     public async Task PlayAudio()
     {
-        gameObject.GetComponent<MeshRenderer>().enabled = debug;
         if(playbackType == AudioListeningType.BINAURAL)
         {
             UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();

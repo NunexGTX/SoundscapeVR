@@ -288,6 +288,8 @@ public class SoundscapeWrapper: MonoBehaviour
             currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
             Debug.Log("All audios loaded. yay");
             if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) StartLoopCoroutine();
+            //Now reaper can start playing stuff
+            if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) reapyController.StartSoundscape();
         });
 
         foreach(AudioSource src in audioSources)
@@ -301,8 +303,6 @@ public class SoundscapeWrapper: MonoBehaviour
             PlaceSoundscapeAudioSource(src);
         }
 
-        //Now reaper can start playing stuff
-        if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)reapyController.StartSoundscape();
     }
 
     private void ReaperSendSoundscapeInformation(int duration, bool loop)
