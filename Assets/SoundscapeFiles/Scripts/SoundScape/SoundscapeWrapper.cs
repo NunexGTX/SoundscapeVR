@@ -287,7 +287,7 @@ public class SoundscapeWrapper: MonoBehaviour
             //corre quando tudo carrega
             currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
             Debug.Log("All audios loaded. yay");
-            if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)StartLoopCoroutine();
+            if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) StartLoopCoroutine();
         });
 
         foreach(AudioSource src in audioSources)

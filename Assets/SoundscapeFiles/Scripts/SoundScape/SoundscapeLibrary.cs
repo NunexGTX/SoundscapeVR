@@ -296,7 +296,7 @@ public class SoundscapeLibrary: MonoBehaviour
 
     public async Task<IAudioGenerator> GetClipForAudio(string audioId)
     {
-        if(audioClipCache.IsAudioLoaded(audioId)) return audioClipCache.GetAudioClip(audioId);
+        if(audioClipCache.IsAudioInCache(audioId)) return audioClipCache.GetAudioClip(audioId);
         await LoadAudioClipsAsync(new List<string>{audioId});
         return audioClipCache.GetAudioClip(audioId);
     }
@@ -316,7 +316,7 @@ public class SoundscapeLibrary: MonoBehaviour
         foreach (Audio audio in audios)
         {
             loadingManager.SetInfo($"Loading audio clip {audio.id}: {i++}/{audios.Count}");
-            if (!string.IsNullOrWhiteSpace(audio.fileName) && !audioClipCache.IsAudioLoaded(audio.id))
+            if (!string.IsNullOrWhiteSpace(audio.fileName) && !audioClipCache.IsAudioInCache(audio.id))
             {
                 if (audio.IsAmbisonic())
                 {
@@ -326,8 +326,8 @@ public class SoundscapeLibrary: MonoBehaviour
                         Debug.LogWarning($"[SoundscapeVR] Failed to load ambisonic audio {audio.fileName} because no ambisonic asset name was given");
                         continue;
                     }
-                    AudioClip downloadedClip = await LoadCustomAudio(audioClipCache, audio.fileName, audio.ambisonicAssetName);
-                    audioClipCache.AddAudio(audio.id, downloadedClip);
+                    AudioClip downloadedClip = await LoadAudioFromBundle(audioClipCache, audio.fileName, audio.ambisonicAssetName);
+                    await audioClipCache.AddAudio(audio.id, downloadedClip);
                     //TODO deal with ambisonic audio delays
                     if(downloadedClip != null) Debug.Log($"[SoundscapeVR] Successfully loaded ambisonic audio: {audio.name}");
                     else Debug.LogWarning($"[SoundscapeVR] Failed to load ambisonic audio {audio.fileName}");
@@ -349,7 +349,7 @@ public class SoundscapeLibrary: MonoBehaviour
                         if (www.result == UnityWebRequest.Result.Success)
                         {
                             AudioClip downloadedClip = DownloadHandlerAudioClip.GetContent(www);
-                            audioClipCache.AddAudio(audio.id, downloadedClip);
+                            await audioClipCache.AddAudio(audio.id, downloadedClip);
                             //audio.SetClip(downloadedClip);
                             Debug.Log($"Successfully loaded: {audio.name}");
                         }
@@ -466,7 +466,8 @@ public class SoundscapeLibrary: MonoBehaviour
         return math.sqrt(math.max(0, distSq));
     }
 
-    private async static Task<AudioClip> LoadCustomAudio(AudioClipCache cache, string bundlePath, string assetName)
+    //Loads ambisonic audio, assumes its from a bundle
+    private async static Task<AudioClip> LoadAudioFromBundle(AudioClipCache cache, string bundlePath, string assetName)
     {
         string fullPath = Path.Combine(GetStreamingPath(), "mods");
         if(!Directory.Exists(fullPath))
@@ -497,6 +498,7 @@ public class SoundscapeLibrary: MonoBehaviour
             await Task.Yield();
         AudioClip customClip = assetRequest.asset as AudioClip;
         cache.LoadedBundle(localBundle);
+        if(customClip == null) return null;
         return customClip;
     }
     public string GetAudioType(string audioId)
@@ -510,7 +512,7 @@ public class SoundscapeLibrary: MonoBehaviour
 
     public bool IsAudioLoaded(string audioId)
     {
-        return audioClipCache.IsAudioLoaded(audioId);
+        return audioClipCache.IsAudioInCache(audioId);
     }
 
     public Texture2D GetIconForAudio(string audioId)

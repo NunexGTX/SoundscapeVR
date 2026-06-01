@@ -166,8 +166,9 @@ public class WorldAudioSource: MonoBehaviour
 
     public void ResetMaterial(Material defaultMaterial)
     {
+        Material mat = new(defaultMaterial);
         Texture2D icon = library.GetIconForAudio(audioSource.GetAudioId());
-        defaultMaterial.mainTexture = icon;
-        gameObject.GetComponent<MeshRenderer>().material = defaultMaterial;
+        mat.mainTexture = icon;
+        gameObject.GetComponent<MeshRenderer>().material = mat;
     }
 }
