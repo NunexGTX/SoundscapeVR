@@ -9,9 +9,9 @@
                 <ui:IntegerField label="Time in Seconds" value="90" name="timeInput"/>
                 <ui:Toggle label="Loop" name="loopToggle"/>
                 <ui:Toggle label="Video Soundscape" name="videoToggle" style="align-content: flex-start; justify-content: flex-start; align-self: auto; align-items: stretch; flex-wrap: wrap; flex-direction: row;"/>
-                <ui:TextField label="2D Video Location" placeholder-text="coolVideos/Rick.mp4" name="2dPath" style="flex-direction: column;"/>
+                <ui:TextField label="2D Video Location" placeholder-text="coolVideos/Rick.mp4" name="2dPath" style="flex-direction: column; display: flex; visibility: visible;"/>
                 <ui:TextField label="360 Video Location" placeholder-text="Cool Videos/Wide Rick.mp4" name="360Path" style="flex-direction: column;"/>
-                <ui:DropdownField label="Projection Type" choices="None (As Is),Side by Side,Over Under" index="0" name="projectionDropdown" style="flex-direction: column;"/>
+                <ui:DropdownField label="360 Projection Type" choices="None (As Is),Side by Side,Over Under" index="0" name="projectionDropdown" style="flex-direction: column;"/>
                 <ui:Label text="" name="debugLabel" style="white-space: normal;"/>
                 <ui:Button text="Create" name="createBtn" style="background-color: rgb(168, 255, 155); margin-top: 11px; height: 42px; width: 100%; align-self: center; margin-right: 4%;"/>
             </ui:Foldout>

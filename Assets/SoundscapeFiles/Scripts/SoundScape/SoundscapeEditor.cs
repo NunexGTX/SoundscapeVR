@@ -9,6 +9,7 @@ public class SoundscapeEditor
     private TextField titleField;
     private IntegerField timeField;
     private Toggle videoToggle;
+    private EventCallback<ChangeEvent<bool>> videoToggleCallback;
     private Toggle loopToggle;
     private TextField staticPath;
     private TextField encompassingPath;
@@ -40,6 +41,7 @@ public class SoundscapeEditor
         if(createButton != null) createButton.clicked += OnCreate;
         if(destroyButton != null) destroyButton.clicked += OnDestroy;
 
+        prepareVideoUIFields();
     }
 
     public SoundscapeEditor RunOnCreate(Action<Soundscape> action)
@@ -108,7 +110,40 @@ public class SoundscapeEditor
         //ssWrapper.SetAndStartSoundscape(newSS);
         //ssWrapper.MarkEdited();
         if(runOnCreate != null) runOnCreate.Invoke(newSS);
+        
     }
+
+    void prepareVideoUIFields()
+    {
+        // Store it in the field first, then register
+        videoToggleCallback = evt =>
+        {
+            if (evt.newValue)
+            {
+                staticPath.style.display = DisplayStyle.Flex;
+                encompassingPath.style.display = DisplayStyle.Flex;
+                projectionDropdown.style.display = DisplayStyle.Flex;
+            }
+            else
+            {
+                staticPath.style.display = DisplayStyle.None;
+                encompassingPath.style.display = DisplayStyle.None;
+                projectionDropdown.style.display = DisplayStyle.None;
+            }
+        };
+
+        videoToggle.RegisterValueChangedCallback(videoToggleCallback);
+
+        staticPath.style.display = DisplayStyle.None;
+        encompassingPath.style.display = DisplayStyle.None;
+        projectionDropdown.style.display = DisplayStyle.None;
+    }
+
+    public void unresgisterVideoToggleEvents()
+    {
+        videoToggle?.UnregisterValueChangedCallback(videoToggleCallback);
+    }
+
     /// <summary>
     /// Collect SS Settings UI values and return them in an empty Soundscape instance.
     /// </summary>
@@ -159,6 +194,7 @@ public class SoundscapeEditor
         }
         destroyButton.text = $"Delete {ssTitle}?";
     }
+
 
     private void ResetDeleteCounter()
     {

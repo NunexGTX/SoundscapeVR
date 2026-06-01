@@ -65,6 +65,7 @@ public class SoundscapeListScript : MonoBehaviour
     
     void OnDisable()
     {
+        ssEditor.unresgisterVideoToggleEvents();
         if (returnBtn != null)
             returnBtn.clicked -= Return;
     }
