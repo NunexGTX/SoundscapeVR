@@ -197,6 +197,7 @@ public class SoundscapeWrapper: MonoBehaviour
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING){
             reapyController.loadingManager = loadingManager;
             ReaperSendSoundscapeInformation(currentSoundscape.timeSeconds,currentSoundscape.loop);
+            reapyController.SkipStartSoundscape();
         }
         
         loadingManager.SetInfo($"Loading visuals for: {currentSoundscape.title}");

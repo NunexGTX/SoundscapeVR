@@ -18,6 +18,7 @@ public class NewSoundscape: ReapyControllerCommand
 }
 
 public class StartSoundscape: ReapyControllerCommand{}
+public class SkipStartSoundscape: ReapyControllerCommand{}
 
 public class StopSoundscape: ReapyControllerCommand{}
 
