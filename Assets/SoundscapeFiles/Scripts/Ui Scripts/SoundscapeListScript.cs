@@ -74,6 +74,7 @@ public class SoundscapeListScript : MonoBehaviour
         soundscapesSource = new(library.soundscapeList.GetSoundscapes());
         soundscapeListView.Rebuild();
         ClearFields();
+        //TODO show label here
     }
 
     private void SelectSoundscape(Soundscape soundscape)

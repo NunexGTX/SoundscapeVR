@@ -214,7 +214,6 @@ public class SoundscapeWrapper: MonoBehaviour
         {
             Debug.LogWarning("[SoundscapeVR] Caught an error trying to load the visuals of a soundscape");
             _ = OnVisualFail($"Failed to load visuals {currentSoundscape.title}");
-            StopSoundscape();
             return;
         }
         Debug.Log($"[SoundscapeVR] Gotten visuals for soundscape {currentSoundscape.title}");
