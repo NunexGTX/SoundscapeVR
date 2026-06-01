@@ -44,8 +44,8 @@ public class ImageSoundscape : Soundscape
             onVisualsLoaded.Invoke();
             return new GameObject("NoVideo");        
         }
-        if(!string.IsNullOrWhiteSpace(encompassingPath)) return GetImage(visualType);
-        if(visualType == VisualType.STATIC && !string.IsNullOrWhiteSpace(staticPath)) return GetImage(visualType);
+        if(!string.IsNullOrEmpty(encompassingPath)) return GetImage(visualType);
+        if(visualType == VisualType.STATIC && !string.IsNullOrEmpty(staticPath)) return GetImage(visualType);
         return null;
     }
 
@@ -67,30 +67,6 @@ public class ImageSoundscape : Soundscape
             // 1. Setup Canvas for Camera Overlay
             CreateScreenAdapter(createCanvas: true);
             _ =LoadCanvasImage(SoundscapeLibrary.GetStreamingPath(staticPath), applyToScreen: false, onVisualsFailed, onVisualsLoaded);
-            /*Canvas canvas = go.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = Camera.main;
-            canvas.planeDistance = 1; // Distance from camera (Near Plane)
-
-            //TODO verify this needs to be here and what it does.
-            go.AddComponent<CanvasScaler>();
-            go.AddComponent<GraphicRaycaster>();
-
-            // 2. Add UI Image component
-            Image uiImage = go.AddComponent<Image>();
-            uiImage.preserveAspect = true; // Prevents stretching
-
-            // 3. Stretch Image to fill screen
-            RectTransform rect = uiImage.rectTransform;
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.sizeDelta = Vector2.zero;
-
-            // 4. Attach the loader script
-            StaticDisplay loader = go.AddComponent<StaticDisplay>();
-            loader.imagePath = SoundscapeLibrary.GetStreamingPath(staticPath);
-            loader.onImagePrepared = onVisualsLoaded;
-            loader.onLoadFailed = onVisualsFailed;*/
             return go;
         } else if (!string.IsNullOrWhiteSpace(encompassingPath))
         {
