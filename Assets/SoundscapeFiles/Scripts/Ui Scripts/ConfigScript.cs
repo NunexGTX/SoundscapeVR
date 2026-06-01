@@ -9,6 +9,7 @@ public class ConfigScript : MonoBehaviour
     private TextField reaperControllerAddressField;
     private Button reaperControllerConnect;
     private Label reaperConnectionStatusMessage;
+    private Image reaperConnectionIcon;
     private float connectionMessageTimeout = 4;
     public bool connectionTimeout = false;
     private IEnumerator messageClearCoroutine;
@@ -24,6 +25,8 @@ public class ConfigScript : MonoBehaviour
         reaperControllerAddressField = root.Q<TextField>("reaperControllerAddress");
         reaperControllerConnect = root.Q<Button>("reaperControllerConnect");
         reaperConnectionStatusMessage = root.Q<Label>("reaperConnectionStatusMessage");
+        reaperConnectionIcon = root.Q<Image>("connectionIcon");
+
         reapySetup();
 
         VRToggle = root.Q<Toggle>("vrToggle");
@@ -72,22 +75,26 @@ public class ConfigScript : MonoBehaviour
             default:
                 reaperConnectionStatusMessage.text = "";
                 reaperConnectionStatusMessage.visible = false;
+                reaperConnectionIcon.visible = false;
                 return; //Dont do anything else
             case "connecting":
                 reaperConnectionStatusMessage.style.color = new StyleColor(Color.orange);
+                reaperConnectionIcon.tintColor = Color.orange;
                 reaperConnectionStatusMessage.text = "Connecting...";
                 break;
             case "connected":
                 reaperConnectionStatusMessage.style.color = new StyleColor(Color.forestGreen);
+                reaperConnectionIcon.tintColor = Color.forestGreen;
                 reaperConnectionStatusMessage.text = "Connected to Reaper Controller";
                 //reaperConnectionStatusMessage.text = $"Connectied to Reapy Controller at: {reapyControllerCommunication.getServerIP()}:{reapyControllerCommunication.getPort()}";
                 break;
             case "failed":
                 reaperConnectionStatusMessage.style.color = new StyleColor(Color.red);
+                reaperConnectionIcon.tintColor = Color.red;
                 reaperConnectionStatusMessage.text = "Connection Failed";
                 break;
         }
-
+        reaperConnectionIcon.visible = true;
         reaperConnectionStatusMessage.visible = true;
         if (connectionTimeout)
         {

@@ -1,0 +1,20 @@
+:root {
+
+}
+
+VisualElement > .unity-scroll-view--vertical > #settingsFoldout > .unity-foldout__toggle > .unity-foldout__input > #unity-checkmark {
+    background-image: url("project://database/Assets/SoundscapeFiles/UI/icons/settings-svgrepo-com.svg");
+    background-size: contain;        /* or: cover, auto */
+    -unity-background-scale-mode: scale-and-crop;
+    margin-bottom: 1%;
+    -unity-background-image-tint-color: black;
+    rotate: 0deg;
+    transition-property: rotate;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+VisualElement > .unity-scroll-view--vertical > #settingsFoldout > .unity-foldout__toggle:checked > .unity-foldout__input > #unity-checkmark {
+    -unity-background-image-tint-color: #0D7E8A;
+    rotate: 45deg;
+}

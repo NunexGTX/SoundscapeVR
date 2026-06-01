@@ -1,5 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/SoundscapeSettingsStyle.uss?fileID=7433441132597879392&amp;guid=e9b1dd91742b24bfca41581196e27fe6&amp;type=3#SoundscapeSettingsStyle"/>
     <ui:VisualElement style="flex-grow: 1;">
         <ui:ScrollView horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" mouse-wheel-scroll-size="18" style="height: 100%;">
             <ui:Button text="Go Back" name="returnBtn" class="buttonStyle"/>
@@ -15,9 +16,7 @@
                 <ui:DropdownField label="Projection Type" choices="None (As Is),Side by Side,Over Under" index="0" name="projectionDropdown" style="flex-direction: column;"/>
                 <ui:Label text="" name="debugLabel" style="white-space: normal;"/>
                 <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: center; align-self: center;"/>
-                <ui:VisualElement style="flex-grow: 1;">
-                    <ui:Button text="Delete" name="deleteBtn" style="background-color: rgb(255, 134, 134); margin-top: 11px; height: 42px; justify-content: flex-start; align-content: auto;"/>
-                </ui:VisualElement>
+                <ui:Button text="Delete" name="deleteBtn" style="background-color: rgb(255, 134, 134); margin-top: 11px; height: 42px; justify-content: flex-start; align-content: auto;"/>
             </ui:Foldout>
             <ui:Label text="" name="selectedAudio"/>
             <ui:VisualElement name="audios" style="flex-grow: 1; height: auto; opacity: 1; background-color: rgb(117, 152, 154); margin-top: 9px; margin-right: 9px; margin-bottom: 9px; margin-left: 9px; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">

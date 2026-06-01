@@ -1,5 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/SoundscapeEditList.uss?fileID=7433441132597879392&amp;guid=2b0b29b4d2ed54173897133e8733ba26&amp;type=3#SoundscapeEditList"/>
     <ui:VisualElement style="flex-grow: 1;">
         <ui:ScrollView horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" mouse-wheel-scroll-size="18" style="height: 100%;">
             <ui:Button text="Go Back" name="returnBtn" class="buttonStyle"/>
