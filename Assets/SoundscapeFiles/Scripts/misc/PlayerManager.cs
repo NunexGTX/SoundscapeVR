@@ -4,10 +4,12 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Gravity;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
 using UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets;
+using Unity.XR.CoreUtils;
 
 //Class to manage both the VR and the flat players.
 public class PlayerManager : MonoBehaviour
 {
+    [SerializeField] private GameObject UIGameObject;
     [SerializeField] private GameObject vrCamera;
     [SerializeField] private GameObject playerCamera;
     [SerializeField] private Camera vrUICamera;
@@ -37,6 +39,7 @@ public class PlayerManager : MonoBehaviour
         #else
         EnterVR();
         #endif
+        SetHeightOffset(vrStateData.HeightOffset);
         //else ExitVR();
     }
     private void EnsureVrState(bool isInVr)
@@ -97,9 +100,8 @@ public class PlayerManager : MonoBehaviour
         } else
         {
             Debug.Log("Setting orientation and position...");
-            Vector3 position = new(0, 0, 0);
-            player.transform.position = position;
-            vrPlayer.transform.position = position;
+            player.transform.position = new(0, player.transform.position.y, 0);
+            vrPlayer.transform.position = new(0, -vrStateData.HeightOffset, 0);
             player.transform.rotation = Quaternion.Euler(0, 90, 0);
             vrPlayer.transform.rotation = Quaternion.Euler(0, 90, 0);
         }
@@ -135,6 +137,56 @@ public class PlayerManager : MonoBehaviour
     {
         //hide stuff
         Camera.main.cullingMask &= ~GetCameraMask(type);
+    }
 
+    public void SetHeightOffset(float height)
+    {
+        Debug.Log($"[SoundscapeVR] Setting player height offset to {height}");
+
+        //set flat camera offset
+        Vector3 camPos = playerCamera.transform.localPosition;
+        camPos.y = height - 1;
+        playerCamera.transform.localPosition = camPos;
+        
+        //offset room
+        GameObject room = GameObject.Find("Room");
+        if(room != null)
+        {
+            Vector3 roomPos = room.transform.position;   
+            roomPos.y = -height;
+            room.transform.position = roomPos;
+        }
+
+        //reposition flat player
+        GameObject playerGo = player.gameObject;
+        Vector3 fPlayerPosition = playerGo.transform.position;
+        playerGo.transform.position = new(fPlayerPosition.x, -height + 1, fPlayerPosition.z);
+
+        //reposition vr player
+        Vector3 vrPos = vrPlayer.transform.position;
+        vrPos.y = -height + 0.2f;
+        vrPlayer.transform.position = vrPos; 
+
+        SetUiPos();
+    }
+
+    public void SetUiPos()
+    {
+        //reposition UIs to be level with the player
+        //flat player has the UIs at y = 0 (since camera is always at that level)~
+        //vr has the UI closer on the ground.
+        //this also has to run when the vr state is changed
+        if (vrStateData.IsInVr)
+        {
+            Vector3 uiPos = UIGameObject.transform.position;
+            uiPos.y = -vrStateData.HeightOffset + 1;
+            UIGameObject.transform.position = uiPos;
+        }
+        else
+        {
+            Vector3 uiPos = UIGameObject.transform.position;
+            uiPos.y = 0;
+            UIGameObject.transform.position = uiPos;
+        }
     }
 }

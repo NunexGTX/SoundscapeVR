@@ -12,13 +12,19 @@ public class VrStateData : ScriptableObject
     [SerializeField, DontCreateProperty]
     AudioListeningType currentAudio = AudioListeningType.BINAURAL;
     [SerializeField, DontCreateProperty]
+    float heightOffset = 1f;
+    [SerializeField, DontCreateProperty]
     string ReaperControllerIP;
 
     [CreateProperty]
     public bool IsInVr
     {
         get => vrEnabled;
-        set => vrEnabled = value;
+        set
+        {
+            vrEnabled = value;
+            GameObject.Find("PlayerManager").GetComponent<PlayerManager>().SetUiPos();        
+        } 
     }
 
     [CreateProperty]
@@ -34,6 +40,17 @@ public class VrStateData : ScriptableObject
     {
         get => (int)currentAudio;
         set => currentAudio = (AudioListeningType) value;
+    }
+
+
+    [CreateProperty]
+    public float HeightOffset
+    {
+        get => heightOffset;
+        set {
+            heightOffset = value;
+            GameObject.Find("PlayerManager").GetComponent<PlayerManager>().SetHeightOffset(heightOffset);
+        }
     }
 
     [CreateProperty]

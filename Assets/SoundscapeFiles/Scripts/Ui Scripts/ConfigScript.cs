@@ -1,11 +1,14 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.UIElements;
 
 public class ConfigScript : MonoBehaviour
 {
     public PlayerManager playerManager;
     [SerializeField] private GameObject mainMenu;
+    [SerializeField] private VrStateData vrStateData;
     private TextField reaperControllerAddressField;
     private Button reaperControllerConnect;
     private Label reaperConnectionStatusMessage;
@@ -17,6 +20,7 @@ public class ConfigScript : MonoBehaviour
     private ReapyControllerCommunication reapyControllerCommunication;
     private Toggle VRToggle;
     private Button returnBtn;
+    private Button heightBtn;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
@@ -27,6 +31,7 @@ public class ConfigScript : MonoBehaviour
         reaperControllerConnect = root.Q<Button>("reaperControllerConnect");
         reaperConnectionStatusMessage = root.Q<Label>("reaperConnectionStatusMessage");
         reaperConnectionIcon = root.Q<Image>("connectionIcon");
+        heightBtn = root.Q<Button>("heightBtn");
 
         reapySetup();
 
@@ -36,6 +41,7 @@ public class ConfigScript : MonoBehaviour
 
         VRToggle.RegisterValueChangedCallback(DoToggleVr);
         returnBtn.clicked += Return;
+        heightBtn.clicked += CalibrateHeight;
     }
 
     void OnDisable()
@@ -43,6 +49,7 @@ public class ConfigScript : MonoBehaviour
         if (VRToggle != null)
             VRToggle.UnregisterValueChangedCallback(DoToggleVr);
         returnBtn.clicked -= Return;
+        heightBtn.clicked -= CalibrateHeight;
 
         reaperDestroyUIEvents();
     }
@@ -178,5 +185,24 @@ public class ConfigScript : MonoBehaviour
             reaperConnectionIcon.style.opacity = 1;
             yield return wait;
         }
+    }
+
+    private void CalibrateHeight()
+    {
+        float height = GetHmdHeight();
+        vrStateData.HeightOffset = height;
+    }
+    
+    private float GetHmdHeight()
+    {
+        Debug.Log($"[SoundscapeVR] Getting HMD Height");
+        if (Gamepad.all.Count >= 0)
+        {
+            Vector3 hmdPosition = InputSystem.GetDevice<XRHMD>()?.centerEyePosition.ReadValue() ?? Vector3.zero;  
+            Debug.Log($"[SoundscapeVR] Returning height {hmdPosition.y}");
+            return hmdPosition.y;
+        }
+        Debug.Log($"[SoundscapeVR] Failed to get height, defaulting to 0");
+        return 0f;
     }
 }

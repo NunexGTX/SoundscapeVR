@@ -25,7 +25,8 @@ public class SoundscapeWrapper: MonoBehaviour
     private Material defaultSkybox;
     [SerializeField] private InputActionReference leaveSoundscapeAction;
     [SerializeField] private LoadingManager loadingManager;
-
+    [SerializeField] private SoundscapePlayerEditor playerEditor;
+    [SerializeField] private GameObject editListUi, editSsUi;
 
     void OnEnable()
     {
@@ -144,8 +145,8 @@ public class SoundscapeWrapper: MonoBehaviour
         {
             try
             {
-                Debug.Log($"Applying layer {untargetableSoundSourceLayer.GetFirstLayerIndex()} to audioSource {src.GetAudioId()}");
-                gameObject.SetLayerRecursively(untargetableSoundSourceLayer.GetFirstLayerIndex());                        
+                //Debug.Log($"Applying layer {untargetableSoundSourceLayer.GetFirstLayerIndex()} to audioSource {src.GetAudioId()}");
+                go.SetLayerRecursively(untargetableSoundSourceLayer.GetFirstLayerIndex());                        
             }
             catch
             {
@@ -280,6 +281,8 @@ public class SoundscapeWrapper: MonoBehaviour
 
         Debug.Log($"[SoundscapeVR] Playing audios");
         List<AudioSource> audioSources = currentSoundscape.GetAudioSources();
+
+        //setting up loading manager
         loadingManager.SetToStart(audioSources.Count);
         loadingManager.SetInfo("Playing audios...");
         loadingManager.OnLoaded(() =>
@@ -292,6 +295,18 @@ public class SoundscapeWrapper: MonoBehaviour
             if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) reapyController.StartSoundscape();
         });
 
+        //we define the timeout variabel within the scope of this function as its only relevant here.
+        //if placing the audios happens to take longer than the timeout time, we do not place them.
+        //ie say the forloop takes 10 seconds to run sequentially, and after the first 5 seconds, no audios incremented the loading manager
+        //this triggers the timeout, but now we should not try to place anymore audios.
+        bool timedout = false;
+        loadingManager.OnTimeout(() =>
+        {
+            timedout = true;
+            StopSoundscape();
+        }, 5);
+
+        //placing audios
         foreach(AudioSource src in audioSources)
         {
             //if an audio isnt loaded here, that means it could not be loaded, so we dont instantiate it.
@@ -300,9 +315,9 @@ public class SoundscapeWrapper: MonoBehaviour
                 loadingManager.Increment();
                 continue;  
             } 
-            PlaceSoundscapeAudioSource(src);
+            if(!timedout) PlaceSoundscapeAudioSource(src);
         }
-
+        timedout = false;
     }
 
     private void ReaperSendSoundscapeInformation(int duration, bool loop)
@@ -342,6 +357,12 @@ public class SoundscapeWrapper: MonoBehaviour
 
     public void StopSoundscape()
     {
+        /*if (inEditMode)
+        {
+            playerEditor.LeaveEdit();
+            editListUi.SetActive(true);
+            editSsUi.SetActive(false);
+        }*/
         inEditMode = false;
         //SaveCurrentSoundscape();
         playerManager.SetPlayerMovement(true);

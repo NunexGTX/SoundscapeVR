@@ -90,6 +90,7 @@ public class EditSoundscapeScript : MonoBehaviour
     {
         previousMenu.SetActive(true);
         gameObject.SetActive(false);
+        ssWrapper.StopSoundscape();
     }
 
     private void SelectAudio(Audio audio)

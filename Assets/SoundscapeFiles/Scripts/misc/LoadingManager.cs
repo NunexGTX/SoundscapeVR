@@ -16,6 +16,13 @@ public class LoadingManager : MonoBehaviour
     private bool softConcurrencyCheck = false;
     private bool queued = false;
     private Action onLoadingFinished = null;
+    private Action onTimeout = null;
+
+    private float animationTime = 0f;
+    private float timeInQueue = 0f;
+    private int timeoutSeconds = 5;
+    private float timeSinceLastUpdate = 0;
+    private bool timedout = false;
 
     public void SetInfo(string text)
     {
@@ -43,19 +50,23 @@ public class LoadingManager : MonoBehaviour
         softConcurrencyCheck = true;
         progress = 0f;
         this.end = end;
-        image.gameObject.SetActive(true);
+        image.SetActive(true);
         loadingBar.value = 0;
         player.SetPlayerRotation(false);
         SetInfo("Starting up...");
+        timeSinceLastUpdate = 0;
+        timedout = false;
     }
 
     public void Increment(float amount = 1f)
     {
+        if(timedout) return;
         if(progress < end)
         {
             progress += amount;
         }
         UpdateBar();
+        timeSinceLastUpdate = 0;
     }
 
     public float GetCurrentProgress()
@@ -72,23 +83,31 @@ public class LoadingManager : MonoBehaviour
     {
         loadingBar.value = 0;
         softConcurrencyCheck = false;
+        if(!timedout) onLoadingFinished?.Invoke();
+        onLoadingFinished = null;
+        onTimeout = null;
+        timeSinceLastUpdate = 0;
+        timedout = false;
         //if theres another loader queued up, dont disable the visuals.
         if(queued) return;
-        image.gameObject.SetActive(false);
+        image.SetActive(false);
         player.SetPlayerRotation(true);
-        if(onLoadingFinished != null) onLoadingFinished.Invoke();
-        onLoadingFinished = null;
     }
 
-    private float time = 0f;
-    private float timeInQueue = 0f;
+    public LoadingManager OnTimeout(Action onTimeout, int timeoutSeconds = 5)
+    {
+        this.timeoutSeconds = timeoutSeconds;
+        this.onTimeout = onTimeout;
+        return this;
+    }
 
     void Update()
     {
-        time += Time.deltaTime;
-        if(time > 0.5f)
+        animationTime += Time.deltaTime;
+        timeSinceLastUpdate += Time.deltaTime;
+        if(animationTime > 0.5f)
         {
-            time = 0f;
+            animationTime = 0f;
             int dotsNow = loadingText.text[7..].Length;
             string res = "Loading";
             for(int i = 0; i < (dotsNow + 1)%4; i++)
@@ -96,6 +115,16 @@ public class LoadingManager : MonoBehaviour
                 res += ".";
             }
             loadingText.text = res;
+        }
+        if(timeSinceLastUpdate > timeoutSeconds)
+        {
+            timedout = true;
+            SetInfo("Loading timed out.");
+            if(timeSinceLastUpdate > timeoutSeconds + 2)
+            {
+                onTimeout?.Invoke();
+                EndLoading();
+            }
         }
         //if someone queued up but theres nothing loading
         if(queued && !softConcurrencyCheck)

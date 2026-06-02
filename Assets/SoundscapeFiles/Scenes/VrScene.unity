@@ -549,7 +549,7 @@ MonoBehaviour:
   m_SortingOrder: 0
   m_Position: 0
   m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 267.2
+  m_WorldSpaceWidth: 335.2
   m_WorldSpaceHeight: 278.7
   m_PivotReferenceSize: 0
   m_Pivot: 0
@@ -573,8 +573,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.7487755, y: 2.8045478, z: 0.058801528}
-  m_Center: {x: 0.0000000015473185, y: 0, z: -0.010605277}
+  m_Size: {x: 3.452353, y: 2.8045478, z: 0.058801528}
+  m_Center: {x: -0.06704435, y: 0, z: -0.010605449}
 --- !u!114 &88210266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -589,6 +589,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ConfigScript
   playerManager: {fileID: 657310048}
   mainMenu: {fileID: 812061678}
+  vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   connectionTimeout: 0
 --- !u!114 &88210267
 MonoBehaviour:
@@ -630,7 +631,7 @@ Transform:
   m_GameObject: {fileID: 292047921}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.59000015, y: 0, z: -0.5799999}
+  m_LocalPosition: {x: 0.59000015, y: -1, z: -0.5799999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1525,7 +1526,7 @@ Transform:
   m_GameObject: {fileID: 525683844}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071071, z: -0, w: 0.7071065}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1563,6 +1564,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3a9e2597798beb4bb3df6b69c22cb5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  UIGameObject: {fileID: 1725830493}
   vrCamera: {fileID: 1148877395}
   playerCamera: {fileID: 525683844}
   vrUICamera: {fileID: 1693604676}
@@ -3160,8 +3162,8 @@ Transform:
   m_GameObject: {fileID: 1398928840}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.63150615, z: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 525683848}
@@ -4651,7 +4653,7 @@ Transform:
   m_GameObject: {fileID: 1716594759}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.2588186, z: -0, w: 0.965926}
-  m_LocalPosition: {x: -0.3000002, y: 0, z: 1.9199998}
+  m_LocalPosition: {x: -0.3000002, y: -1, z: 1.9199998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4721,7 +4723,7 @@ Transform:
   m_GameObject: {fileID: 1765509620}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5098,6 +5100,9 @@ MonoBehaviour:
     m_Bits: 1024
   leaveSoundscapeAction: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   loadingManager: {fileID: 657310051}
+  playerEditor: {fileID: 0}
+  editListUi: {fileID: 0}
+  editSsUi: {fileID: 0}
 --- !u!4 &1891192194
 Transform:
   m_ObjectHideFlags: 0
@@ -5167,7 +5172,10 @@ MonoBehaviour:
   connectionTimeOutMillis: 5000
   vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   loadingManager: {fileID: 0}
+  newSoundscapeCommand: new_soundscape
   startSoundscapeCommand: start_soundscape
+  skipStartSoundscapeCommand: no_start_wait
+  endSoundscapeCommand: end_soundscape
   newTrackCommand: new_track
   sourcePositionCommand: source_position
   muteCommand: mute

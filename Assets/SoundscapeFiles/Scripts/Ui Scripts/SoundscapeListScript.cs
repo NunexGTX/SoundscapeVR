@@ -90,8 +90,6 @@ public class SoundscapeListScript : MonoBehaviour
     {
         mainMenu.SetActive(true);
         gameObject.SetActive(false);
-        ssWrapper.StopSoundscape();
-        editorPlayer.LeaveEdit();
     }
 
     private void ClearFields()

@@ -1,9 +1,9 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3"/>
     <ui:VisualElement data-source="" data-source-path="" class="backgroundStyle">
         <ui:ScrollView scroll-deceleration-rate="-0.03" horizontal-scroller-visibility="Hidden">
             <ui:Label text="General Configuration" class="headerStyle"/>
-            <ui:Button text="Return to Main Menu" name="returnBtn" class="buttonStyle" style="left: auto; align-self: flex-start;"/>
+            <ui:Button text="Return to Main Menu" name="returnBtn" class="buttonStyle" style="left: auto; align-self: center;"/>
             <ui:GroupBox name="reaperControllerSettings" style="background-color: rgb(227, 229, 254); border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; margin-bottom: 6px;">
                 <ui:Label text="Reaper Controller Server"/>
                 <ui:TextField label="" placeholder-text="Server IP" hide-placeholder-on-focus="false" name="reaperControllerAddress">
@@ -14,7 +14,26 @@
                     <ui:Label text="Connected to Reaper Controller at: 192.168.1.1:1222" name="reaperConnectionStatusMessage" style="font-size: 12px; -unity-font-style: normal; color: rgb(207, 126, 75); padding-left: 3px; padding-right: 4px; visibility: hidden; display: flex;"/>
                 </ui:GroupBox>
             </ui:GroupBox>
-            <ui:DropdownField label="Binaural Audio Target" choices="WIP" style="-unity-font-style: normal;"/>
+            <ui:GroupBox name="reaperControllerSettings" style="background-color: rgb(227, 229, 254); border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; margin-bottom: 6px;">
+                <ui:Label text="(VR) Define speaker origin height (m)"/>
+                <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: center; align-content: stretch; width: 90%; align-self: center;">
+                    <ui:FloatField label="" value="1" max-length="5" name="calibrationField" style="width: 93%; height: 77%; align-self: center;">
+                        <Bindings>
+                            <ui:DataBinding property="value" data-source-path="HeightOffset" data-source="project://database/Assets/SoundscapeFiles/Scripts/SavedData/VrStateData.asset?fileID=11400000&amp;guid=26e8613f074c8004192a57c57732439f&amp;type=2#VrStateData" binding-mode="TwoWay"/>
+                        </Bindings>
+                    </ui:FloatField>
+                </ui:VisualElement>
+                <ui:Button text="Calibrate with current height" name="heightBtn" style="width: 89%; align-self: center;">
+                    <Bindings>
+                        <ui:DataBinding property="enabledSelf" data-source-path="IsInVr" data-source="project://database/Assets/SoundscapeFiles/Scripts/SavedData/VrStateData.asset?fileID=11400000&amp;guid=26e8613f074c8004192a57c57732439f&amp;type=2#VrStateData" binding-mode="ToTarget"/>
+                    </Bindings>
+                </ui:Button>
+                <ui:GroupBox style="position: relative; align-items: flex-start; flex-direction: row; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-left: 5px; height: 25px;">
+                    <ui:Image name="connectionIcon" source="project://database/Assets/VRTemplateAssets/Sprites/UI/Circle_60x60_Vertical.png?fileID=2800000&amp;guid=83d67d78424a7e24fa4bef36e1e32541&amp;type=3#Circle_60x60_Vertical" scale-mode="ScaleToFit" style="height: 22px; width: 16px; margin-top: 3.5px; display: none;"/>
+                    <ui:Label text="Connected to Reaper Controller at: 192.168.1.1:1222" name="reaperConnectionStatusMessage" style="font-size: 12px; -unity-font-style: normal; color: rgb(207, 126, 75); padding-left: 3px; padding-right: 4px; visibility: hidden; display: flex;"/>
+                </ui:GroupBox>
+            </ui:GroupBox>
+            <ui:DropdownField label="Binaural Audio Target" choices="WIP" enabled="false" style="-unity-font-style: normal;"/>
             <ui:Toggle label="VR Mode" value="false" toggle-on-label-click="true" text="" name="vrToggle">
                 <Bindings>
                     <ui:DataBinding property="value" data-source-path="IsInVr" data-source="project://database/Assets/SoundscapeFiles/Scripts/SavedData/VrStateData.asset?fileID=11400000&amp;guid=26e8613f074c8004192a57c57732439f&amp;type=2#VrStateData" binding-mode="TwoWay"/>

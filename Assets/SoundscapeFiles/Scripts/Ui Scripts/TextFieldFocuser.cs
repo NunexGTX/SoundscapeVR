@@ -22,7 +22,10 @@ public class TextFieldFocuser : MonoBehaviour
     private void RegisterAllTextFields()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-        foreach (var field in root.Query<TextField>().ToList())
+        var allFields = root.Query<VisualElement>()
+            .Where(e => e is TextField || e is IntegerField || e is FloatField)
+            .ToList();
+        foreach (var field in allFields)
         {
             EventCallback<FocusInEvent> focusIn = _ => OnTextFieldFocused(field);
             EventCallback<FocusOutEvent> focusOut = _ => OnTextFieldUnfocused(field);
@@ -57,6 +60,10 @@ public class TextFieldFocuser : MonoBehaviour
         } else if(field is IntegerField integerField)
         {
             keyboardManager.ShowKeyboard(integerField.value.ToString());
+        } else if(field is FloatField floatField)
+        {
+            Debug.Log($"[SoundscapeVR] focusing on float field with value {floatField.value}");
+            keyboardManager.ShowKeyboard(floatField.value.ToString());
         }
         if(!keyboardManager.keyboard.isOpen) return;
         keyboardManager.keyboard.onTextUpdated.AddListener(OnKeyboardTextUpdate);
@@ -89,6 +96,13 @@ public class TextFieldFocuser : MonoBehaviour
             if (int.TryParse(keyboardText, out int result))
             {
                 inf.value = result;
+            }
+        }
+        else if (_activeField is FloatField flf)
+        {
+            if (float.TryParse(keyboardText, out float result))
+            {
+                flf.value = result;
             }
         }
     }
