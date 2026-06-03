@@ -15,5 +15,5 @@ MonoBehaviour:
   vrEnabled: 1
   currentVisual: 2
   currentAudio: 1
-  heightOffset: 1
+  heightOffset: 1.1040877
   ReaperControllerIP: 10.65.13.2
