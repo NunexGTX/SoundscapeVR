@@ -372,8 +372,9 @@ public class ReapyControllerCommunication : MonoBehaviour
 
             case AudioEffectInstance.Occlusion:
                 return new string[] {"true", audioEffectInstance.occlusionEffectData.frequency_dependent.ToString(), audioEffectInstance.occlusionEffectData.occlusion_value.ToString(), audioEffectInstance.occlusionEffectData.occlusion_low_freq.ToString(),audioEffectInstance.occlusionEffectData.occlusion_mid_freq.ToString(), audioEffectInstance.occlusionEffectData.occlusion_high_freq.ToString()};
-            
-            //TODO: add new effects like LOW HIGH Pass
+
+            case AudioEffectInstance.Pass:
+                return new string[] {"true", audioEffectInstance.passEffectData.highPassFreq.ToString(), audioEffectInstance.passEffectData.lowPassFreq.ToString()};
         }
     }
     

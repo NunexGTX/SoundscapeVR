@@ -10,8 +10,8 @@ public class HighLowPassEffectData
     public const int maxLowPassFreq = 22000;
 
     //if changing these values, also change the UI limits.
-    public const int minHighPassFreq = 1000;
-    public const int maxHighPassFreq = 22000;
+    public const int minHighPassFreq = 0;
+    public const int maxHighPassFreq = 1000;
 
     public HighLowPassEffectData(int lowPassFreq, int highPassFreq)
     {
