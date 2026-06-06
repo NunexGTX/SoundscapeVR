@@ -1,9 +1,10 @@
 using System;
 using SteamAudio;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [Serializable]
-public class OcclusionEffectData
+public class OcclusionEffectData : AudioEffectData
 {
     public float occlusion_value = 1f;
     public float occlusion_low_freq = 1f;
@@ -21,16 +22,18 @@ public class OcclusionEffectData
         occlusion_mid_freq = midFreqOcc;
         occlusion_high_freq = highFreqOcc;
     }
-    public OcclusionEffectData(OcclusionEffectData other)
+    public override AudioEffectData CopyValues(AudioEffectData other)
     {
-        frequency_dependent = other.frequency_dependent;
-        occlusion_value = other.occlusion_value;
-        occlusion_low_freq = other.occlusion_low_freq;
-        occlusion_mid_freq = other.occlusion_mid_freq;
-        occlusion_high_freq = other.occlusion_high_freq;
+        if(other is not OcclusionEffectData otherOcc) return null;
+        frequency_dependent = otherOcc.frequency_dependent;
+        occlusion_value = otherOcc.occlusion_value;
+        occlusion_low_freq = otherOcc.occlusion_low_freq;
+        occlusion_mid_freq = otherOcc.occlusion_mid_freq;
+        occlusion_high_freq = otherOcc.occlusion_high_freq;
+        return this;
     }
     
-    public void ApplyEffectToSource(GameObject audioClipObject)
+    public override void ApplyEffectToSource(GameObject audioClipObject)
     {
         if(audioClipObject.GetComponent<SteamAudioSource>() == null) audioClipObject.AddComponent<SteamAudioSource>();
         SteamAudioSource steamSource = audioClipObject.GetComponent<SteamAudioSource>();
@@ -47,5 +50,38 @@ public class OcclusionEffectData
         steamSource.transmissionMid = occlusion_mid_freq;
         steamSource.transmissionHigh= occlusion_high_freq;
 
+    }
+
+    public override bool IsEffectAppliedInUI(VisualElement root) => root.Q<Toggle>("occlusionToggle").value;
+
+    public override AudioEffectData CollectFromUI(VisualElement root)
+    {
+        bool dependency = root.Q<Toggle>("freqToggle").value;
+        float occlusionValue = root.Q<Slider>("occlusionValue").value;
+        float lowOcc = root.Q<Slider>("lowFreqOcc").value;
+        float midOcc = root.Q<Slider>("midFreqOcc").value;
+        float highOcc = root.Q<Slider>("highFreqOcc").value;
+        return new OcclusionEffectData(dependency, occlusionValue, lowOcc, midOcc, highOcc);
+    }
+
+    public override void ApplyDefaultUI(VisualElement root)
+    {
+        root.Q<Foldout>("occlusionFoldout").value = false;
+        root.Q<Toggle>("occlusionToggle").value = false;
+    }
+
+    public override void ApplyValuesToUI(VisualElement root)
+    {
+        root.Q<Foldout>("occlusionFoldout").value = true;
+        root.Q<Toggle>("occlusionToggle").value = true;
+        root.Q<Toggle>("freqToggle").value = frequency_dependent;
+        root.Q<Slider>("occlusionValue").value = occlusion_value;
+        root.Q<Slider>("lowFreqOcc").value = occlusion_low_freq;
+        root.Q<Slider>("midFreqOcc").value = occlusion_mid_freq;
+        root.Q<Slider>("highFreqOcc").value = occlusion_high_freq;
+    }
+    public override string[] GetTrackParams()
+    {
+        return new string[] { "true", frequency_dependent.ToString(), occlusion_value.ToString(), occlusion_low_freq.ToString(), occlusion_mid_freq.ToString(), occlusion_high_freq.ToString() };
     }
 }

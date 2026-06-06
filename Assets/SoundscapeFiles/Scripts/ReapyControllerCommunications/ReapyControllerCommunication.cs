@@ -353,29 +353,12 @@ public class ReapyControllerCommunication : MonoBehaviour
             return;
         }
 
-        var msg = new AudioEffect {command = addEffectCommand, SoundUUID = soundUUID.ToString(), EffectName = audioEffectInstance.effectId, EffectParams = effectParams};
+        var msg = new AudioEffect {command = addEffectCommand, SoundUUID = soundUUID.ToString(), EffectName = audioEffectInstance.effectData.effectId, EffectParams = effectParams};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json, soundUUID);
     }
 
-    string[] trackEffectParams(AudioEffectInstance audioEffectInstance)
-    {
-        switch (audioEffectInstance.effectId)
-        {
-            default:
-                Debug.LogWarning("The effect you were trying to add to the track in Reaper was not yet implemented. Skipping...");
-                return null;
-
-            case AudioEffectInstance.Echo:
-                return new string[] {"true", audioEffectInstance.echoEffectData.delay_ms.ToString(),audioEffectInstance.echoEffectData.decay_ratio.ToString(),audioEffectInstance.echoEffectData.dry_mix.ToString(),audioEffectInstance.echoEffectData.wet_mix.ToString()};
-
-            case AudioEffectInstance.Occlusion:
-                return new string[] {"true", audioEffectInstance.occlusionEffectData.frequency_dependent.ToString(), audioEffectInstance.occlusionEffectData.occlusion_value.ToString(), audioEffectInstance.occlusionEffectData.occlusion_low_freq.ToString(),audioEffectInstance.occlusionEffectData.occlusion_mid_freq.ToString(), audioEffectInstance.occlusionEffectData.occlusion_high_freq.ToString()};
-
-            case AudioEffectInstance.Pass:
-                return new string[] {"true", audioEffectInstance.passEffectData.highPassFreq.ToString(), audioEffectInstance.passEffectData.lowPassFreq.ToString()};
-        }
-    }
+    string[] trackEffectParams(AudioEffectInstance audioEffectInstance) => audioEffectInstance.effectData.GetTrackParams();
     
 }

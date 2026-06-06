@@ -112,16 +112,15 @@ def authenticate(credentialsJson, scopes):
     return token
 
 token = authenticate(credentialsJson, API_Scopes)
-
 def QuestionsGatherer():
-    #The the form's raw data
-    formData = FormsContentRetriever(FormID,token)
+    # The form's raw data
+    formData = FormsContentRetriever(FormID, token)
 
     resultDict = {}
-    #Gather the Questions
+    # Gather the Questions
     Title = formData.get('info', {}).get('title')
     description = formData.get('info', {}).get('description')
-    uri: str = formData.get("responderUri")
+    uri: str = formData.get("responderUri", "")
     formId = uri.replace("https://docs.google.com/forms/d/e/", "").replace("/viewform", "")
     resultDict["formTitle"] = Title
     resultDict["formViewId"] = formId
@@ -130,13 +129,12 @@ def QuestionsGatherer():
 
     items = formData.get('items', [])
     for item in items:
-        # Check if the item is a question (ignores layout elements like images/headers)
+        # 1. Handle Standard Questions
         if 'questionItem' in item:
             question: dict = item['questionItem']['question']
-            q_id = "entry." + str(int(question['questionId'],16)) #Temos de converter o entry id de hexadecimal para int para podermos responder com o post request
+            q_id = "entry." + str(int(question['questionId'], 16)) # Convert entry id from hex to int
             q_name = item.get('title', "Untitled Question")
             _choiceQuestion: dict = question.get('choiceQuestion', {})
-            print(type(question))
             q_required = question.get('required', "false")
 
             # get type of question
@@ -148,28 +146,81 @@ def QuestionsGatherer():
             elif 'scaleQuestion' in question:
                 q_type = "SCALE"
             elif 'choiceQuestion' in question:
-                q_type = _choiceQuestion['type']
+                q_type = _choiceQuestion.get('type')
             else:
                 continue
 
-            #after determining type, we get any extra information that may be relevant
+            # after determining type, get any extra information
             q_extra = []
-            if(_choiceQuestion):
-                q_extra = [entry["value"] for entry in _choiceQuestion["options"]]
-            elif(q_type == "SCALE"):
+            shuffle_status = False
+            
+            if _choiceQuestion:
+                q_extra = [
+                    entry.get("value", "__Other__") if not entry.get("isOther") else "Outro (Texto Livre)"
+                    for entry in _choiceQuestion.get("options", [])
+                ]
+                shuffle_status = _choiceQuestion.get('shuffle', False)
+            elif q_type == "SCALE":
                 scaler = question["scaleQuestion"]
-                q_extra = [str(scaler["low"]), str(scaler["high"])]
-                if(scaler["lowLabel"]):
-                    q_extra.extend([scaler["lowLabel"], scaler["highLabel"]])
+                q_extra = [str(scaler.get("low", 0)), str(scaler.get("high", 10))]
+                if scaler.get("lowLabel") or scaler.get("highLabel"):
+                    q_extra.extend([scaler.get("lowLabel", ""), scaler.get("highLabel", "")])
 
             itemDict: dict = {
                 "id": q_id,
                 "type": q_type,
                 "required": q_required,
                 "description": q_name,
-                "extra": q_extra
+                "extra": q_extra,
+                "shuffle": shuffle_status
             }
             Questions.append(itemDict)
+
+        # 2. Handle Grid/Question Group Items
+        elif 'questionGroupItem' in item:
+            group_item = item['questionGroupItem']
+            group_title = item.get('title', "Untitled Grid")
+            
+            # Extract column options shared across rows
+            grid_config = group_item.get('grid', {})
+            columns_data = grid_config.get('columns', {})
+            columns_options = [opt.get("value", "") for opt in columns_data.get("options", [])]
+            q_type = columns_data.get('type', 'RADIO_GRID')
+            
+            shuffle_status = columns_data.get('shuffle', False) 
+
+            # Loop through individual rows as separate sub-questions
+            for row_q in group_item.get('questions', []):
+                q_id = "entry." + str(int(row_q['questionId'], 16))
+                row_title = row_q.get('rowQuestion', {}).get('title', 'Untitled Row')
+                q_required = row_q.get('required', "false")
+                
+                # MODIFICATION: Put the row title first, then append the column options
+                grid_extra = [row_title] + columns_options
+                
+                itemDict: dict = {
+                    "id": q_id,
+                    "type": f"GRID_{q_type}",
+                    "required": q_required,
+                    "description": group_title, # Kept clean since row title is now in 'extra'
+                    "extra": grid_extra,
+                    "shuffle": shuffle_status
+                }
+                Questions.append(itemDict)
+
+        # 3. Handle Images
+        elif 'imageItem' in item:
+            image_uri = item['imageItem'].get('image', {}).get('contentUri', '')
+            itemDict: dict = {
+                "id": item.get("itemId", ""),
+                "type": "IMAGE",
+                "required": "false",
+                "description": item.get("title", "Untitled Image"),
+                "extra": image_uri
+            }
+            Questions.append(itemDict)
+
+        # 4. Handle Layout elements (Titles / Page Breaks)
         elif 'textItem' in item or 'pageBreakItem' in item:
             itemDict: dict = {
                 "id": item.get("title", ""),
@@ -180,12 +231,11 @@ def QuestionsGatherer():
             Questions.append(itemDict)
 
     resultDict["questions"] = Questions
-    #Print the Questions
+    # Print the Questions
     showQuestionsJson(resultDict)
-    #Save questions to a .csv
+    # Save questions to a .json
     saveQuestionstoJSON(resultDict)
-
-
+    
 def FormsContentRetriever(formID, token):
     service = build('forms', 'v1', credentials=token)
     formData = service.forms().get(formId=formID).execute()
