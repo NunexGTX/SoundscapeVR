@@ -49,12 +49,15 @@ def setupInstructions():
             print("  20. - On the Credentials page still, copy the Service Account email you just created")
             print("  21. - Open the Google Form on the browser in the Edit View")
             print("  22. - Click the three-dot menu at the top right > 'Add collaborators'")
-            print("  23. - Paste the service account email > set role to 'Viewer' > click 'Send'")
+            print("  23. - Paste the service account email > set role to 'Editor' > click 'Send'")
             print()
             print("#2 - How to get the Google Forms ID")
             print("   1. - Open your form in Edit View")
             print("   2. - Get its link, you'll notice that its something like 'https://docs.google.com/forms/d/e/[FormID]/...'")
             print("   3. - Write down that FormID")
+            print("#3 - Making the .json")
+            print("   1 - Open the credentials.json generated")
+            print('   2 - Inside the Dictionary, add the parameter called "formId" and write the formID there like this: "formId=[formID],"')
             break
         elif needInstructions == "n":
             break
@@ -81,7 +84,7 @@ def selectFile(fileName, filetype, filetypename):
         print("No file selected.")
 
 while True:
-    credentialsJson = selectFile("credentials.json",".json","json files")
+    credentialsJson = selectFile("GForm.json",".json","json files")
     if credentialsJson:
         break
 
