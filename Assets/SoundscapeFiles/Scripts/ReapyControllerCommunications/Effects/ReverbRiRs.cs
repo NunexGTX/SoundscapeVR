@@ -4,18 +4,14 @@ using UnityEngine;
 
 public class ReverbRiRs
 {
-    public static Dictionary<string, string> ReaperReverbPresets= new Dictionary<string, string>{
-        {"Cinema Room", "Cinema_Room"},
-        {"Parliment", "Parliment"}
+    public static Dictionary<ReverbEffectData.ReverbPresets, string> ReaperReverbPresets= new Dictionary<ReverbEffectData.ReverbPresets, string>{
+        //PresetName : RiReverb Preset
+        {ReverbEffectData.ReverbPresets.Auditorium, "Auditorium"},
+        {ReverbEffectData.ReverbPresets.Parliment, "Parliment"}
     };
 
-    public static string getPresetCode(string displayName)
+    public static string getPresetCode(ReverbEffectData.ReverbPresets preset)
     {
-        return ReaperReverbPresets[displayName];
-    }
-
-    public static string[] presetDisplayList()
-    {
-        return ReaperReverbPresets.Keys.ToArray();
+        return ReaperReverbPresets[preset];
     }
 }

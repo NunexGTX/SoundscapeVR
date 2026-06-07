@@ -38,5 +38,10 @@
             <ui:SliderInt label="Low Pass Freq." value="22000" high-value="22000" name="lowPassFreq" fill="true" show-input-field="true" low-value="1000" inverted="false" direction="Horizontal" style="flex-wrap: wrap; flex-direction: row; justify-content: center; font-size: 18px; white-space: normal; text-overflow: clip;"/>
             <ui:SliderInt label="High Pass Freq." value="42" high-value="1000" name="highPassFreq" fill="true" show-input-field="true" low-value="0"/>
         </ui:Foldout>
+        <ui:Foldout text="Reverb" name="reverbFoldout" value="true" style="background-color: rgba(0, 0, 0, 0.1); margin-top: 5px; padding: 5px;">
+            <ui:Toggle label="Apply Reverb" name="applyReverb"/>
+            <ui:Label text="Reverb presets and their effects may differ between Unity&apos;s Binaural mode and the Reaper Controller" triple-click-selects-line="false" double-click-selects-word="false" display-tooltip-when-elided="false" name="Label" style="flex-wrap: wrap; flex-direction: column; white-space: normal; width: auto; left: -25px; -unity-font-style: normal;"/>
+            <ui:DropdownField label="Reverb Preset" choices="Rafinha,Rafão" name="reverbPresetDropdown"/>
+        </ui:Foldout>
     </ui:ScrollView>
 </ui:UXML>
