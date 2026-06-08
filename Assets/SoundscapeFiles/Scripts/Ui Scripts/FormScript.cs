@@ -269,7 +269,6 @@ public class FormScript : MonoBehaviour
                                 formRoot.Add(gridContainer);
                             }
 
-                            // 2. Instantiate a single row asset instance
                             VisualElement rowInstance = radioButtonElement.Instantiate();
                             RadioButtonGroup rowRadioGroup = rowInstance.Q<RadioButtonGroup>("radioButtons");
 
@@ -277,7 +276,6 @@ public class FormScript : MonoBehaviour
                             rowRadioGroup.style.fontSize = 12;
                             rowRadioGroup.choices = gridChoices;
 
-                            // 4. Populate previously saved answer data
                             if (answersHolder.IsQuestionAnswered(id))
                             {
                                 string savedAnswer = answersHolder.GetSingleAnswer(id);
@@ -288,7 +286,6 @@ public class FormScript : MonoBehaviour
                                 }
                             }
 
-                            // 5. Register data tracking and cleanup actions
                             EventCallback<ChangeEvent<int>> gridCallback = (ChangeEvent<int> evt) => 
                             {
                                 if (evt.newValue >= 0 && evt.newValue < gridChoices.Count)

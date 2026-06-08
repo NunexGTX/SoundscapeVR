@@ -158,6 +158,7 @@ public abstract class Soundscape
 
     public void SetScreenAtHeight(float yLevel)
     {
+        if(!IsScreenCreated()) return;
         Vector3 videoPos = screenObject.transform.position;  
         videoPos = new(videoPos.x, yLevel, videoPos.z);    
         screenObject.transform.position = videoPos;
