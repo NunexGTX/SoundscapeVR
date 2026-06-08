@@ -5,7 +5,6 @@ using UnityEngine.Video;
 public class VideoPlayer360 : MonoBehaviour
 {
     private VideoPlayer videoPlayer;
-    public string videoFileName;
     private RenderTexture videoTex;
     public Material Video360Material;
 
@@ -13,9 +12,6 @@ public class VideoPlayer360 : MonoBehaviour
     void Start()
     {
         videoPlayer = gameObject.GetComponent<VideoPlayer>();
-        string videoPath = videoFileName;
-        videoPlayer.source = VideoSource.Url;
-        videoPlayer.url = videoPath;
         videoPlayer.prepareCompleted += OnVideoPrepared;
     }
 

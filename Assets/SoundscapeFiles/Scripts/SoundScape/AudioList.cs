@@ -32,7 +32,7 @@ public class AudioList
         {
             Debug.Log("Found Audio configuration file.");
             string json = File.ReadAllText(path);
-            return JsonUtility.FromJson<AudioList>(json);
+            return JsonUtility.FromJson<AudioList>(json) ?? new();
         }
         Debug.Log("Could not find Audio configuration file.");
         return new();

@@ -94,7 +94,6 @@ public abstract class Soundscape
         screenObject.transform.position = new(5.5f, 2f, 0);
         screenObject.transform.rotation = Quaternion.Euler(0, 90, 0);
         screenObject.transform.localScale = new(8, 5, 5);
-        screenObject.layer = 2;
         if(!createCanvas) return;
 
         screenObject.GetComponent<MeshRenderer>().enabled = false;
@@ -126,7 +125,7 @@ public abstract class Soundscape
 
     public void DeleteScreen()
     {
-        if(screenObject == null) return;
+        if(!IsScreenCreated()) return;
         if(screenTexture != null) screenTexture.Release();
         //if(rawImage != null) rawImage = null;
         
@@ -134,6 +133,7 @@ public abstract class Soundscape
         screenObject = null;
         rawImage = null;
     }
+    protected bool IsScreenCreated() => screenObject != null;
     public static void SetProjectionType(string projectionType, Material mat)
     {
         //2f corresponds to over under, 1f to side by side, 0f to none (default)

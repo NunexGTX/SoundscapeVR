@@ -166,6 +166,7 @@ public class WorldAudioSource: MonoBehaviour
         Material mat = new(defaultMaterial);
         Texture2D icon = library.GetIconForAudio(audioSource.GetAudioId());
         mat.mainTexture = icon;
+        mat.SetFloat("_AlphaClip", 1);
         gameObject.GetComponent<MeshRenderer>().material = mat;
     }
 }

@@ -60,20 +60,18 @@ public class VideoSoundscape : Soundscape
         {
             //videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
             VideoPlayer360 v360 = go.AddComponent<VideoPlayer360>();
-            v360.videoFileName = SoundscapeLibrary.GetStreamingPath(encompassingPath);
+            videoPlayer.url = SoundscapeLibrary.GetStreamingPath(encompassingPath);
             Material mat = new Material(Shader.Find("Skybox/Panoramic"));
             SetProjectionType(projectionType, mat);                                      
             v360.Video360Material = mat;
         } else if(!string.IsNullOrWhiteSpace(staticPath))
         {
             videoPlayer.url = SoundscapeLibrary.GetStreamingPath(staticPath);
-            videoPlayer.prepareCompleted += AdaptEncompassingToScreen;
             CreateScreenAdapter(createCanvas: true);
         } else if(!string.IsNullOrWhiteSpace(encompassingPath))
         {
             videoPlayer.url = SoundscapeLibrary.GetStreamingPath(encompassingPath);
             CreateScreenAdapter(createCanvas: false);
-            videoPlayer.prepareCompleted += AdaptEncompassingToScreen;
         }
         videoPlayer.prepareCompleted += OnVideoPrepared;
         VideoPlayer.ErrorEventHandler onError = (vp, mess) => {onVisualsFailed.Invoke();};
@@ -84,13 +82,23 @@ public class VideoSoundscape : Soundscape
 
     private void OnVideoPrepared(VideoPlayer player)
     {
+        Debug.Log("Video player prepared");
+        AdaptEncompassingToScreen(player);
         onVisualsLoaded.Invoke();
     }
 
     private void AdaptEncompassingToScreen(VideoPlayer player)
     {
+        if(!IsScreenCreated()) return;
+        int videoWidth = (int)player.width;
+        int videoHeight = (int)player.height;
+        if(videoWidth < 1 || videoHeight < 1)
+            Debug.LogError($"[SoundscapeVR] Error: Video player has invalid sizes: {videoWidth} width by {videoHeight} height");
+        player.targetTexture = null; 
         screenTexture = new RenderTexture((int)player.width, (int)player.height, 0);
         player.targetTexture = screenTexture;
+        if(screenMat == null)
+            Debug.LogError($"[SoundscapeVR] Error: Can't adapt encompassing video to cinema projection because the relevant material is null");
         screenMat.SetTexture("_MainTex",screenTexture);
         if(rawImage != null) rawImage.texture = screenTexture;
     }
@@ -98,12 +106,12 @@ public class VideoSoundscape : Soundscape
     public override void ClearVisualsBinding()
     {
         videoPlayer.prepareCompleted -= OnVideoPrepared;
-        videoPlayer.prepareCompleted -= AdaptEncompassingToScreen;
         base.ClearVisualsBinding();
     }
 
     public override void RestartVisuals(GameObject ssVisual, VisualType visualType)
     {
+        Debug.Log($"[SoundscapeVR] Restarting visuals");
         ssVisual.GetComponent<VideoPlayer>().Stop();
         ssVisual.GetComponent<VideoPlayer>().Play();
     }

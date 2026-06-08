@@ -204,15 +204,18 @@ public class SoundscapeWrapper: MonoBehaviour
         //when loading the visuals was successful
         currentSoundscape.OnVisualsLoaded(() =>
         {
-            loadingManager.Increment();  
-            loadingManager.EndLoading();  
+            loadingManager.Increment();
+            currentSoundscape.ClearVisualsBinding();
             _ = PrepareAudiosAndPlaySoundscape();
         } );
 
-        Debug.Log($"[SoundscapeVR] Preparing soundscape {currentSoundscape.title}");
+        Debug.Log($"[SoundscapeVR] Preparing soundscape {currentSoundscape.title ?? "None"}");
         try
         {
-            ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());         
+            ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());   
+            Vector3 videoPos = ssVisual.transform.position;
+            videoPos = new(videoPos.x, vrStateData.IsInVr? 2 - vrStateData.HeightOffset : 2, videoPos.z);      
+            ssVisual.transform.position = videoPos;
         }
         catch(Exception e)
         {
@@ -254,9 +257,8 @@ public class SoundscapeWrapper: MonoBehaviour
         Debug.Log($"[SoundscapeVR] Loading audios for soundscape.");
         List<string> audioIds = new();
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
-        {
             audioIds.Add(src.GetAudioId());
-        }
+            
         if(vrStateData.GetCurrentAudio() == AudioListeningType.BINAURAL)
         {
             soundscapeLibrary.ClearAudioCache(currentSoundscape.title);
@@ -333,6 +335,7 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         int time = currentSoundscape.timeSeconds;
         if(time == 0) return;
+        Debug.Log($"[SoundscapeVR] Setting Soundscape to loop in {time} seconds");
         StartCoroutine(SoundscapeCountdown(time));
     }
 
@@ -372,7 +375,6 @@ public class SoundscapeWrapper: MonoBehaviour
         playerManager.ShowCameraLayers();
         if (videoPlaying)
         {
-            currentSoundscape.ClearVisualsBinding();
             if(ssVisual != null) 
             {
                 Destroy(ssVisual);
@@ -393,7 +395,7 @@ public class SoundscapeWrapper: MonoBehaviour
         if(gameObject != null) StopAllCoroutines();
 
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) reapyController.StopSoundscape();
-        playerEditor?.LeaveEdit();
+        //playerEditor?.LeaveEdit();
     }
 
     private void RemoveAudioSources()

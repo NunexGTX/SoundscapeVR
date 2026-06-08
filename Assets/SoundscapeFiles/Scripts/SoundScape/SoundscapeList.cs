@@ -23,7 +23,7 @@ public class SoundscapeList
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
-            return JsonUtility.FromJson<SoundscapeList>(json);
+            return JsonUtility.FromJson<SoundscapeList>(json) ?? new();
         }
         Debug.Log($"Could not find soundscapes.json in {path}");
         return new();
