@@ -41,4 +41,10 @@ public abstract class AudioEffectData
     /// </summary>
     /// <param name="root"> root of the UI document</param>
     public abstract void ApplyValuesToUI(VisualElement root);
+
+    public AudioEffectData WithId(string effectId)
+    {
+        this.effectId = effectId;
+        return this;
+    }
 }

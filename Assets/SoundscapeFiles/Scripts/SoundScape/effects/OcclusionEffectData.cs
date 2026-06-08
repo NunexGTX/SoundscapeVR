@@ -61,7 +61,7 @@ public class OcclusionEffectData : AudioEffectData
         float lowOcc = root.Q<Slider>("lowFreqOcc").value;
         float midOcc = root.Q<Slider>("midFreqOcc").value;
         float highOcc = root.Q<Slider>("highFreqOcc").value;
-        return new OcclusionEffectData(dependency, occlusionValue, lowOcc, midOcc, highOcc);
+        return new OcclusionEffectData(dependency, occlusionValue, lowOcc, midOcc, highOcc).WithId(effectId);
     }
 
     public override void ApplyDefaultUI(VisualElement root)

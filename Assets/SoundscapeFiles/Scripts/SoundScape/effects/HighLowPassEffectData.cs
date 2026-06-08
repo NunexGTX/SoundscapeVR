@@ -42,7 +42,7 @@ public class HighLowPassEffectData : AudioEffectData
     {
         int lowFreq = root.Q<SliderInt>("lowPassFreq").value;
         int highFreq = root.Q<SliderInt>("highPassFreq").value;
-        return new HighLowPassEffectData(lowFreq, highFreq);
+        return new HighLowPassEffectData(lowFreq, highFreq).WithId(effectId);
     }
 
     public override void ApplyDefaultUI(VisualElement root)

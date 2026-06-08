@@ -53,7 +53,7 @@ public class EchoEffectData : AudioEffectData
         float echoDecay = root.Q<Slider>("echoDecay").value;
         float echoDry = root.Q<Slider>("echoDry").value;
         float echoWet = root.Q<Slider>("echoWet").value;
-        return new EchoEffectData(echoDelay, echoDecay, wet: echoWet, dry: echoDry);
+        return new EchoEffectData(echoDelay, echoDecay, wet: echoWet, dry: echoDry).WithId(effectId);
     }
 
     public override void ApplyDefaultUI(VisualElement root)

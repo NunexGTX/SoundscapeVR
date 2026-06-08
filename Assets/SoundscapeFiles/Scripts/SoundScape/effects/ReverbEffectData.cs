@@ -55,23 +55,23 @@ public class ReverbEffectData: AudioEffectData
     public override AudioEffectData CollectFromUI(VisualElement root)
     {
         ReverbPresets reverbPreset = Enum.Parse<ReverbPresets>(root.Q<DropdownField>("reverbPresetDropdown").value);
-        return new ReverbEffectData(reverbPreset);
+        return new ReverbEffectData(reverbPreset).WithId(effectId);
     }
 
     public override void ApplyDefaultUI(VisualElement root)
     {
-       root.Q<DropdownField>("reverbPresetDropdown").value = currentPreset.ToString();
+       root.Q<DropdownField>("reverbPresetDropdown").choices = getPresetNames();
     }
 
     public override void ApplyValuesToUI(VisualElement root)
     {
-        root.Q<DropdownField>("reverbPresetDropdown").choices = getPresetNames();
+        root.Q<DropdownField>("reverbPresetDropdown").value = currentPreset.ToString();
     }
 
     public override string[] GetTrackParams()
     {
         //Can only be used for reaper in this case
-        return new string[] { "true", ReverbRiRs.getPresetCode(currentPreset)};
+        return new string[] {"true", ReverbRiRs.getPresetCode(currentPreset)};
     }
     
 }

@@ -8,6 +8,7 @@ public class AudioEffects
     public static AudioEffectData ECHO_EFFECT = RegisterEffectData("echo", new EchoEffectData());
     public static AudioEffectData OCCLUSION_EFFECT = RegisterEffectData("occlusion", new OcclusionEffectData());
     public static AudioEffectData PASS_EFFECT = RegisterEffectData("pass", new HighLowPassEffectData());
+    public static AudioEffectData REVERB_EFFECT = RegisterEffectData("reverb", new ReverbEffectData());
 
     private static AudioEffectData RegisterEffectData(string effectId, AudioEffectData data)
     {
