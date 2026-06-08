@@ -290,7 +290,7 @@ public class SoundscapeWrapper: MonoBehaviour
             //corre quando tudo carrega
             currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
             Debug.Log("All audios loaded. yay");
-            if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) StartLoopCoroutine();
+            StartLoopCoroutine();
             //Now reaper can start playing stuff
             if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) reapyController.StartSoundscape();
         });
@@ -302,9 +302,10 @@ public class SoundscapeWrapper: MonoBehaviour
         bool timedout = false;
         loadingManager.OnTimeout(() =>
         {
+            Debug.LogWarning($"[SoundscapeVR] Loading 'playing audios' timedout.");
             timedout = true;
             StopSoundscape();
-        }, 5);
+        }, timeoutSeconds: 5);
 
         //placing audios
         foreach(AudioSource src in audioSources)
@@ -317,6 +318,7 @@ public class SoundscapeWrapper: MonoBehaviour
             } 
             if(!timedout) PlaceSoundscapeAudioSource(src);
         }
+        if(audioSources.Count == 0) loadingManager.EndLoading();
         timedout = false;
     }
 
@@ -363,6 +365,7 @@ public class SoundscapeWrapper: MonoBehaviour
             editListUi.SetActive(true);
             editSsUi.SetActive(false);
         }*/
+        Debug.Log($"[SoundscapeVR] Stopping Soundscape {currentSoundscape?.title ?? "None"}");
         inEditMode = false;
         //SaveCurrentSoundscape();
         playerManager.SetPlayerMovement(true);
@@ -390,6 +393,7 @@ public class SoundscapeWrapper: MonoBehaviour
         if(gameObject != null) StopAllCoroutines();
 
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) reapyController.StopSoundscape();
+        playerEditor?.LeaveEdit();
     }
 
     private void RemoveAudioSources()

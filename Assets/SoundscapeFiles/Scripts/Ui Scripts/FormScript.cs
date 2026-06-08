@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UIElements;
 
 public class FormScript : MonoBehaviour
@@ -12,6 +14,7 @@ public class FormScript : MonoBehaviour
     [SerializeField] private VisualTreeAsset radioButtonElement;
     [SerializeField] private VisualTreeAsset labelElement;
     [SerializeField] private VisualTreeAsset textInputElement;
+    [SerializeField] private VisualTreeAsset imageElement;
     [SerializeField] private VisualTreeAsset scaleElement;
     [SerializeField] private VisualTreeAsset checkboxContainerElement;
     [SerializeField] private VisualTreeAsset checkboxElement;
@@ -243,6 +246,63 @@ public class FormScript : MonoBehaviour
 
                         formRoot.Add(textInput);
                         break;
+                    case FormElement.IMAGE:
+                        VisualElement imageInstance = imageElement.Instantiate();
+                        Image imageField = imageInstance.Q<Image>("image");
+                        _ = LoadImageAsync(extras[0], imageField);
+                        formRoot.Add(imageInstance);
+                        break;
+                    case FormElement.GRID_RADIO:
+                        if (extras.Count > 1)
+                        {
+                            string rowSubLabel = extras[0];
+                            List<string> gridChoices = extras.GetRange(1, extras.Count - 1);
+                            VisualElement gridContainer = formRoot.Q<VisualElement>(name: question);
+
+                            if (gridContainer == null)
+                            {
+                                // Create the main container asset if it's the first row encountered
+                                gridContainer = labelElement.Instantiate();
+                                gridContainer.name = question;
+                                gridContainer.Q<Label>("title").text = "";
+                                gridContainer.Q<Label>("description").text = question;
+                                formRoot.Add(gridContainer);
+                            }
+
+                            // 2. Instantiate a single row asset instance
+                            VisualElement rowInstance = radioButtonElement.Instantiate();
+                            RadioButtonGroup rowRadioGroup = rowInstance.Q<RadioButtonGroup>("radioButtons");
+
+                            rowRadioGroup.label = rowSubLabel;
+                            rowRadioGroup.style.fontSize = 12;
+                            rowRadioGroup.choices = gridChoices;
+
+                            // 4. Populate previously saved answer data
+                            if (answersHolder.IsQuestionAnswered(id))
+                            {
+                                string savedAnswer = answersHolder.GetSingleAnswer(id);
+                                int savedIndex = gridChoices.IndexOf(savedAnswer);
+                                if (savedIndex >= 0)
+                                {
+                                    rowRadioGroup.value = savedIndex;
+                                }
+                            }
+
+                            // 5. Register data tracking and cleanup actions
+                            EventCallback<ChangeEvent<int>> gridCallback = (ChangeEvent<int> evt) => 
+                            {
+                                if (evt.newValue >= 0 && evt.newValue < gridChoices.Count)
+                                {
+                                    answersHolder.AddSingleAnswer(id, gridChoices[evt.newValue]);
+                                }
+                            };
+                            
+                            rowRadioGroup.RegisterValueChangedCallback(gridCallback);
+                            unbindingActions.Add(() => { rowRadioGroup.UnregisterCallback(gridCallback); });
+                            gridContainer.Add(rowInstance);
+                            Debug.Log($"Added row {ele.ToString()}");
+                        }
+                        break;
                     default:
                         VisualElement textThing = labelElement.Instantiate();
                         string title = id;
@@ -315,5 +375,51 @@ public class FormScript : MonoBehaviour
         }
         if(section.Count > 0) result.Add(section);
         return result;
+    }
+    
+    private async Task LoadImageAsync(string url, Image targetImageField)
+    {
+        if (string.IsNullOrEmpty(url) || targetImageField == null) return;
+
+        using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))
+        {
+            // Send the request and wait asynchronously until it finishes
+            UnityWebRequestAsyncOperation operation = request.SendWebRequest();
+
+            while (!operation.isDone)
+            {
+                await Task.Yield(); // Yield control back to Unity, preventing freezing
+            }
+
+            // Handle network errors or bad responses
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Failed to load image from URL: {url}. Error: {request.error}");
+                return;
+            }
+
+            // Extract the downloaded Texture2D
+            Texture2D downloadedTexture = DownloadHandlerTexture.GetContent(request);
+
+            if (downloadedTexture != null)
+            {
+                // Assign the texture directly to the UI Toolkit Image component
+                if(targetImageField != null) targetImageField.image = downloadedTexture;
+                
+                // 1. Force the image to match the horizontal width of the UI container
+                targetImageField.style.width = Length.Percent(100);
+
+                // 2. Calculate the aspect ratio (Width / Height)
+                float aspectRatio = (float)downloadedTexture.width / downloadedTexture.height;
+
+                // 3. Use USS AspectRatio property to force UI Toolkit to compute height dynamically
+                // Formula handled internally by Unity layout engine: height = width / aspectRatio
+                targetImageField.style.aspectRatio = aspectRatio;
+
+                // 4. Ensure height isn't overridden by stale layout rules
+                targetImageField.style.height = StyleKeyword.Null;
+                targetImageField.style.flexGrow = 0;
+            }
+        }
     }
 }

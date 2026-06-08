@@ -58,13 +58,18 @@ public class EditSoundscapeScript : MonoBehaviour
         }
     }
     
+
+    public void Return()
+    {
+        previousMenu.SetActive(true);
+        gameObject.SetActive(false);
+    }
+
     void OnDisable()
     {
         returnBtn.clicked -= Return;
         foreach(ButtonHandler handler in libraryButtons)
-        {
             handler.Clear();
-        }
         ssWrapper.StopSoundscape();
         editorPlayer.LeaveEdit();
     }
@@ -86,13 +91,6 @@ public class EditSoundscapeScript : MonoBehaviour
         ssWrapper.SetAndStartSoundscape(newSoundscape, debug: true);
     }
 
-    private void Return()
-    {
-        previousMenu.SetActive(true);
-        gameObject.SetActive(false);
-        ssWrapper.StopSoundscape();
-    }
-
     private void SelectAudio(Audio audio)
     {
         if(!editorPlayer.SelectAudio(audio)) return;
@@ -102,6 +100,6 @@ public class EditSoundscapeScript : MonoBehaviour
 
     public void UnselectAudio()
     {
-        audioLabel.text = "";
+        if(audioLabel != null) audioLabel.text = "";
     }
 }

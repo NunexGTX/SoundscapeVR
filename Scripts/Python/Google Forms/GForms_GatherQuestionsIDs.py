@@ -216,7 +216,7 @@ def QuestionsGatherer():
                 "type": "IMAGE",
                 "required": "false",
                 "description": item.get("title", "Untitled Image"),
-                "extra": image_uri
+                "extra": [image_uri]
             }
             Questions.append(itemDict)
 

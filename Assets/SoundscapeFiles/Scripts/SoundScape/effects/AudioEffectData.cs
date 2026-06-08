@@ -16,6 +16,12 @@ public abstract class AudioEffectData
     public abstract AudioEffectData CopyValues(AudioEffectData other);
     //called to apply this effect to the source GameObject
     public abstract void ApplyEffectToSource(GameObject audioClipObject);
+
+    public AudioEffectData WithId(string effectId)
+    {
+        this.effectId = effectId;
+        return this;
+    }
     public abstract string[] GetTrackParams();
     /// <summary>
     /// called to check if, according to the AudioEffectsUI, this effect was applied (should be the checkbox corresponding to this effect).
@@ -41,10 +47,4 @@ public abstract class AudioEffectData
     /// </summary>
     /// <param name="root"> root of the UI document</param>
     public abstract void ApplyValuesToUI(VisualElement root);
-
-    public AudioEffectData WithId(string effectId)
-    {
-        this.effectId = effectId;
-        return this;
-    }
 }

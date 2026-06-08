@@ -271,7 +271,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     private void CancelAction(InputAction.CallbackContext context){CancelState();}
     public void CancelState(bool leaving = false)
     {
-        if(currentState == State.Standby) return;
+        if(currentState == State.Standby && !leaving) return;
         
         if(currentState == State.TryRemove && !leaving)
         {
@@ -324,7 +324,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
 
     private void UnselectLibraryAudio()
     {
-        editUi.UnselectAudio();
+        editUi?.UnselectAudio();
         currentPickedAudio = null;
         pickedAudioAsSource = null;
     }
@@ -332,6 +332,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     public void LeaveEdit()
     {
         CancelState(leaving: true);
+        editUi.Return();
     }
 
     private void DestroyTextAsset()

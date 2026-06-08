@@ -12,9 +12,20 @@ public class FormElement
     public const string SCALE = "SCALE";
     public const string PARAGRAPH = "PARAGRAPH";
     public const string TEXT = "TEXT";
+    public const string IMAGE = "IMAGE";
+    public const string GRID_RADIO = "GRID_RADIO";
     public string id;
     public string type;
     public string description;
     public bool required = false;
     public List<string> extra;
+    public bool shuffle = false;
+    public override string ToString()
+    {
+        string extraElements = (extra != null) ? string.Join(", ", extra) : "null";
+        
+        return $"[FormElement] ID: {id} | Type: {type} | Required: {required} | Shuffle: {shuffle}\n" +
+               $"Description: \"{description}\"\n" +
+               $"Extra: [{extraElements}]";
+    }
 }

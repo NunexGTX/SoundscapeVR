@@ -822,7 +822,7 @@ MonoBehaviour:
   m_SortingOrder: 0
   m_Position: 0
   m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 244.6
+  m_WorldSpaceWidth: 302.6
   m_WorldSpaceHeight: 326.8
   m_PivotReferenceSize: 0
   m_Pivot: 0
@@ -845,6 +845,7 @@ MonoBehaviour:
   radioButtonElement: {fileID: 9197481963319205126, guid: dbc974f5009ff534c8c6f91d6c8ec76b, type: 3}
   labelElement: {fileID: 9197481963319205126, guid: 64c6353482c546d4ebbbcecee2e51ad9, type: 3}
   textInputElement: {fileID: 9197481963319205126, guid: c651c47c282bb3a4092c66eb5b42a7ae, type: 3}
+  imageElement: {fileID: 9197481963319205126, guid: 148bc565f61a2b3459325c8d3309d9e9, type: 3}
   scaleElement: {fileID: 9197481963319205126, guid: 888b743d286caf542a51b5c74daa3aa3, type: 3}
   checkboxContainerElement: {fileID: 9197481963319205126, guid: 3ce8c888b33a68b4aa6d2b000c5452be, type: 3}
   checkboxElement: {fileID: 9197481963319205126, guid: 08b69c5035787f9479ac489225e5c09f, type: 3}

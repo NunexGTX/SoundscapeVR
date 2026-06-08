@@ -12,7 +12,7 @@ public class LoadingManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI loadingText;
     [SerializeField] private TextMeshProUGUI infoText;
     private float progress = 0f;
-    private float end = 1f;
+    private float totalLoadingIncrementCount = 1f;
     private bool softConcurrencyCheck = false;
     private bool queued = false;
     private Action onLoadingFinished = null;
@@ -49,7 +49,7 @@ public class LoadingManager : MonoBehaviour
         timeInQueue = 0f;
         softConcurrencyCheck = true;
         progress = 0f;
-        this.end = end;
+        totalLoadingIncrementCount = end;
         image.SetActive(true);
         loadingBar.value = 0;
         player.SetPlayerRotation(false);
@@ -61,7 +61,7 @@ public class LoadingManager : MonoBehaviour
     public void Increment(float amount = 1f)
     {
         if(timedout) return;
-        if(progress < end)
+        if(progress < totalLoadingIncrementCount)
         {
             progress += amount;
         }
@@ -71,7 +71,7 @@ public class LoadingManager : MonoBehaviour
 
     public float GetCurrentProgress()
     {
-        return progress/end;
+        return progress/totalLoadingIncrementCount;
     }
 
     private void UpdateBar()
@@ -82,6 +82,7 @@ public class LoadingManager : MonoBehaviour
     public void EndLoading()
     {
         loadingBar.value = 0;
+        totalLoadingIncrementCount = 0;
         softConcurrencyCheck = false;
         if(!timedout) onLoadingFinished?.Invoke();
         onLoadingFinished = null;
@@ -103,6 +104,7 @@ public class LoadingManager : MonoBehaviour
 
     void Update()
     {
+        if(totalLoadingIncrementCount <= 0) return;
         animationTime += Time.deltaTime;
         timeSinceLastUpdate += Time.deltaTime;
         if(animationTime > 0.5f)

@@ -154,30 +154,27 @@
     width: 32%;
 }
 
-#saveBtn Image{
+#saveBtn Image {
     width: 11%;
     padding: 0;
     padding-left: 3%;
 }
 
-#saveBtn TextElement{
+#saveBtn TextElement {
     width: 100%;
     margin-left: -5%;
 }
 
-/* Make the ScrollView itself expand to fit all its content */
 #soundscapeList {
-    flex-shrink: 0;   /* Don't let it compress smaller than its content */
-    height: auto;     /* Grow to fit content naturally */
-    min-height: 0;    /* Let flex take over */
+    flex-shrink: 0;
+    height: auto;
+    min-height: 0;
 }
 
-/* Make the viewport not clip overflow */
 #soundscapeList .unity-scroll-view__viewport {
     overflow: visible;
 }
 
-/* Make the content container also expand freely */
 #soundscapeList #unity-content-and-vertical-scroll-container {
     flex-grow: 1;
     flex-shrink: 0;
@@ -189,4 +186,13 @@ VisualElement > .unity-scroll-view--vertical > #settingsFoldout > #unity-content
 
 VisualElement > .unity-scroll-view--vertical > #settingsFoldout > #projectionDropdown > .unity-popup-field__input {
     margin-left: 0;
+}
+
+.unity-radio-button__text {
+    margin-bottom: 20px;
+    padding-bottom: 0;
+    margin-top: 13px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-left: 0;
 }
