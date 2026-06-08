@@ -5158,7 +5158,7 @@ MonoBehaviour:
     m_Bits: 1024
   leaveSoundscapeAction: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   loadingManager: {fileID: 657310051}
-  playerEditor: {fileID: 0}
+  playerEditor: {fileID: 657310050}
   editListUi: {fileID: 0}
   editSsUi: {fileID: 0}
 --- !u!4 &1891192194
