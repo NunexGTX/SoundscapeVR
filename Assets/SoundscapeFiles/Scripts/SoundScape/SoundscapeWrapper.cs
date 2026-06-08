@@ -213,9 +213,7 @@ public class SoundscapeWrapper: MonoBehaviour
         try
         {
             ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());   
-            Vector3 videoPos = ssVisual.transform.position;
-            videoPos = new(videoPos.x, vrStateData.IsInVr? 2 - vrStateData.HeightOffset : 2, videoPos.z);      
-            ssVisual.transform.position = videoPos;
+            currentSoundscape.SetScreenAtHeight(vrStateData.IsInVr ? 2 - vrStateData.HeightOffset : 2);
         }
         catch(Exception e)
         {

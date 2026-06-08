@@ -111,8 +111,10 @@ public class VideoSoundscape : Soundscape
 
     public override void RestartVisuals(GameObject ssVisual, VisualType visualType)
     {
-        Debug.Log($"[SoundscapeVR] Restarting visuals");
-        ssVisual.GetComponent<VideoPlayer>().Stop();
-        ssVisual.GetComponent<VideoPlayer>().Play();
+        Debug.Log($"[SoundscapeVR] Restarting visuals instantly via rewinding");
+        VideoPlayer videoPlayer = ssVisual.GetComponent<VideoPlayer>();
+        videoPlayer.time = 0; 
+        if (!videoPlayer.isPlaying)
+            videoPlayer.Play();
     }
 }

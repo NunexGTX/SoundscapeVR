@@ -87,30 +87,31 @@ public abstract class Soundscape
     {
         Debug.Log("Creating cinema adapter");
         MakeSkyDark();
-        
-        screenMat = new Material(Shader.Find("Custom/CinemaStereoProjection"));
-        screenObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        screenObject.GetComponent<MeshRenderer>().material = screenMat;
-        screenObject.transform.position = new(5.5f, 2f, 0);
-        screenObject.transform.rotation = Quaternion.Euler(0, 90, 0);
-        screenObject.transform.localScale = new(8, 5, 5);
-        if(!createCanvas) return;
 
-        screenObject.GetComponent<MeshRenderer>().enabled = false;
-        GameObject canvasObj = new GameObject("Canvas"); 
-        canvasObj.transform.SetParent(screenObject.transform, false);
-        Canvas canvas = canvasObj.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-        canvas.worldCamera = Camera.main;
-        canvas.GetComponent<RectTransform>().localScale = new(0.01f, 0.01f, 0.0125f);
-        canvas.GetComponent<RectTransform>().localPosition = new(0, 0, 0);
+        if (createCanvas)
+        {
+            screenObject = new GameObject("Canvas"); 
+            Canvas canvas = screenObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.WorldSpace;
+            canvas.worldCamera = Camera.main;
+            canvas.GetComponent<RectTransform>().localScale = new(0.01f, 0.01f, 0.0125f);
+            canvas.GetComponent<RectTransform>().localPosition = new(0, 0, 0);
 
-        GameObject img = new GameObject("VideoDisplay");
-        img.transform.SetParent(canvasObj.transform);
-        img.transform.localPosition = new(0, 0, 0);
-        img.transform.localScale = new(1, 1, 1);
-        img.transform.rotation = Quaternion.Euler(0, 90, 0);
-        rawImage = img.AddComponent<RawImage>();
+            GameObject img = new GameObject("VideoDisplay");
+            img.transform.SetParent(screenObject.transform);
+            img.transform.localPosition = new(0, 0, 0);
+            img.transform.localScale = new(1, 1, 1);
+            img.transform.rotation = Quaternion.Euler(0, 90, 0);
+            rawImage = img.AddComponent<RawImage>();
+        } else
+        {
+            screenMat = new Material(Shader.Find("Custom/CinemaStereoProjection"));
+            screenObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            screenObject.GetComponent<MeshRenderer>().material = screenMat;
+            screenObject.transform.position = new(5.5f, 2f, 0);
+            screenObject.transform.rotation = Quaternion.Euler(0, 90, 0);
+            screenObject.transform.localScale = new(8, 5, 5);
+        }
     }
     public void SetEdit(bool debug)
     {
@@ -127,6 +128,7 @@ public abstract class Soundscape
     {
         if(!IsScreenCreated()) return;
         if(screenTexture != null) screenTexture.Release();
+        
         //if(rawImage != null) rawImage = null;
         
         screenTexture = null;
@@ -152,6 +154,13 @@ public abstract class Soundscape
             }
         } else 
             Debug.Log($"[SoundscapeVR] Read soundscape projection as Over Under");  
+    }
+
+    public void SetScreenAtHeight(float yLevel)
+    {
+        Vector3 videoPos = screenObject.transform.position;  
+        videoPos = new(videoPos.x, yLevel, videoPos.z);    
+        screenObject.transform.position = videoPos;
     }
 
     public GameObject GetScreenObject(){return screenObject;}
