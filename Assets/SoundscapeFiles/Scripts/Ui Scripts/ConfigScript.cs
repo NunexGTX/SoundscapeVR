@@ -35,13 +35,19 @@ public class ConfigScript : MonoBehaviour
 
         reapySetup();
 
-        VRToggle = root.Q<Toggle>("vrToggle");
         returnBtn = root.Q<Button>("returnBtn");
         //TouchScreenKeyboard.Open();
 
-        VRToggle.RegisterValueChangedCallback(DoToggleVr);
         returnBtn.clicked += Return;
         heightBtn.clicked += CalibrateHeight;
+
+        VRToggle = root.Q<Toggle>("vrToggle");
+        VRToggle.RegisterValueChangedCallback(DoToggleVr);
+
+        #if UNITY_ANDROID
+            //Don't show the toggle for Quest/Android XR users 'cause it will crash and it they aren't supposed to do that
+            VRToggle.style.display = DisplayStyle.None;
+        #endif
     }
 
     void OnDisable()
@@ -101,7 +107,7 @@ public class ConfigScript : MonoBehaviour
             case "failed":
                 reaperConnectionStatusMessage.style.color = new StyleColor(Color.red);
                 reaperConnectionIcon.tintColor = Color.red;
-                reaperConnectionStatusMessage.text = "Connection Failed";
+                reaperConnectionStatusMessage.text = "Not Connected";
                 break;
         }
         reaperConnectionIcon.style.display = DisplayStyle.Flex;

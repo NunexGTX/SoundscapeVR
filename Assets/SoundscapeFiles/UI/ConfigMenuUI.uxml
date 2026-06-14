@@ -33,8 +33,7 @@
                     <ui:Label text="Connected to Reaper Controller at: 192.168.1.1:1222" name="reaperConnectionStatusMessage" style="font-size: 12px; -unity-font-style: normal; color: rgb(207, 126, 75); padding-left: 3px; padding-right: 4px; visibility: hidden; display: flex;"/>
                 </ui:GroupBox>
             </ui:GroupBox>
-            <ui:DropdownField label="Binaural Audio Target" choices="WIP" enabled="false" style="-unity-font-style: normal;"/>
-            <ui:Toggle label="VR Mode" value="false" toggle-on-label-click="true" text="" name="vrToggle">
+            <ui:Toggle label="VR Mode" value="false" toggle-on-label-click="true" text="" name="vrToggle" style="display: flex;">
                 <Bindings>
                     <ui:DataBinding property="value" data-source-path="IsInVr" data-source="project://database/Assets/SoundscapeFiles/Scripts/SavedData/VrStateData.asset?fileID=11400000&amp;guid=26e8613f074c8004192a57c57732439f&amp;type=2#VrStateData" binding-mode="TwoWay"/>
                 </Bindings>
