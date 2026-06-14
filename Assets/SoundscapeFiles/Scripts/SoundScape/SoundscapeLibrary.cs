@@ -22,6 +22,7 @@ public class SoundscapeLibrary: MonoBehaviour
     public Texture2D defaultAudioIcon;
 
     private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
+    private static readonly string REAPYIP_PATH = "controller.conf";
     private async void Start()
     {
         Debug.Log("[SoundscapeVR] Loading files...");
@@ -155,6 +156,11 @@ public class SoundscapeLibrary: MonoBehaviour
     public static string GetAudioFilePath()
     {
         return GetStreamingConfigPath("audios.json");
+    }
+
+    public static string GetReaperControllerIPFilePath()
+    {
+        return GetStreamingConfigPath(REAPYIP_PATH);
     }
 
     public static string GetFormFilePath()

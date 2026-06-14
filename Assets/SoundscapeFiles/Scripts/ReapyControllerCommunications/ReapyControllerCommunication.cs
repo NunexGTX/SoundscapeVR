@@ -66,7 +66,29 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     void Start()
     {
-        if (autoconnect) setAndConnectIP(vrStateData.CurrentReaperControllerServerIP);
+        string readIP = readIPFile();
+        if (autoconnect)
+        {
+            if (readIP != null)
+            {
+                setAndConnectIP(readIP);
+            }
+            else
+            {
+                setAndConnectIP(vrStateData.CurrentReaperControllerServerIP);  
+            }
+        }
+        else
+        {
+            if (readIP != null)
+            {
+                setServerIP(readIP);
+            }
+            else
+            {
+                setServerIP(vrStateData.CurrentReaperControllerServerIP);  
+            }
+        }
     }
 
     public void startReaperCommunication()
@@ -206,6 +228,32 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
         Debug.LogError($"Reaper Controller: Failed to reconnect after {MaxReconnectAttempts} attempts.");
         _isReconnecting = false;
+    }
+
+    public static string readIPFile()
+    {
+        string IPFile = SoundscapeLibrary.GetReaperControllerIPFilePath();
+
+        try
+        {
+            string ip = File.ReadAllText(IPFile).Trim();
+
+             if (IPTools.IsValidIP(ip))
+            {
+                Debug.Log($"Loaded Reaper Controller's IP:{ip} from {IPFile} successfully");
+                return ip;
+            }
+            else
+            {
+                Debug.LogError($"Invalid IP address format in config: '{ip}'");
+                return null;
+            }
+        }
+        catch (IOException e)
+        {
+            Debug.LogError($"Failed to read config file: {e.Message}");
+            return null;
+        }
     }
 
     void OnDestroy()
