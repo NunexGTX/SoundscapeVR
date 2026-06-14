@@ -1,0 +1,9 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/testStyle.uss?fileID=7433441132597879392&amp;guid=af1d223cdcfbc514fbde70ae6e4a7fb4&amp;type=3#testStyle"/>
+    <Style src="project://database/Assets/SoundscapeFiles/UI/styles/sliderStyle.uss?fileID=7433441132597879392&amp;guid=12ecb2eb793a3264f84d7d10dce03e48&amp;type=3#sliderStyle"/>
+    <ui:Label text="Choose your path" style="align-self: center;"/>
+    <ui:VisualElement style="flex-grow: 1; white-space: normal; flex-direction: row; justify-content: center; align-content: center;">
+        <ui:Button text="I&apos;m taking a survey" name="formBtn" class="buttonStyle" style="width: 40%; white-space: normal; height: 61px;"/>
+        <ui:Button text="I&apos;m studying soundscapes" name="mainBtn" class="buttonStyle" style="width: 40%; height: 61px; white-space: normal;"/>
+    </ui:VisualElement>
+</ui:UXML>

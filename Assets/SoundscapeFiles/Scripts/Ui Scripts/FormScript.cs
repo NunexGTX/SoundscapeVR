@@ -9,6 +9,7 @@ using UnityEngine.UIElements;
 public class FormScript : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenu;
+    [SerializeField] private GameObject audioVideoMenu;
     [SerializeField] private SoundscapeWrapper ssWrapper;
     [SerializeField] private SoundscapeLibrary library;
     [SerializeField] private VisualTreeAsset radioButtonElement;
@@ -61,6 +62,7 @@ public class FormScript : MonoBehaviour
         RemoveSection();
         mainMenu.SetActive(true);
         gameObject.SetActive(false);
+        audioVideoMenu?.SetActive(true);
     }
 
     private void NextSection()

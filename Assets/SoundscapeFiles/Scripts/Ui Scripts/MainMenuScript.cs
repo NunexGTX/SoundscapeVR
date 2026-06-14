@@ -5,23 +5,27 @@ using UnityEngine.XR.Management;
 public class UiTestClick : MonoBehaviour
 {
     [SerializeField] private GameObject configMenu;
+    [SerializeField] private GameObject audioVideoMenu;
     
     [SerializeField] private GameObject soundscapeMenu;
     [SerializeField] private GameObject editMenu;
     [SerializeField] private GameObject formMenu;
+    [SerializeField] private GameObject homeMenu;
     private enum MenuType
     {
         MAIN,
         CONFIG,
         SOUNDSCAPE,
         EDIT,
-        FORM
+        FORM,
+        HOME
     }
     private Button formBtn;
     private Button ssBtn;
     private Button editBtn;
     private Button configBtn;
     private Button exitBtn;
+    private Button returnBtn;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
@@ -33,12 +37,14 @@ public class UiTestClick : MonoBehaviour
         Button questBtn = root.Q<Button>("questBtn"); 
         exitBtn = root.Q<Button>("exitBtn"); 
         editBtn = root.Q<Button>("editSsBtn"); 
+        returnBtn = root.Q<Button>("returnBtn"); 
 
         ssBtn.clicked += GoToSS;
         formBtn.clicked += GoToForm;
         configBtn.clicked += GoToConfig;
         editBtn.clicked += GoToEdit;
         exitBtn.clicked += OnQuitClicked;
+        returnBtn.clicked += OnReturn;
     }
 
     void OnDisable()
@@ -47,7 +53,10 @@ public class UiTestClick : MonoBehaviour
         ssBtn.clicked -= GoToConfig;
         editBtn.clicked -= GoToEdit;
         exitBtn.clicked -= OnQuitClicked;
+        returnBtn.clicked -= OnReturn;
     }
+
+    private void OnReturn() => GoTo(MenuType.HOME);
 
     private void GoToSS()
     {
@@ -75,6 +84,7 @@ public class UiTestClick : MonoBehaviour
         soundscapeMenu.SetActive(false);
         editMenu.SetActive(false);
         formMenu.SetActive(false);
+        homeMenu.SetActive(false);
         switch (targetMenu)
         {
             case MenuType.CONFIG:
@@ -88,6 +98,10 @@ public class UiTestClick : MonoBehaviour
                 break;
             case MenuType.FORM:
                 formMenu.SetActive(true);
+                break;
+            case MenuType.HOME:
+                homeMenu.SetActive(true);
+                audioVideoMenu?.SetActive(false);
                 break;
         }
         gameObject.SetActive(false);
