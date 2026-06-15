@@ -105,7 +105,7 @@ public class VideoSoundscape : Soundscape
 
     public override void ClearVisualsBinding()
     {
-        videoPlayer.prepareCompleted -= OnVideoPrepared;
+        if(videoPlayer != null) videoPlayer.prepareCompleted -= OnVideoPrepared;
         base.ClearVisualsBinding();
     }
 

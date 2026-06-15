@@ -40,6 +40,15 @@ public class FormScript : MonoBehaviour
         returnBtn.clicked += Return;
         if(library.form == null) return;
         formRoot = root.Q<VisualElement>("formRoot");
+        
+        if(Application.internetReachability != NetworkReachability.NotReachable)
+        {
+            
+            root.Q<Label>("formTitle").text = "No internet connection. Try again later.";
+            root.Q<Button>("nextBtn").visible = false;
+            Debug.LogError($"[SoundscapeVR] Error: Can't load form as there is no internet!");
+            return;
+        }
         if(library.form == null || string.IsNullOrWhiteSpace(library.form.formTitle)) return;
         formSections = SeparateElements(library.form.questions);
         formTitle = library.form.formTitle;
@@ -326,6 +335,9 @@ public class FormScript : MonoBehaviour
                                 btn.clicked += ssButtonStart;
                                 unbindingActions.Add(() => btn.clicked -= ssButtonStart);
                                 textThing.Add(btn);
+                            } else
+                            {
+                                textThing.Q<Label>("description").text += $"\nError: Could not load soundscape {title} as it does not exist.";
                             }
                         }
                         formRoot.Add(textThing);  

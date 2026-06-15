@@ -3,6 +3,6 @@
     <Style src="project://database/Assets/SoundscapeFiles/UI/styles/radioBtnEleStyle.uss?fileID=7433441132597879392&amp;guid=8d25a6dd1577fdd4392be89b940f8c5a&amp;type=3#radioBtnEleStyle"/>
     <ui:VisualElement style="flex-grow: 1; margin-top: 14px; margin-right: 14px; margin-bottom: 14px; margin-left: 14px;">
         <ui:Label text="Title" name="title" style="font-size: 24px; -unity-font-style: bold;"/>
-        <ui:Label text="Description" focusable="false" name="description"/>
+        <ui:Label text="Description" focusable="false" name="description" parse-escape-sequences="true"/>
     </ui:VisualElement>
 </ui:UXML>
