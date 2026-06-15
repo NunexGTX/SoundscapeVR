@@ -319,7 +319,11 @@ public class SoundscapeWrapper: MonoBehaviour
             } 
             if(!timedout) PlaceSoundscapeAudioSource(src);
         }
-        if(audioSources.Count == 0) loadingManager.EndLoading();
+        if(audioSources.Count == 0)
+        {
+            loadingManager.EndLoading();
+            ReapyControllerMonitor.countstartDelay();
+        } 
         timedout = false;
     }
 
