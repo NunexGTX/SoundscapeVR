@@ -44,7 +44,7 @@ public class FormScript : MonoBehaviour
         if(library.form == null) return;
         formRoot = root.Q<VisualElement>("formRoot");
         
-        if(Application.internetReachability != NetworkReachability.NotReachable)
+        if(Application.internetReachability == NetworkReachability.NotReachable)
         {
             
             root.Q<Label>("formTitle").text = "No internet connection. Try again later.";
