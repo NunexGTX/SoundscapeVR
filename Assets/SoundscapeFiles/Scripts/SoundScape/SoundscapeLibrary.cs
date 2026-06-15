@@ -23,6 +23,7 @@ public class SoundscapeLibrary: MonoBehaviour
 
     private static readonly string SOUNDSCAPE_PATH = "soundscapes.json";
     private static readonly string REAPYIP_PATH = "controller.conf";
+    private static readonly string QUESTIONNAIREJSON_PATH = "questionnaire.json";
     private async void Start()
     {
         Debug.Log("[SoundscapeVR] Loading files...");
@@ -165,7 +166,7 @@ public class SoundscapeLibrary: MonoBehaviour
 
     public static string GetFormFilePath()
     {
-        return GetStreamingConfigPath("questionnaire_config.json");
+        return GetStreamingConfigPath(QUESTIONNAIREJSON_PATH);
     }
     
     private static string GetAndroidPath()
@@ -211,17 +212,16 @@ public class SoundscapeLibrary: MonoBehaviour
         Debug.Log($"Media Scanner skip: Not on Android. Path: {filePath}");
     #endif
     }
-    private void ReadFormFromJson(string path)
+    private async Task ReadFormFromJson(string path)
     {
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
-            form = JsonUtility.FromJson<Form>(json);
-            GoogleForm.formID = form.formViewId;
+            form = await GoogleForm.FetchForm(json);
         }
         else
         {
-            Debug.LogWarning($"Could not find questionnaire_config.json in path {path}. Please ensure it exists to use the questionnaire.");
+            Debug.LogWarning($"Could not find {QUESTIONNAIREJSON_PATH} in path {path}. Please ensure it exists to use the questionnaire.");
             form = new();
         }
     }
@@ -231,7 +231,7 @@ public class SoundscapeLibrary: MonoBehaviour
     {
         soundscapeList = await Task.Run(() => SoundscapeList.ReadFromJson(soundscapePath));
         audioList      = await Task.Run(() => AudioList.ReadFromJson(audioPath));
-        await Task.Run(() => ReadFormFromJson(formPath));
+        await ReadFormFromJson(formPath);
     }
 
     static bool HasPermissions()
@@ -394,7 +394,7 @@ public class SoundscapeLibrary: MonoBehaviour
             "xm"             => AudioType.XM,
             "xma"            => AudioType.XMA,
             "vag"            => AudioType.VAG,
-            "flac" or "alac" => throw new NotSupportedException($"Sorry Audiophiles, '{extension}' is not supported. Convert '{fileName}' to a mediocre peasant format."),
+            "flac" or "alac" => throw new NotSupportedException($"Sorry Audiophiles, '{extension}' is not supported. Convert '{fileName}' to a mediocre peasant format. I suppose you know how that works at that point"),
             _                => AudioType.UNKNOWN
         };
     }

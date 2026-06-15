@@ -20,7 +20,6 @@ public class FormScript : MonoBehaviour
     [SerializeField] private VisualTreeAsset checkboxContainerElement;
     [SerializeField] private VisualTreeAsset checkboxElement;
     [SerializeField] private VisualTreeAsset dropdownElement;
-    [SerializeField] private GoogleForm formSubmiter;
     public const string SoundscapeInit = "LoadSoundscape:";
     private Button returnBtn;
     private VisualElement formRoot;
@@ -97,7 +96,7 @@ public class FormScript : MonoBehaviour
         introduction.Q<Label>("title").text = formTitle;
         introduction.Q<Label>("description").text = "Form has been submited. Thanks for participating.";
         formRoot.Add(introduction);
-        if(formSubmiter != null) formSubmiter.submitForm(answersHolder);
+        GoogleForm.submitForm(answersHolder,library.form.formViewId);
     }
 
     private void RemoveSection()
