@@ -64,6 +64,9 @@ public class ReapyControllerCommunication : MonoBehaviour
     [SerializeField]
     private const string newTrackCreatedSuccesfullyMessage = "track_created";
 
+    [SerializeField]
+    private const string startSoundscapeSuccesfullyMessage = "soundscape_started";
+
     void Start()
     {
         string readIP = readIPFile();
@@ -195,6 +198,9 @@ public class ReapyControllerCommunication : MonoBehaviour
                 Debug.Log($"[SoundscapeVR] Acknowledged track creation - loading manager exists: {loadingManager != null}");
                 if(loadingManager != null) loadingManager.Increment();
                 break;
+            case startSoundscapeSuccesfullyMessage:
+                ReapyControllerMonitor.startstartDelayCount();
+                break;
             default:
                 Debug.Log($"[SoundscapeVR] other response gotten: {ReaperResponse}");
                 break;
@@ -251,7 +257,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
         catch (IOException e)
         {
-            Debug.LogError($"Failed to read config file: {e.Message}");
+            Debug.LogWarning($"Failed to read config file: {e.Message}");
             return null;
         }
     }

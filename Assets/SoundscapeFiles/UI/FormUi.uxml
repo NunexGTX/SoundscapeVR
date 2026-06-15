@@ -5,6 +5,7 @@
             <ui:Button text="Back to main menu" parse-escape-sequences="false" name="returnBtn" class="buttonStyle" style="margin-bottom: 1px;"/>
             <ui:Label text="Form Title" name="formTitle" style="-unity-text-align: upper-center; white-space: normal; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; text-overflow: ellipsis;"/>
             <ui:Image source="project://database/Assets/Resources/bar.png?fileID=2800000&amp;guid=13922342b32ba0946a94978980a32d5f&amp;type=3#bar" scale-mode="StretchToFill" style="justify-content: flex-start; align-self: stretch; align-content: flex-start; width: auto;"/>
+            <ui:Label text="*Please fill all mandatory questions" name="notAllMandatory" style="display: none; visibility: visible; color: rgb(233, 14, 14); font-size: 14px; padding-left: 6px;"/>
         </ui:VisualElement>
         <ui:ScrollView scroll-deceleration-rate="-0.03" name="ScrollView" vertical-scroller-visibility="Auto" horizontal-scroller-visibility="Hidden" style="align-items: auto; justify-content: center; align-self: auto; min-width: 0; flex-direction: column; top: auto; max-height: 75%; min-height: initial;">
             <ui:VisualElement name="formRoot" style="flex-grow: 1; flex-wrap: wrap;">
