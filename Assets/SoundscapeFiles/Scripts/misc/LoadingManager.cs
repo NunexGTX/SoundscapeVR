@@ -84,7 +84,13 @@ public class LoadingManager : MonoBehaviour
         loadingBar.value = 0;
         totalLoadingIncrementCount = 0;
         softConcurrencyCheck = false;
-        if(!timedout) onLoadingFinished?.Invoke();
+        try
+        {
+            if(!timedout) onLoadingFinished?.Invoke();
+        } catch(Exception e)
+        {
+            Debug.LogWarning($"[SoundscapeVR] Encountered error in OnLoadingFinished function: {e.Message}\n{e.StackTrace}");
+        }
         onLoadingFinished = null;
         onTimeout = null;
         timeSinceLastUpdate = 0;
@@ -124,7 +130,13 @@ public class LoadingManager : MonoBehaviour
             SetInfo("Loading timed out.");
             if(timeSinceLastUpdate > timeoutSeconds + 2)
             {
-                onTimeout?.Invoke();
+                try
+                {
+                    onTimeout?.Invoke();
+                } catch (Exception e)
+                {
+                    Debug.LogWarning($"[SoundscapeVR] Encountered error in OnLoadingFinished function: {e.Message}\n{e.StackTrace}");
+                }
                 EndLoading();
             }
         }

@@ -174,7 +174,7 @@ public class SoundscapeWrapper: MonoBehaviour
 
     private void RestartSoundscape()
     {
-        currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
+        if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
         PlayExistingSourcesFromZero();
         StartLoopCoroutine();
     }
@@ -212,7 +212,7 @@ public class SoundscapeWrapper: MonoBehaviour
         Debug.Log($"[SoundscapeVR] Preparing soundscape {currentSoundscape.title ?? "None"}");
         try
         {
-            ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals());   
+            ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals(), out videoPlaying);   
             currentSoundscape.SetScreenAtHeight(vrStateData.IsInVr ? 2 - vrStateData.HeightOffset : 2);
         }
         catch(Exception e)
@@ -224,7 +224,6 @@ public class SoundscapeWrapper: MonoBehaviour
         Debug.Log($"[SoundscapeVR] Gotten visuals for soundscape {currentSoundscape.title}");
         screen = currentSoundscape.GetScreenObject();
         currentSoundscape.SetEdit(inEditMode);
-        videoPlaying = true;
         if(ssVisual == null)
         {
             videoPlaying = false;
@@ -289,7 +288,7 @@ public class SoundscapeWrapper: MonoBehaviour
         loadingManager.OnLoaded(() =>
         {
             //corre quando tudo carrega
-            currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
+            if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
             Debug.Log("All audios loaded. yay");
             StartLoopCoroutine();
             //Now reaper can start playing stuff

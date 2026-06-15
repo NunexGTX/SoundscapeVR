@@ -34,17 +34,26 @@ public class VideoSoundscape : Soundscape
         title, timeSeconds, staticPath, encompassingPath, projectionType, loop);
     }
 
-    public override GameObject TryGetVisuals(VisualType visualType)
+    public override GameObject TryGetVisuals(VisualType visualType, out bool videoPlaying)
     {
         if(visualType == VisualType.NONE)
         {
             MakeSkyDark();
             onVisualsLoaded.Invoke();
-            return new GameObject("NoVideo");        
+            videoPlaying = false;
+            return new GameObject(NO_VIDEO_NAME);        
         }
-        if(!string.IsNullOrWhiteSpace(encompassingPath)) return GetVideo(visualType);
-        if(visualType == VisualType.STATIC && !string.IsNullOrWhiteSpace(staticPath)) return GetVideo(visualType);
-        //onVisualsLoaded.Invoke();
+        videoPlaying = true;
+        try
+        {
+            if(!string.IsNullOrWhiteSpace(encompassingPath)) return GetVideo(visualType);
+            if(visualType == VisualType.STATIC && !string.IsNullOrWhiteSpace(staticPath)) return GetVideo(visualType);
+        }
+        catch
+        {
+            videoPlaying = false;
+        }
+        videoPlaying = false;
         return null;
     }
 
@@ -112,6 +121,7 @@ public class VideoSoundscape : Soundscape
     public override void RestartVisuals(GameObject ssVisual, VisualType visualType)
     {
         Debug.Log($"[SoundscapeVR] Restarting visuals instantly via rewinding");
+        if(ssVisual.name.Equals(NO_VIDEO_NAME)) return;
         VideoPlayer videoPlayer = ssVisual.GetComponent<VideoPlayer>();
         videoPlayer.time = 0; 
         if (!videoPlayer.isPlaying)

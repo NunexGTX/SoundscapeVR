@@ -16,6 +16,7 @@ public abstract class Soundscape
     [SerializeField] protected List<AudioSource> audioSources = new();
     protected Action onVisualsLoaded = null;
     protected Action onVisualsFailed = null;
+    protected static readonly string NO_VIDEO_NAME = "NoVideo"; 
     public static readonly string VIDEO_GO_NAME = "soundscapeVideo";
     private GameObject screenObject = null;
     protected RenderTexture screenTexture = null;
@@ -167,7 +168,7 @@ public abstract class Soundscape
     public GameObject GetScreenObject(){return screenObject;}
     public void RemoveSource(AudioSource audio){RemoveSource(audio.GetUUID());}
     public abstract Soundscape Copy();
-    public abstract GameObject TryGetVisuals(VisualType visualType);
+    public abstract GameObject TryGetVisuals(VisualType visualType, out Boolean videoPlaying);
     [Obsolete("Este método não deve ter uso atualmente, verificar para remover.")]
     public abstract VisualType GetSupportedVisual();
     public abstract void RestartVisuals(GameObject ssVisual, VisualType visualType);

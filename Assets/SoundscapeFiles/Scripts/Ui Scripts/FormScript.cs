@@ -23,6 +23,7 @@ public class FormScript : MonoBehaviour
     [SerializeField] private VisualTreeAsset dropdownElement;
     public const string SoundscapeInit = "LoadSoundscape:";
     private Button returnBtn;
+    private Button nextBtn = null;
     private VisualElement formRoot;
     private List<List<FormElement>> formSections = new();
     private string formTitle = "";
@@ -56,7 +57,7 @@ public class FormScript : MonoBehaviour
         formSections = SeparateElements(library.form.questions);
         formTitle = library.form.formTitle;
         formDesc = library.form.description;
-        Button nextBtn = root.Q<Button>("nextBtn");
+        nextBtn = root.Q<Button>("nextBtn");
         nextBtn.clicked += NextSection;
         Label title = root.Q<Label>("formTitle");
         title.text = library.form.formTitle;
@@ -67,6 +68,7 @@ public class FormScript : MonoBehaviour
     void OnDisable()
     {
         returnBtn.clicked -= Return;
+        if(nextBtn != null) nextBtn.clicked -= Return;
     }
 
     private void Return()

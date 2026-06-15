@@ -36,16 +36,25 @@ public class ImageSoundscape : Soundscape
         );
     }
 
-    public override GameObject TryGetVisuals(VisualType visualType)
+    public override GameObject TryGetVisuals(VisualType visualType, out bool videoPlaying)
     {   
         if(visualType == VisualType.NONE)
         {
             MakeSkyDark();
             onVisualsLoaded.Invoke();
-            return new GameObject("NoVideo");        
+            videoPlaying = false;
+            return new GameObject(NO_VIDEO_NAME);        
         }
-        if(!string.IsNullOrEmpty(encompassingPath)) return GetImage(visualType);
-        if(visualType == VisualType.STATIC && !string.IsNullOrEmpty(staticPath)) return GetImage(visualType);
+        videoPlaying = true;
+        try
+        {
+            if(!string.IsNullOrEmpty(encompassingPath)) return GetImage(visualType);
+            if(visualType == VisualType.STATIC && !string.IsNullOrEmpty(staticPath)) return GetImage(visualType);    
+        } catch
+        {
+            videoPlaying = false;
+        }
+        videoPlaying = false;
         return null;
     }
 
