@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -29,6 +30,9 @@ public class FormScript : MonoBehaviour
     private int formPosition = -1;
     private List<Action> unbindingActions = new();
     private FormAnswersHolder answersHolder;
+    private Label notAllMandatory;
+    private Coroutine allMandatory;
+    public int disappearAllMandatoryTimeout = 5;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
@@ -67,15 +71,34 @@ public class FormScript : MonoBehaviour
     private void NextSection()
     {
         if(formSections.Count == formPosition) return;
-        if(!answersHolder.AreRequiredComplete(formPosition)) return;
+        if (!answersHolder.AreRequiredComplete(formPosition))
+        {
+            notAllMandatory.style.display = DisplayStyle.Flex;
+            if(allMandatory != null) StopCoroutine(allMandatory);
+            allMandatory = StartCoroutine(DisappearAllMandatory());
+            return;
+        }
         if(formPosition >= formSections.Count - 1)
         {
             SubmitForm();
             return;
         }
         formPosition++;
+        hideAllMandatoryMessage();
         RemoveSection();
         BuildFormSection();
+    }
+
+    IEnumerator DisappearAllMandatory()
+    {
+        yield return new WaitForSeconds(disappearAllMandatoryTimeout);
+        hideAllMandatoryMessage();
+    }
+
+    void hideAllMandatoryMessage()
+    {
+        if(notAllMandatory != null) notAllMandatory.style.display = DisplayStyle.None;
+        if (allMandatory != null) StopCoroutine(allMandatory);
     }
 
     private void PreviousSection()
@@ -83,6 +106,7 @@ public class FormScript : MonoBehaviour
         if(formSections.Count < 1) return;
         if(formPosition < 0) return;
         formPosition--;
+        hideAllMandatoryMessage();
         RemoveSection();
         BuildFormSection();
     }
@@ -331,6 +355,17 @@ public class FormScript : MonoBehaviour
                         break;
                 }
             }
+        }
+        //Add allmandatory warning
+        if (!answersHolder.AreRequiredComplete(formPosition))
+        {
+            notAllMandatory = new Label();
+            notAllMandatory.text = "*Please fill all mandatory questions";
+            notAllMandatory.style.display = DisplayStyle.None;
+            notAllMandatory.style.color = new StyleColor(Color.red);
+            notAllMandatory.style.fontSize = new StyleLength(14f);
+            notAllMandatory.style.paddingLeft = new Length(6, LengthUnit.Pixel);
+            formRoot.Add(notAllMandatory);
         }
         //add next and back buttons, and a finish button
         if(formPosition < formSections.Count)
