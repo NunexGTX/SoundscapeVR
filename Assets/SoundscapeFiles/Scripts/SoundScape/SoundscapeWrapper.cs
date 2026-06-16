@@ -288,9 +288,8 @@ public class SoundscapeWrapper: MonoBehaviour
         loadingManager.OnLoaded(() =>
         {
             //corre quando tudo carrega
-            if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
-            Debug.Log("All audios loaded. yay");
-            StartLoopCoroutine();
+            Debug.Log("[SoundscapeVR] All audios loaded. Soundscape starting.");
+            RestartSoundscape();
             //Now reaper can start playing stuff
             if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) reapyController.StartSoundscape();
         });
