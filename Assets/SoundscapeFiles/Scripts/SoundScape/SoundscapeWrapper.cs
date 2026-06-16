@@ -326,7 +326,7 @@ public class SoundscapeWrapper: MonoBehaviour
             int delay = 0;
             if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)
             {
-                delay = (int) StartSoundscapeReaper();
+                delay = (int) await StartSoundscapeReaper();
                 Debug.Log($"Delaying Soundcsape Video by {delay}ms");
                 
             }
@@ -338,10 +338,10 @@ public class SoundscapeWrapper: MonoBehaviour
         reapyController.NewSoundscape(duration, loop);
     }
 
-    private long StartSoundscapeReaper()
+    private async Task<long> StartSoundscapeReaper()
     {
         long start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        reapyController.StartSoundscape();
+        await reapyController.StartSoundscapeLockAndLoad();
         long finish = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         return finish - start;

@@ -354,14 +354,14 @@ public class ReapyControllerCommunication : MonoBehaviour
         message_beeboop(json);
     }
 
-    public void NewSoundscapeLockAndLoad(int duration, bool loop)
+    public async Task StartSoundscapeLockAndLoad()
     {
-        var msg = new NewSoundscape {command = newSoundscapeCommand, Duration = duration, Loop = loop};
+        var msg = new StartSoundscape {command = startSoundscapeCommand, timestamp=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);
 
-        startSoundscape_lock.WaitAsync();
+        await startSoundscape_lock.WaitAsync();
     }
 
     public void StartSoundscape()
