@@ -22,6 +22,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     private string[] connectionTypes = new string[] {"not_connected", "connecting", "connected", "failed"};
     private CancellationTokenSource _cts = new CancellationTokenSource();
     private readonly SemaphoreSlim _streamLock = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim startSoundscape_lock = new SemaphoreSlim(0,1);
     private bool _isReconnecting = false;
     private const int MaxReconnectAttempts = 5;
     private const int ReadTimeoutMs = 3000;
@@ -112,12 +113,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
     }
 
-    async void ConnectAsync() {
-        await TryConnectAsync(_cts.Token);
-
-        //Send clock after establishing a connection
-        ClockSync();
-    }
+    async void ConnectAsync() => await TryConnectAsync(_cts.Token);
 
     private async Task<bool> TryConnectAsync(CancellationToken ct)
     {
@@ -202,11 +198,13 @@ public class ReapyControllerCommunication : MonoBehaviour
     }
 
     private void OnReaperReceive(string ReaperResponse)
-    {
+    {   
+        /*
         if (ReaperResponse.Contains("clock_sync:"))
         {
             ClockSyncResult(long.Parse(ReaperResponse.Split(':')[1]));
         }
+        */
 
         //correr quando receber ack ou error de tocar uma fonte de audio
         switch (ReaperResponse.Trim())
@@ -216,7 +214,7 @@ public class ReapyControllerCommunication : MonoBehaviour
                 if(loadingManager != null) loadingManager.Increment();
                 break;
             case startSoundscapeSuccesfullyMessage:
-                //ReapyControllerMonitor.countstartDelay();
+                startSoundscape_lock.Release();
                 break;
             default:
                 Debug.Log($"[SoundscapeVR] other response gotten: {ReaperResponse}");
@@ -354,6 +352,16 @@ public class ReapyControllerCommunication : MonoBehaviour
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);
+    }
+
+    public void NewSoundscapeLockAndLoad(int duration, bool loop)
+    {
+        var msg = new NewSoundscape {command = newSoundscapeCommand, Duration = duration, Loop = loop};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+
+        startSoundscape_lock.WaitAsync();
     }
 
     public void StartSoundscape()
