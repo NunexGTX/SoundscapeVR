@@ -23,6 +23,8 @@ public class LoadingManager : MonoBehaviour
     private int timeoutSeconds = 5;
     private float timeSinceLastUpdate = 0;
     private bool timedout = false;
+    //variable to prevent stack overflows
+    private bool runningOnLoad = false;
 
     public void SetInfo(string text)
     {
@@ -81,14 +83,28 @@ public class LoadingManager : MonoBehaviour
     }
     public void EndLoading()
     {
+        //if the onLoad is running, that means that theres a potential stack overflow happening.
+        //to prevent it, we early return with the assumption that this call was accidental -> it doesnt make sense to end the loading twice while the first is running.
+        //this happened before, where the OnLoad function, at some point, called the Increment() function, which in turn caused EndLoading to call itself recursively.
+        if(runningOnLoad)
+        {
+            Debug.Log($"[SoundscapeVR] Tried to call endLoading while OnLoadingFinished is running");
+            return;
+        }
         loadingBar.value = 0;
         totalLoadingIncrementCount = 0;
         softConcurrencyCheck = false;
         try
         {
-            if(!timedout) onLoadingFinished?.Invoke();
+            if(!timedout)
+            {
+                runningOnLoad = true;
+                onLoadingFinished?.Invoke();
+            }
+            runningOnLoad = false;
         } catch(Exception e)
         {
+            loadingBar.value = 0;
             Debug.LogWarning($"[SoundscapeVR] Encountered error in OnLoadingFinished function: {e.Message}\n{e.StackTrace}");
         }
         onLoadingFinished = null;

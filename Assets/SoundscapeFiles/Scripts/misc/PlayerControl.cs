@@ -30,12 +30,10 @@ public class PlayerControl : MonoBehaviour
     {
         if(rotating == canRotate) return;
         rotating = canRotate;
-        Debug.Log($"Player rotation is now {canRotate}");
     }
     public void SetPlayerMovement(bool canMove){
         if(moving == canMove) return;
         moving = canMove;
-        Debug.Log($"Player movement is now {canMove}");
     }
 
     void Awake()

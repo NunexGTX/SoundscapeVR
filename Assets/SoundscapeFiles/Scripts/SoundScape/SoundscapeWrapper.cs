@@ -114,20 +114,20 @@ public class SoundscapeWrapper: MonoBehaviour
         Debug.LogError($"Tried to remove an audio source that doesnt exist: {audioId}");
     }
 
-    public async void PlaceNewAudioSource(AudioSource src)
+    public void PlaceNewAudioSource(AudioSource src)
     {
         if(currentSoundscape == null) return;
-        await PlaceBaseSource(src, debug: true);
+        PlaceBaseSource(src, debug: true);
         EditSoundscape(src, add: true);
     }
     
-    private async Task PlaceSoundscapeAudioSource(AudioSource src)
+    private void PlaceSoundscapeAudioSource(AudioSource src)
     {
         if(currentSoundscape == null) return;
-        await PlaceBaseSource(src, inEditMode);
+        PlaceBaseSource(src, inEditMode);
     }
 
-    private async Task PlaceBaseSource(AudioSource src, bool debug)
+    private void PlaceBaseSource(AudioSource src, bool debug)
     {
         GameObject go = Instantiate(audioSourceObject);
         go.transform.position = SoundscapeLibrary.SphereToWorld(src.GetSpherePosition());
@@ -155,12 +155,8 @@ public class SoundscapeWrapper: MonoBehaviour
 
         src.ApplyEffects(go);
         placedAudios.Add(worldSrc.GetUUID(), go);
-        
-        // Activate the object
         go.SetActive(true);
-
-        // Explicitly await the audio preparation step here instead of letting an internal Start() trigger it blindly
-        await worldSrc.PlayAudio();
+        _ = worldSrc.PlayAudio(true);
     }
 
     //called when the audio sources are already created, we just want to replay them
@@ -168,12 +164,7 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         Debug.Log("Replaying audios");
         foreach(GameObject go in placedAudios.Values)
-            PlayAudioSource(go);
-    }
-
-    private void PlayAudioSource(GameObject srcObj)
-    {
-        _ = srcObj.GetComponent<WorldAudioSource>().PlayAudio();
+            _ = go.GetComponent<WorldAudioSource>().PlayAudio(false);
     }
 
     private void RestartSoundscape(float delay  = 0)
@@ -286,6 +277,7 @@ public class SoundscapeWrapper: MonoBehaviour
 
         loadingManager.SetToStart(audioSources.Count);
         loadingManager.SetInfo("Playing audios...");
+        loadingManager.OnLoaded(() => {_ = OnSoundscapeLoaded();});
 
         bool timedout = false;
         loadingManager.OnTimeout(() =>
@@ -307,31 +299,25 @@ public class SoundscapeWrapper: MonoBehaviour
             } 
             if(!timedout) 
             {
-                placementTasks.Add(PlaceSoundscapeAudioSource(src));
+                PlaceSoundscapeAudioSource(src);
             }
         }
-
-        // Wait for all clips to load and components to assign values safely
-        await Task.WhenAll(placementTasks);
-
         if(audioSources.Count == 0) loadingManager.EndLoading();
         timedout = false;
-
-        // Trigger playback safely once everything is initialized and stored
-        if (!timedout)
+    }
+    private async Task OnSoundscapeLoaded()
+    {
+        Debug.Log("[SoundscapeVR] All audios loaded. Soundscape starting.");
+        //corre quando tudo carrega
+        //Now reaper can start playing stuff
+        int delay = 0;
+        if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)
         {
-            Debug.Log("[SoundscapeVR] All audios loaded. Soundscape starting.");
-            //corre quando tudo carrega
-            //Now reaper can start playing stuff
-            int delay = 0;
-            if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)
-            {
-                delay = (int) await StartSoundscapeReaper();
-                Debug.Log($"Delaying Soundcsape Video by {delay}ms");
-                
-            }
-            RestartSoundscape(delay);
+            delay = (int) await StartSoundscapeReaper();
+            Debug.Log($"Delaying Soundcsape Video by {delay}ms");
+            
         }
+        RestartSoundscape(delay);
     }
     private void ReaperSendSoundscapeInformation(int duration, bool loop)
     {

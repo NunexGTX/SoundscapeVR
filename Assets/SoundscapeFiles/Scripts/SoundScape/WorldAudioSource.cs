@@ -103,7 +103,7 @@ public class WorldAudioSource: MonoBehaviour
     }
 
     //called when playing or replaying audio source.
-    public async Task PlayAudio()
+    public async Task PlayAudio(bool incLoading)
     {
         if(playbackType == AudioListeningType.BINAURAL)
         {
@@ -128,7 +128,8 @@ public class WorldAudioSource: MonoBehaviour
             src.time = 0;
             src.PlayDelayed(audioSource.DelaySeconds);
         }
-        loadingManager.Increment();
+        if(incLoading) loadingManager?.Increment();
+        loadingManager = null;
         return;
     }
 
