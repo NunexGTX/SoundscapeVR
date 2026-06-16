@@ -358,7 +358,6 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     public void StartSoundscape()
     {
-        ReapyControllerMonitor.startstartDelayCount();
         var msg = new StartSoundscape {command = startSoundscapeCommand, timestamp=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()};
         string json = JsonUtility.ToJson(msg);
 

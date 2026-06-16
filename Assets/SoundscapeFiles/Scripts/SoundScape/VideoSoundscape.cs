@@ -118,12 +118,12 @@ public class VideoSoundscape : Soundscape
         base.ClearVisualsBinding();
     }
 
-    public override void RestartVisuals(GameObject ssVisual, VisualType visualType)
+    public override void RestartVisuals(GameObject ssVisual, VisualType visualType, float delay)
     {
         Debug.Log($"[SoundscapeVR] Restarting visuals instantly via rewinding");
         if(ssVisual.name.Equals(NO_VIDEO_NAME)) return;
         VideoPlayer videoPlayer = ssVisual.GetComponent<VideoPlayer>();
-        videoPlayer.time = 0; 
+        videoPlayer.time = delay; 
         if (!videoPlayer.isPlaying)
             videoPlayer.Play();
     }

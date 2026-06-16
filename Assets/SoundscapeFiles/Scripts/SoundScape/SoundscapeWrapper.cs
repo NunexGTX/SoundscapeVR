@@ -172,11 +172,11 @@ public class SoundscapeWrapper: MonoBehaviour
         _ = srcObj.GetComponent<WorldAudioSource>().PlayAudio();
     }
 
-    private void RestartSoundscape()
+    private void RestartSoundscape(float delay  = 0)
     {
-        if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
+        if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals(), delay);
         PlayExistingSourcesFromZero();
-        StartLoopCoroutine();
+        StartLoopCoroutine(delay);
     }
 
     public async Task PrepareSoundscape(bool debug)
@@ -328,15 +328,15 @@ public class SoundscapeWrapper: MonoBehaviour
 
     //function to start counting time to loop the SS.
     //if currrentSS time is 0, this does nothing. otherwise starts the coroutine that will then call RestartSoundscape()
-    private void StartLoopCoroutine()
+    private void StartLoopCoroutine(float delay)
     {
         int time = currentSoundscape.timeSeconds;
         if(time == 0) return;
         Debug.Log($"[SoundscapeVR] Setting Soundscape to loop in {time} seconds");
-        StartCoroutine(SoundscapeCountdown(time));
+        StartCoroutine(SoundscapeCountdown(time - delay));
     }
 
-    IEnumerator SoundscapeCountdown(int timeSeconds)
+    IEnumerator SoundscapeCountdown(float timeSeconds)
     {
         yield return new WaitForSeconds(timeSeconds);
         //if we're debugging, loop soundscape always.

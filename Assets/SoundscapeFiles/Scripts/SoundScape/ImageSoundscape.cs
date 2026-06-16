@@ -119,5 +119,5 @@ public class ImageSoundscape : Soundscape
         }
     }
 
-    public override void RestartVisuals(GameObject ssVisual, VisualType visualType){}
+    public override void RestartVisuals(GameObject ssVisual, VisualType visualType, float delay){}
 }
