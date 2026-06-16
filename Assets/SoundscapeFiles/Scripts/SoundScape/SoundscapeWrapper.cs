@@ -286,6 +286,20 @@ public class SoundscapeWrapper: MonoBehaviour
 
         loadingManager.SetToStart(audioSources.Count);
         loadingManager.SetInfo("Playing audios...");
+        loadingManager.OnLoaded(() =>
+        {
+            //corre quando tudo carrega
+            Debug.Log("[SoundscapeVR] All audios loaded. Soundscape starting.");
+            //Now reaper can start playing stuff
+            int delay = 0;
+            if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)
+            {
+                delay = (int) StartSoundscapeReaper();
+                Debug.Log($"Delaying Soundcsape Video by {delay}ms");
+                
+            }
+            RestartSoundscape(delay);
+        });
 
         bool timedout = false;
         loadingManager.OnTimeout(() =>
@@ -322,11 +336,27 @@ public class SoundscapeWrapper: MonoBehaviour
         {
             Debug.Log("All audios loaded. yay");
             RestartSoundscape();
+            //Now reaper can start playing stuff
+            if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)
+            {
+                long video_delay = StartSoundscapeReaper();
+                Debug.Log($"Delaying Soundcsape Video by {video_delay}ms");
+                
+            } 
         }
     }
     private void ReaperSendSoundscapeInformation(int duration, bool loop)
     {
         reapyController.NewSoundscape(duration, loop);
+    }
+
+    private long StartSoundscapeReaper()
+    {
+        long start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        reapyController.StartSoundscape();
+        long finish = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        return finish - start;
     }
 
     //function to start counting time to loop the SS.
