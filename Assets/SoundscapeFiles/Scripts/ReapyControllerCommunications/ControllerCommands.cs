@@ -11,6 +11,16 @@ public abstract class TrackCommand: ReapyControllerCommand
     public string SoundUUID;
 }
 
+public class ClockSync: ReapyControllerCommand
+{
+    public long t1;
+}
+
+public class ClockSyncResult: ReapyControllerCommand
+{
+    public long offset;
+}
+
 public class NewSoundscape: ReapyControllerCommand
 {
     public int Duration;

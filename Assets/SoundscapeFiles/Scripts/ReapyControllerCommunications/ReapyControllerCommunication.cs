@@ -28,38 +28,45 @@ public class ReapyControllerCommunication : MonoBehaviour
     private const int BaseReconnectDelayMs = 1000;
     public LoadingManager loadingManager = null;
 
+    private long t1_count = 0;
+    private long offset_count = 0;
+
     //Commands
     [SerializeField]
-    private string newSoundscapeCommand = "new_soundscape";
+    private const string ClockSyncCommand = "clock_sync";
     [SerializeField]
-    private string startSoundscapeCommand = "start_soundscape";
+    private const string ClockSyncResultCommand = "clock_sync_result";
     [SerializeField]
-    private string skipStartSoundscapeCommand = "no_start_wait";
+    private const string newSoundscapeCommand = "new_soundscape";
     [SerializeField]
-    private string endSoundscapeCommand = "end_soundscape";
+    private const string startSoundscapeCommand = "start_soundscape";
     [SerializeField]
-    private string newTrackCommand = "new_track";
+    private const string skipStartSoundscapeCommand = "no_start_wait";
+    [SerializeField]
+    private const string endSoundscapeCommand = "end_soundscape";
+    [SerializeField]
+    private const string newTrackCommand = "new_track";
 
     [SerializeField]
-    private string sourcePositionCommand = "source_position";
+    private const string sourcePositionCommand = "source_position";
 
     [SerializeField]
-    private string muteCommand = "mute";
+    private const string muteCommand = "mute";
 
     [SerializeField]
-    private string unmuteCommand = "unmute";
+    private const string unmuteCommand = "unmute";
 
     [SerializeField]
-    private string deleteTrackCommand = "delete_track";
+    private const string deleteTrackCommand = "delete_track";
 
     [SerializeField]
-    private string resetCommand = "RESET";
+    private const string resetCommand = "RESET";
 
     [SerializeField]
-    private string addEffectCommand = "add_effect";
+    private const string addEffectCommand = "add_effect";
 
     [SerializeField]
-    private string removeEffectCommand = "remove_effect";
+    private const string removeEffectCommand = "remove_effect";
 
     [SerializeField]
     private const string newTrackCreatedSuccesfullyMessage = "track_created";
@@ -105,7 +112,12 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
     }
 
-    async void ConnectAsync() => await TryConnectAsync(_cts.Token);
+    async void ConnectAsync() {
+        await TryConnectAsync(_cts.Token);
+
+        //Send clock after establishing a connection
+        ClockSync();
+    }
 
     private async Task<bool> TryConnectAsync(CancellationToken ct)
     {
@@ -191,6 +203,11 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     private void OnReaperReceive(string ReaperResponse)
     {
+        if (ReaperResponse.Contains("clock_sync:"))
+        {
+            ClockSyncResult(long.Parse(ReaperResponse.Split(':')[1]));
+        }
+
         //correr quando receber ack ou error de tocar uma fonte de audio
         switch (ReaperResponse.Trim())
         {
@@ -310,6 +327,26 @@ public class ReapyControllerCommunication : MonoBehaviour
     }
 
     //Command functions
+    public void ClockSync()
+    {
+        t1_count = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var msg = new ClockSync {command = ClockSyncCommand, t1 = t1_count};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
+    public void ClockSyncResult(long t_rx)
+    {
+        long t4 = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        offset_count = t_rx - (t1_count + (t4-t1_count)/2);
+
+        var msg = new ClockSyncResult {command = ClockSyncResultCommand, offset = offset_count};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
     //Soundscape Commands
     public void NewSoundscape(int duration, bool loop)
     {
