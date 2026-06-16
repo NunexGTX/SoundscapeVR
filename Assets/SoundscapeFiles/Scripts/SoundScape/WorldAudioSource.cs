@@ -47,7 +47,7 @@ public class WorldAudioSource: MonoBehaviour
 
             //Send effects that are being used
             reaperSendAudioEffects();
-        } else _ = PlayAudio();
+        }
 
         gameObject.GetComponent<MeshRenderer>().enabled = debug;
 
