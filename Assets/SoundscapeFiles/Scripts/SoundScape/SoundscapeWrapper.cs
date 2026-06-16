@@ -167,11 +167,11 @@ public class SoundscapeWrapper: MonoBehaviour
             _ = go.GetComponent<WorldAudioSource>().PlayAudio(false);
     }
 
-    private void RestartSoundscape(float delay  = 0)
+    private void RestartSoundscape(float delaySeconds  = 0)
     {
-        if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals(), delay);
+        if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals(), delaySeconds);
         PlayExistingSourcesFromZero();
-        StartLoopCoroutine(delay);
+        StartLoopCoroutine(delaySeconds);
     }
 
     public async Task PrepareSoundscape(bool debug)
@@ -310,14 +310,14 @@ public class SoundscapeWrapper: MonoBehaviour
         Debug.Log("[SoundscapeVR] All audios loaded. Soundscape starting.");
         //corre quando tudo carrega
         //Now reaper can start playing stuff
-        int delay = 0;
+        int delayMs = 0;
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)
         {
-            delay = (int) await StartSoundscapeReaper();
-            Debug.Log($"Delaying Soundcsape Video by {delay}ms");
+            delayMs = (int) await StartSoundscapeReaper();
+            Debug.Log($"Delaying Soundcsape Video by {delayMs}ms");
             
         }
-        RestartSoundscape(delay);
+        RestartSoundscape(delayMs/1000L);
     }
     private void ReaperSendSoundscapeInformation(int duration, bool loop)
     {
@@ -335,12 +335,12 @@ public class SoundscapeWrapper: MonoBehaviour
 
     //function to start counting time to loop the SS.
     //if currrentSS time is 0, this does nothing. otherwise starts the coroutine that will then call RestartSoundscape()
-    private void StartLoopCoroutine(float delay)
+    private void StartLoopCoroutine(float delaySeconds)
     {
         int time = currentSoundscape.timeSeconds;
         if(time == 0) return;
         Debug.Log($"[SoundscapeVR] Setting Soundscape to loop in {time} seconds");
-        StartCoroutine(SoundscapeCountdown(time - delay));
+        StartCoroutine(SoundscapeCountdown(time - delaySeconds));
     }
 
     IEnumerator SoundscapeCountdown(float timeSeconds)

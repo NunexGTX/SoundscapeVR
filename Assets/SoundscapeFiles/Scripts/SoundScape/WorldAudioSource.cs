@@ -83,6 +83,7 @@ public class WorldAudioSource: MonoBehaviour
 
     void deleteReaperTrack()
     {
+        if (!playbackType.Equals(AudioListeningType.ENCOMPASSING)) return;
         reaperController.DeleteTrack(audioSource.GetUUID());
     }
 
