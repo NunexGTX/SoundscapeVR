@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ReapyControllerMonitor
 {
-    public static long startDelayTimestamp0;
-    public static long startDelayTimestamp1;
+    public static long startDelayTimestamp0 = 0;
+    public static long startDelayTimestamp1 = 0 ;
 
     public static void startstartDelayCount()
     {

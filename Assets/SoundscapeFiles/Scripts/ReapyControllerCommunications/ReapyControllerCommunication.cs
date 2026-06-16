@@ -199,7 +199,7 @@ public class ReapyControllerCommunication : MonoBehaviour
                 if(loadingManager != null) loadingManager.Increment();
                 break;
             case startSoundscapeSuccesfullyMessage:
-                ReapyControllerMonitor.startstartDelayCount();
+                //ReapyControllerMonitor.countstartDelay();
                 break;
             default:
                 Debug.Log($"[SoundscapeVR] other response gotten: {ReaperResponse}");
@@ -321,7 +321,8 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     public void StartSoundscape()
     {
-        var msg = new StartSoundscape {command = startSoundscapeCommand};
+        ReapyControllerMonitor.startstartDelayCount();
+        var msg = new StartSoundscape {command = startSoundscapeCommand, timestamp=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);

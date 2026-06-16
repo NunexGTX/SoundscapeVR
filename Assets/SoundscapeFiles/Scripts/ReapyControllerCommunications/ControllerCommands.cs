@@ -17,7 +17,10 @@ public class NewSoundscape: ReapyControllerCommand
     public bool Loop;
 }
 
-public class StartSoundscape: ReapyControllerCommand{}
+public class StartSoundscape: ReapyControllerCommand
+{
+    public long timestamp;
+}
 public class SkipStartSoundscape: ReapyControllerCommand{}
 
 public class StopSoundscape: ReapyControllerCommand{}
