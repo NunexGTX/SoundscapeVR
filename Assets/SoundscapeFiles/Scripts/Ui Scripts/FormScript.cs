@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UIElements;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class FormScript : MonoBehaviour
 {
@@ -35,16 +36,12 @@ public class FormScript : MonoBehaviour
     private Coroutine allMandatory;
     public int disappearAllMandatoryTimeout = 5;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
     {
-        formPosition = -1;
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+        formRoot = root.Q<VisualElement>("formRoot");
         returnBtn = root.Q<Button>("returnBtn");
         returnBtn.clicked += Return;
-        if(library.form == null) return;
-        formRoot = root.Q<VisualElement>("formRoot");
-        
         if(Application.internetReachability == NetworkReachability.NotReachable)
         {
             
@@ -53,14 +50,21 @@ public class FormScript : MonoBehaviour
             Debug.LogError($"[SoundscapeVR] Error: Can't load form as there is no internet!");
             return;
         }
+        nextBtn = root.Q<Button>("nextBtn");
+        nextBtn.clicked += NextButton;
+        Label title = root.Q<Label>("formTitle");
+        title.text = library.form.formTitle;
+        
+    }
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Awake()
+    {
+        formPosition = -1;
+        if(library.form == null) return;
         if(library.form == null || string.IsNullOrWhiteSpace(library.form.formTitle)) return;
         formSections = SeparateElements(library.form.questions);
         formTitle = library.form.formTitle;
         formDesc = library.form.description;
-        nextBtn = root.Q<Button>("nextBtn");
-        nextBtn.clicked += NextSection;
-        Label title = root.Q<Label>("formTitle");
-        title.text = library.form.formTitle;
         answersHolder = new(){pageCount = formSections.Count};
         unbindingActions = new();
     }
@@ -78,10 +82,8 @@ public class FormScript : MonoBehaviour
         gameObject.SetActive(false);
         audioVideoMenu?.SetActive(true);
     }
-
-    private void NextSection()
+    private void NextButton()
     {
-        if(formSections.Count == formPosition) return;
         if (!answersHolder.AreRequiredComplete(formPosition))
         {
             notAllMandatory.style.display = DisplayStyle.Flex;
@@ -89,11 +91,45 @@ public class FormScript : MonoBehaviour
             allMandatory = StartCoroutine(DisappearAllMandatory());
             return;
         }
+        _ = CycleObjectAndExecute(() => NextSection(formPosition));
+    }
+
+    private void PreviousButton()
+    {
+        _ = CycleObjectAndExecute(() => PreviousSection(formPosition));
+    }
+
+    private async Task CycleObjectAndExecute(Action navigationCallback)
+    {
+        // 1. Turn the game object off
+        gameObject.SetActive(false);
+
+        // 2. Wait a frame / short duration to allow Unity and XRIT 
+        // to completely flush the active pointer input states
+        await Task.Delay(50); 
+
+        // 3. Turn the game object back on
+        gameObject.SetActive(true);
+
+        // 4. Run the actual logic (Builds the UI with a clean state)
+        navigationCallback?.Invoke();
+    }
+    private void NextSection(int formPos)
+    {
+        Debug.Log(formPos);
+        formPosition = formPos;
+        if(formSections.Count == formPosition)
+        {
+            Debug.Log("NIGGA");
+        return;            
+        } 
         if(formPosition >= formSections.Count - 1)
         {
+            Debug.Log("FUCJKEROO");
             SubmitForm();
             return;
         }
+        Debug.Log("IMBECILE");
         formPosition++;
         hideAllMandatoryMessage();
         RemoveSection();
@@ -112,8 +148,9 @@ public class FormScript : MonoBehaviour
         if (allMandatory != null) StopCoroutine(allMandatory);
     }
 
-    private void PreviousSection()
+    private void PreviousSection(int formPos)
     {
+        formPosition = formPos;
         if(formSections.Count < 1) return;
         if(formPosition < 0) return;
         formPosition--;
@@ -385,7 +422,7 @@ public class FormScript : MonoBehaviour
         if(formPosition < formSections.Count)
         {
             Button nextButton = new Button();
-            nextButton.clicked += NextSection;
+            nextButton.clicked += NextButton;
             if(formPosition == -1) nextButton.text = "Start";
             else if(formPosition == formSections.Count - 1) nextButton.text = "Finish";
             else nextButton.text = "Next";
@@ -394,7 +431,7 @@ public class FormScript : MonoBehaviour
         if(formPosition > -1)
         {
             Button prevButton = new Button();
-            prevButton.clicked += PreviousSection;
+            prevButton.clicked += PreviousButton;
             if(formPosition == 0) prevButton.text = "Return";
             else prevButton.text = "Previous";
             formRoot.Add(prevButton);
@@ -469,4 +506,6 @@ public class FormScript : MonoBehaviour
             }
         }
     }
+
+
 }

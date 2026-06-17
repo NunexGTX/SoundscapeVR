@@ -189,4 +189,12 @@ public class PlayerManager : MonoBehaviour
             UIGameObject.transform.position = uiPos;
         }
     }
+
+    void Update()
+    {
+        if(player.transform.position.y < -vrStateData.HeightOffset/2 || vrPlayer.transform.position.y < -vrStateData.HeightOffset * 2)
+        {
+            SetHeightOffset(vrStateData.HeightOffset);
+        }
+    }
 }

@@ -673,7 +673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &354831906
 Transform:
   m_ObjectHideFlags: 0
@@ -682,13 +682,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 354831905}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.60876197, z: -0, w: 0.7933529}
-  m_LocalPosition: {x: -3.727, y: 1.453, z: -0.659}
+  m_LocalRotation: {x: -0, y: 0.8660257, z: -0, w: 0.49999955}
+  m_LocalPosition: {x: -3.55, y: 1.453, z: -3.4}
   m_LocalScale: {x: 0.78, y: 0.78, z: 0.78}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1716594760}
-  m_LocalEulerAnglesHint: {x: 0, y: 75, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 120, z: 0}
 --- !u!65 &354831907
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -708,8 +708,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.7487755, y: 2.8045478, z: 0.058801528}
-  m_Center: {x: 0.0000000015473185, y: 0, z: -0.010605277}
+  m_Size: {x: 3.3571932, y: 3.292133, z: 0.05880152}
+  m_Center: {x: 0.0000000015473127, y: 0, z: -0.010605277}
 --- !u!114 &354831909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -853,6 +853,7 @@ MonoBehaviour:
   checkboxContainerElement: {fileID: 9197481963319205126, guid: 3ce8c888b33a68b4aa6d2b000c5452be, type: 3}
   checkboxElement: {fileID: 9197481963319205126, guid: 08b69c5035787f9479ac489225e5c09f, type: 3}
   dropdownElement: {fileID: 9197481963319205126, guid: 4a7fe5697fe8b6547b1ca82c62d9e631, type: 3}
+  disappearAllMandatoryTimeout: 5
 --- !u!114 &354831913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1633,7 +1634,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundscapePlayerEditor
   soundscapeWrapper: {fileID: 1891192193}
   confirmAction: {fileID: 83097790271614945, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
-  cancelAction: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  cancelAction: {fileID: -5241644922955542444, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   deleteAction: {fileID: 187161793506945269, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   scrollAction: {fileID: -8666952849799569744, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   aimingSphere: {fileID: 468564577}
@@ -3785,7 +3786,7 @@ Transform:
   m_GameObject: {fileID: 1438728468}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071071, z: -0, w: 0.7071065}
-  m_LocalPosition: {x: -3.482, y: 0.45299995, z: -2.753}
+  m_LocalPosition: {x: -2.87, y: 0.45299995, z: -2.75}
   m_LocalScale: {x: 0.5118101, y: 0.61171997, z: 0.56663996}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -3810,8 +3811,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.7487755, y: 2.8045478, z: 0.058801528}
-  m_Center: {x: 0.0000000015473185, y: 0, z: -0.010605277}
+  m_Size: {x: 3.4122896, y: 1.510478, z: 0.058801528}
+  m_Center: {x: 0.0000000015473183, y: 0, z: -0.010605277}
 --- !u!114 &1438728472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5383,7 +5384,7 @@ MonoBehaviour:
   untargetableSoundSourceLayer:
     serializedVersion: 2
     m_Bits: 1024
-  leaveSoundscapeAction: {fileID: -5982496924579745919, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
+  leaveSoundscapeAction: {fileID: -5241644922955542444, guid: 0f16865692ef2f84e9f583f4aeff417d, type: 3}
   loadingManager: {fileID: 657310051}
   playerEditor: {fileID: 657310050}
   editListUi: {fileID: 0}
@@ -5449,18 +5450,6 @@ MonoBehaviour:
   connectionTimeOutMillis: 5000
   vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   loadingManager: {fileID: 0}
-  newSoundscapeCommand: new_soundscape
-  startSoundscapeCommand: start_soundscape
-  skipStartSoundscapeCommand: no_start_wait
-  endSoundscapeCommand: end_soundscape
-  newTrackCommand: new_track
-  sourcePositionCommand: source_position
-  muteCommand: mute
-  unmuteCommand: unmute
-  deleteTrackCommand: delete_track
-  resetCommand: RESET
-  addEffectCommand: add_effect
-  removeEffectCommand: remove_effect
 --- !u!1 &2037751217
 GameObject:
   m_ObjectHideFlags: 0

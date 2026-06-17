@@ -38,14 +38,13 @@ public class ImageSoundscape : Soundscape
 
     public override GameObject TryGetVisuals(VisualType visualType, out bool videoPlaying)
     {   
+        videoPlaying = true;
         if(visualType == VisualType.NONE)
         {
             MakeSkyDark();
             onVisualsLoaded.Invoke();
-            videoPlaying = false;
             return new GameObject(NO_VIDEO_NAME);        
         }
-        videoPlaying = true;
         try
         {
             if(!string.IsNullOrEmpty(encompassingPath)) return GetImage(visualType);

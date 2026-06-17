@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3437b4234a2da284ebfdfe7303077f96, type: 3}
   m_Name: VrStateData
   m_EditorClassIdentifier: Assembly-CSharp::VrStateData
-  vrEnabled: 0
+  vrEnabled: 1
   currentVisual: 2
   currentAudio: 1
-  heightOffset: 1.1040877
+  heightOffset: 2
   ReaperControllerIP: 10.65.13.2

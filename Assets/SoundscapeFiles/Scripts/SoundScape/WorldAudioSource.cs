@@ -112,8 +112,7 @@ public class WorldAudioSource: MonoBehaviour
             IAudioGenerator gen = await library.GetClipForAudio(audioSource.GetAudioId());
             if(gen == null)
             {
-                //TODO fix this, cant be null bc of the map in wrapper
-                Destroy(gameObject);            
+                soundscapeWrapper.DeleteAudio(GetUUID());
                 return;
             }
             src.generator = gen;

@@ -11,6 +11,8 @@ using UnityEngine.UI;
 using System.Reflection;
 using UnityEngine.Android;
 using NUnit.Framework;
+using System.Linq;
+using Unity.Android.Gradle;
 
 public class SoundscapeLibrary: MonoBehaviour
 {
@@ -475,12 +477,7 @@ public class SoundscapeLibrary: MonoBehaviour
     //Loads ambisonic audio, assumes its from a bundle
     private async static Task<AudioClip> LoadAudioFromBundle(AudioClipCache cache, string bundlePath, string assetName)
     {
-        string fullPath = Path.Combine(GetStreamingPath(), "mods");
-        if(!Directory.Exists(fullPath))
-        {
-            Directory.CreateDirectory(fullPath);
-        }
-        fullPath = Path.Combine(fullPath, bundlePath);
+        string fullPath = GetStreamingPath(bundlePath);
         if (!File.Exists(fullPath))
         {
             Debug.LogWarning($"[SoundscapeVR] Loading Audio {assetName} - File doesn't exist: {fullPath}");
@@ -488,22 +485,37 @@ public class SoundscapeLibrary: MonoBehaviour
         } 
 
         // 1. load bundle
-        AssetBundleCreateRequest bundleRequest = AssetBundle.LoadFromFileAsync(fullPath);
-        while (!bundleRequest.isDone)
-            await Task.Yield();
-        AssetBundle localBundle = bundleRequest.assetBundle;
-        if (localBundle == null)
+        AssetBundle localBundle;
+        AssetBundle existingBundle = Enumerable.FirstOrDefault(AssetBundle.GetAllLoadedAssetBundles(), (bundle) => {return bundle.Contains(assetName);});
+        if(existingBundle != null)
         {
-            Debug.LogWarning($"[SoundscapeVR] Loading Audio {assetName} -Local bundle doesn't exist: {fullPath}");
-            return null;
-        } 
+            localBundle = existingBundle;
+        } else
+        {
+            AssetBundleCreateRequest bundleRequest = AssetBundle.LoadFromFileAsync(fullPath);
+            while (!bundleRequest.isDone)
+                await Task.Yield();
+            localBundle = bundleRequest.assetBundle;
+            if (localBundle == null)
+            {
+                Debug.LogWarning($"[SoundscapeVR] Loading Audio {assetName} -Local bundle doesn't exist: {fullPath}");
+                foreach(AssetBundle bundle in AssetBundle.GetAllLoadedAssetBundles())
+                {
+                    foreach(string name in bundle.GetAllAssetNames())
+                    {                    
+                        Debug.Log($"[SoundscapeVR: SoundscapeLibrary] {name}");
+                    }
+                }
+                return null;
+            } 
+        }
 
         // 2. load audio
         AssetBundleRequest assetRequest = localBundle.LoadAssetAsync<AudioClip>(assetName);
         while (!assetRequest.isDone)
             await Task.Yield();
         AudioClip customClip = assetRequest.asset as AudioClip;
-        cache.LoadedBundle(localBundle);
+        if(existingBundle == null) cache.LoadedBundle(localBundle);
         if(customClip == null) return null;
         return customClip;
     }
