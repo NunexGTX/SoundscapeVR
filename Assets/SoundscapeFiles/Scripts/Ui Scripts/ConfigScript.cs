@@ -33,8 +33,7 @@ public class ConfigScript : MonoBehaviour
         reaperConnectionIcon = root.Q<Image>("connectionIcon");
         heightBtn = root.Q<Button>("heightBtn");
 
-        reapySetup();
-
+        
         returnBtn = root.Q<Button>("returnBtn");
         //TouchScreenKeyboard.Open();
 
@@ -42,12 +41,15 @@ public class ConfigScript : MonoBehaviour
         heightBtn.clicked += CalibrateHeight;
 
         VRToggle = root.Q<Toggle>("vrToggle");
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        VRToggle.visible = false;
+        VRToggle.enabledSelf = false;
+        VRToggle = null; 
+        #else       
         VRToggle.RegisterValueChangedCallback(DoToggleVr);
-
-        #if UNITY_ANDROID
-            //Don't show the toggle for Quest/Android XR users 'cause it will crash and it they aren't supposed to do that
-            VRToggle.style.display = DisplayStyle.None;
         #endif
+
+        reapySetup();
     }
 
     void OnDisable()

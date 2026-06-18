@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -7,12 +6,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Networking;
-using UnityEngine.UI;
-using System.Reflection;
-using UnityEngine.Android;
-using NUnit.Framework;
 using System.Linq;
-using Unity.Android.Gradle;
 
 public class SoundscapeLibrary: MonoBehaviour
 {
@@ -477,10 +471,10 @@ public class SoundscapeLibrary: MonoBehaviour
     //Loads ambisonic audio, assumes its from a bundle
     private async static Task<AudioClip> LoadAudioFromBundle(AudioClipCache cache, string bundlePath, string assetName)
     {
-        string fullPath = GetStreamingPath(bundlePath);
+        string fullPath = Path.Combine(GetStreamingPath(), bundlePath);
         if (!File.Exists(fullPath))
         {
-            Debug.LogWarning($"[SoundscapeVR] Loading Audio {assetName} - File doesn't exist: {fullPath}");
+            Debug.LogWarning($"[SoundscapeVR] Loading Audio {assetName} from {bundlePath} - File doesn't exist: {fullPath}");
             return null;
         } 
 

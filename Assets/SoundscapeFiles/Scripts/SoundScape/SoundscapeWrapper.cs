@@ -128,6 +128,7 @@ public class SoundscapeWrapper: MonoBehaviour
 
     private void PlaceBaseSource(AudioSource src, bool debug)
     {
+        if(placedAudios.ContainsKey(src.GetUUID())) return;
         GameObject go = Instantiate(audioSourceObject);
         go.transform.position = SoundscapeLibrary.SphereToWorld(src.GetSpherePosition());
 
@@ -168,7 +169,14 @@ public class SoundscapeWrapper: MonoBehaviour
 
     private void RestartSoundscape(float delaySeconds  = 0)
     {
-        if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals(), delaySeconds);
+        try
+        {        
+            if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals(), delaySeconds);
+        }
+        catch
+        {
+            return;
+        }
         PlayExistingSourcesFromZero();
         StartLoopCoroutine(delaySeconds);
     }
