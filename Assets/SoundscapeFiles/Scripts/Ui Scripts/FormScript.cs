@@ -119,17 +119,12 @@ public class FormScript : MonoBehaviour
         Debug.Log(formPos);
         formPosition = formPos;
         if(formSections.Count == formPosition)
-        {
-            Debug.Log("NIGGA");
-        return;            
-        } 
+            return;
         if(formPosition >= formSections.Count - 1)
         {
-            Debug.Log("FUCJKEROO");
             SubmitForm();
             return;
         }
-        Debug.Log("IMBECILE");
         formPosition++;
         hideAllMandatoryMessage();
         RemoveSection();
@@ -238,11 +233,65 @@ public class FormScript : MonoBehaviour
                                 check.Q<Label>("optionLabel").text = value;
                                 container.Add(check);
                                 Toggle toggle = check.Q<Toggle>("Toggle");
-                                if(prevValues.Contains(value)) toggle.value = true;
+                                
+                                bool isOtherOption = value == "Other (free response)";
+
+                                if (isOtherOption)
+                                {
+                                    // Instantiate a TextField immediately under the toggle for input
+                                    VisualElement otherTextInput = textInputElement.Instantiate();
+                                    TextField otherField = otherTextInput.Q<TextField>("input");
+                                    otherField.label = "Specify:";
+                                    otherTextInput.style.display = DisplayStyle.None;
+                                    container.Add(otherTextInput);
+
+                                    // Restore previous value if it was saved
+                                    string existingAnswer = prevValues.FirstOrDefault(v => !extras.Contains(v));
+                                    if (!string.IsNullOrEmpty(existingAnswer) || prevValues.Contains(value))
+                                    {
+                                        toggle.value = true;
+                                        otherTextInput.style.display = DisplayStyle.Flex;
+                                        otherField.value = string.IsNullOrEmpty(existingAnswer) ? "" : existingAnswer;
+                                    }
+
+                                    EventCallback<ChangeEvent<bool>> checkCallback = (ChangeEvent<bool> evt) => 
+                                    {
+                                        otherTextInput.style.display = evt.newValue ? DisplayStyle.Flex : DisplayStyle.None;
+                                        if (evt.newValue)
+                                        {
+                                            answersHolder.ToggleRepeatableAnswer(id, otherField.value, true);
+                                        }
+                                        else
+                                        {
+                                            answersHolder.ToggleRepeatableAnswer(id, otherField.value, false);
+                                            otherField.value = "";
+                                        }
+                                    };
+                                    toggle.RegisterValueChangedCallback(checkCallback);
+                                    unbindingActions.Add(() => { toggle.UnregisterCallback(checkCallback); });
+
+                                    EventCallback<ChangeEvent<string>> otherCallback = (ChangeEvent<string> evt) => 
+                                    {
+                                        // Remove old customized string and add the newly written one
+                                        answersHolder.ToggleRepeatableAnswer(id, evt.previousValue, false);
+                                        answersHolder.ToggleRepeatableAnswer(id, evt.newValue, true);
+                                    };
+                                    otherField.RegisterValueChangedCallback(otherCallback);
+                                    unbindingActions.Add(() => { otherField.UnregisterCallback(otherCallback); });
+                                }
+                                else
+                                {
+                                    if(prevValues.Contains(value)) toggle.value = true;
+                                    
+                                    EventCallback<ChangeEvent<bool>> checkCallback = (ChangeEvent<bool> evt) => {answersHolder.ToggleRepeatableAnswer(id, value, evt.newValue);};
+                                    toggle.RegisterValueChangedCallback(checkCallback);
+                                    unbindingActions.Add(() => {toggle.UnregisterCallback(checkCallback);});
+                                }
+                                /*if(prevValues.Contains(value)) toggle.value = true;
                                 
                                 EventCallback<ChangeEvent<bool>> checkCallback = (ChangeEvent<bool> evt) => {answersHolder.ToggleRepeatableAnswer(id, value, evt.newValue);};
                                 toggle.RegisterValueChangedCallback(checkCallback);
-                                unbindingActions.Add(() => {toggle.UnregisterCallback(checkCallback);});
+                                unbindingActions.Add(() => {toggle.UnregisterCallback(checkCallback);});*/
                             }
                             formRoot.Add(container);
                         }
@@ -265,15 +314,62 @@ public class FormScript : MonoBehaviour
                         RadioButtonGroup radioGroup = radio.Q<RadioButtonGroup>("radioButtons");
                         radioGroup.label = question;
                         if(extras.Count > 0)
-                        {
                             radioGroup.choices = extras;
-                        }
-                        if(answersHolder.IsQuestionAnswered(id))
-                            radioGroup.value = extras.IndexOf(answersHolder.GetSingleAnswer(id));
+                        
+                        // Create the text input element for the "Other" write-in field
+                        VisualElement radioOtherTextInput = textInputElement.Instantiate();
+                        TextField radioOtherField = radioOtherTextInput.Q<TextField>("input");
+                        radioOtherField.label = "Specify:";
+                        radioOtherTextInput.style.display = DisplayStyle.None;
+                        radio.Add(radioOtherTextInput);
 
-                        EventCallback<ChangeEvent<int>> radioCallback = (ChangeEvent<int> evt) => {answersHolder.AddSingleAnswer(id, extras[evt.newValue]);};
+                        int otherOptionIndex = extras.IndexOf("Other (free response)");
+
+                        if(answersHolder.IsQuestionAnswered(id))
+                        {
+                            string currentAnswer = answersHolder.GetSingleAnswer(id);
+                            int selectedIndex = extras.IndexOf(currentAnswer);
+                            
+                            if (selectedIndex >= 0)
+                            {
+                                radioGroup.value = selectedIndex;
+                            }
+                            else if (otherOptionIndex >= 0) // The saved answer is a custom user string
+                            {
+                                radioGroup.value = otherOptionIndex;
+                                radioOtherTextInput.style.display = DisplayStyle.Flex;
+                                radioOtherField.value = currentAnswer;
+                            }
+                        }
+
+                        EventCallback<ChangeEvent<int>> radioCallback = (ChangeEvent<int> evt) => 
+                        {
+                            if (evt.newValue == otherOptionIndex && otherOptionIndex >= 0)
+                            {
+                                radioOtherTextInput.style.display = DisplayStyle.Flex;
+                                answersHolder.AddSingleAnswer(id, radioOtherField.value);
+                            }
+                            else
+                            {
+                                radioOtherTextInput.style.display = DisplayStyle.None;
+                                if (evt.newValue >= 0 && evt.newValue < extras.Count)
+                                {
+                                    answersHolder.AddSingleAnswer(id, extras[evt.newValue]);
+                                }
+                            }
+                        };
                         radioGroup.RegisterValueChangedCallback(radioCallback);
-                        unbindingActions.Add(() => {radioGroup.UnregisterCallback(radioCallback);});
+                        unbindingActions.Add(() => { radioGroup.UnregisterCallback(radioCallback); });
+
+                        EventCallback<ChangeEvent<string>> radioOtherTextCallback = (ChangeEvent<string> evt) => 
+                        {
+                            if (radioGroup.value == otherOptionIndex)
+                            {
+                                answersHolder.AddSingleAnswer(id, evt.newValue);
+                            }
+                        };
+                        radioOtherField.RegisterValueChangedCallback(radioOtherTextCallback);
+                        unbindingActions.Add(() => { radioOtherField.UnregisterCallback(radioOtherTextCallback); });
 
                         formRoot.Add(radio);
                         break;

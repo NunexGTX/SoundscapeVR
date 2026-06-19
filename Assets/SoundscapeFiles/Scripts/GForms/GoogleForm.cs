@@ -263,7 +263,7 @@ public class GoogleForm
         if (choice != null)
         {
             foreach (JToken opt in choice["options"] as JArray ?? new JArray())
-                extra.Add(opt["isOther"]?.Value<bool>() == true ? "Outro (Texto Livre)" : opt["value"]?.ToString() ?? "__Other__");
+                extra.Add(opt["isOther"]?.Value<bool>() == true ? "Other (free response)" : opt["value"]?.ToString() ?? "__Other__");
             shuffle = choice["shuffle"]?.Value<bool>() ?? false;
         }
         else if (qType == FormElement.SCALE)
