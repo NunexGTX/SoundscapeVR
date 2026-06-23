@@ -478,7 +478,7 @@ public class FormScript : MonoBehaviour
                             Debug.Log($"Found request for ss: {title}");
                         }
                         
-                        textThing.Q<Label>("title").text = title;
+                        textThing.Q<Label>("title").text = "Soundscape";
                         textThing.Q<Label>("description").text = question;
 
                         if(id.StartsWith(SoundscapeInit)){
@@ -488,7 +488,7 @@ public class FormScript : MonoBehaviour
                                 Action ssButtonStart = () => ssWrapper.SetAndStartSoundscape(found);
                                 Button btn = new()
                                 {
-                                    text = $"Start {title}"
+                                    text = $"Start Soundscape"
                                 };
                                 btn.clicked += ssButtonStart;
                                 unbindingActions.Add(() => btn.clicked -= ssButtonStart);
