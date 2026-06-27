@@ -81,6 +81,7 @@ public class FormScript : MonoBehaviour
         mainMenu.SetActive(true);
         gameObject.SetActive(false);
         audioVideoMenu?.SetActive(true);
+        formPosition = -1;
     }
     private void NextButton()
     {
@@ -472,17 +473,19 @@ public class FormScript : MonoBehaviour
                     default:
                         VisualElement textThing = labelElement.Instantiate();
                         string title = id;
+                        string ssName = "";
                         if (id.StartsWith(SoundscapeInit))
                         {
-                            title = id[15..];
+                            ssName = title[15..];
                             Debug.Log($"Found request for ss: {title}");
+                            title = "Soundscape";
                         }
                         
-                        textThing.Q<Label>("title").text = "Soundscape";
+                        textThing.Q<Label>("title").text = title;
                         textThing.Q<Label>("description").text = question;
 
                         if(id.StartsWith(SoundscapeInit)){
-                            Soundscape found = library.soundscapeList.GetByTitle(title);
+                            Soundscape found = library.soundscapeList.GetByTitle(ssName);
                             if(found != null)
                             {
                                 Action ssButtonStart = () => ssWrapper.SetAndStartSoundscape(found);

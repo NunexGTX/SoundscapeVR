@@ -243,7 +243,7 @@ public class GoogleForm
         if (question == null) return null;
 
         string qId     = "entry." + Convert.ToInt64(question["questionId"]?.ToString() ?? "0", 16);
-        string qName   = item["title"]?.ToString() ?? "Untitled Question";
+        string qName   = item["title"]?.ToString() ?? "";
         bool required  = question["required"]?.Value<bool>() ?? false;
         JToken choice  = question["choiceQuestion"];
         string qType;

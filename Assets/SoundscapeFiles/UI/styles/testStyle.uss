@@ -189,7 +189,7 @@ VisualElement > .unity-scroll-view--vertical > #settingsFoldout > #projectionDro
 }
 
 .unity-radio-button__text {
-    margin-bottom: 20px;
+    margin-bottom: 17px;
     padding-bottom: 0;
     margin-top: 13px;
     padding-top: 0;

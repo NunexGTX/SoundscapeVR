@@ -196,12 +196,12 @@ public class SoundscapeWrapper: MonoBehaviour
             await Task.Delay(100);
         }
         loadingManager.SetToStart(1);
-        loadingManager.SetInfo($"Loading visuals for: {currentSoundscape.title}");
+        loadingManager.SetInfo($"Loading visuals for: ");
         
         //when loading the visuals fails (given path isnt found, other READ-WRITE exceptions)
         currentSoundscape.OnVisualsFail(() =>
         {
-            _ = OnVisualFail($"Failed to load visuals for: {currentSoundscape.title}");
+            _ = OnVisualFail($"Failed to load visuals for: ");
         });
         //when loading the visuals was successful
         currentSoundscape.OnVisualsLoaded(() =>
@@ -211,7 +211,7 @@ public class SoundscapeWrapper: MonoBehaviour
             _ = PrepareAudiosAndPlaySoundscape();
         } );
 
-        Debug.Log($"[SoundscapeVR] Preparing soundscape {currentSoundscape.title ?? "None"}");
+        Debug.Log($"[SoundscapeVR] Preparing soundscape");
         try
         {
             ssVisual = currentSoundscape.TryGetVisuals(vrStateData.GetCurrentVisuals(), out videoPlaying);   
@@ -223,13 +223,13 @@ public class SoundscapeWrapper: MonoBehaviour
             Debug.LogError($"[SoundscapeVR] Error loading visuals: {e.StackTrace}");
             return;
         }
-        Debug.Log($"[SoundscapeVR] Gotten visuals for soundscape {currentSoundscape.title}");
+        Debug.Log($"[SoundscapeVR] Gotten visuals for soundscape");
         screen = currentSoundscape.GetScreenObject();
         currentSoundscape.SetEdit(inEditMode);
         if(ssVisual == null)
         {
             videoPlaying = false;
-            _ = OnVisualFail($"Null Visuals for {currentSoundscape.title}");
+            _ = OnVisualFail($"Null Visuals for");
         }
         return;
 
@@ -273,6 +273,7 @@ public class SoundscapeWrapper: MonoBehaviour
         {
             await Task.Delay(100);
         }
+        if(currentSoundscape == null) return;
 
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING){
             reapyController.loadingManager = loadingManager;
@@ -404,6 +405,7 @@ public class SoundscapeWrapper: MonoBehaviour
         RemoveAudioSources();
         currentSoundscape = null;
         if(gameObject != null) StopAllCoroutines();
+        loadingManager.EndLoading();
 
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) reapyController.StopSoundscape();
         //playerEditor?.LeaveEdit();

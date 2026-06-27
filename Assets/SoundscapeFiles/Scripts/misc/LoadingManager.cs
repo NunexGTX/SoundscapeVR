@@ -52,9 +52,8 @@ public class LoadingManager : MonoBehaviour
         softConcurrencyCheck = true;
         progress = 0f;
         totalLoadingIncrementCount = end;
-        image.SetActive(true);
+        SetVisible(true);
         loadingBar.value = 0;
-        player.SetPlayerRotation(false);
         SetInfo("Starting up...");
         timeSinceLastUpdate = 0;
         timedout = false;
@@ -112,9 +111,17 @@ public class LoadingManager : MonoBehaviour
         timeSinceLastUpdate = 0;
         timedout = false;
         //if theres another loader queued up, dont disable the visuals.
-        if(queued) return;
-        image.SetActive(false);
-        player.SetPlayerRotation(true);
+        if (queued)
+        {
+            Debug.LogWarning($"[SoundscapeVR] Another loader queued up. Maintaining visibility");
+        }
+        SetVisible(false);
+    }
+
+    private void SetVisible(bool show){
+        Debug.Log($"[SoundscapeVR] Setting loading visibility to {show}");
+        image.SetActive(show);
+        player.SetPlayerRotation(!show);
     }
 
     public LoadingManager OnTimeout(Action onTimeout, int timeoutSeconds = 5)
