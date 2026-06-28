@@ -171,7 +171,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
             CreatePlaceholderPreview(worldPos);
         }
 
-        currentPreviewObject.transform.position = worldPos-(audioSourcePlacerObject.transform.localScale/2);
+        currentPreviewObject.transform.position = worldPos;
     }
 
     private void CreatePlaceholderPlacer(Vector3 worldPos)
