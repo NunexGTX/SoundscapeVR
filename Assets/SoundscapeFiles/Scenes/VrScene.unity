@@ -1559,6 +1559,7 @@ GameObject:
   - component: {fileID: 657310049}
   - component: {fileID: 657310048}
   - component: {fileID: 657310050}
+  - component: {fileID: 657310053}
   - component: {fileID: 657310051}
   - component: {fileID: 657310052}
   m_Layer: 0
@@ -1640,6 +1641,7 @@ MonoBehaviour:
   aimingSphere: {fileID: 468564577}
   audioSourcePlacerObject: {fileID: 4017158347209711136, guid: 7994b6627bcf14f458477dc662f6548a, type: 3}
   placingMaterial: {fileID: 2100000, guid: 82c97886f55849f46bb8d8b491654bf4, type: 2}
+  previewMaterial: {fileID: 2100000, guid: 7305936122398102e91a79b3f2b300f3, type: 2}
   defaultMaterial: {fileID: 2100000, guid: cb58b00933386e844a4fe82d340b5ee7, type: 2}
   deletingMaterial: {fileID: 2100000, guid: bfa274fe4e5a5ff429e239d47d668ce3, type: 2}
   selectingMaterial: {fileID: 2100000, guid: 82c97886f55849f46bb8d8b491654bf4, type: 2}
@@ -1687,6 +1689,24 @@ MonoBehaviour:
   scrollSpeed: 500
   threshold: 0.1
   invertVertical: 0
+--- !u!114 &657310053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 657310047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf55b7a8edf73d1285b6b8770406c2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractorRaycast
+  vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
+  sphereLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  editor: {fileID: 657310050}
+  UiInteractor: {fileID: 49396375}
 --- !u!1 &720126414
 GameObject:
   m_ObjectHideFlags: 0

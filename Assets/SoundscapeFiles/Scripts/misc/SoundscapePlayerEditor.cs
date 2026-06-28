@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.XR.CoreUtils;
@@ -5,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Interactors.Casters;
 
@@ -19,6 +21,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     public GameObject aimingSphere;
     public GameObject audioSourcePlacerObject;
     public Material placingMaterial;
+    public Material previewMaterial;
     public Material defaultMaterial;
     public Material deletingMaterial;
     public Material selectingMaterial;
@@ -29,6 +32,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     [SerializeField] private PlayerManager playerManager;
     [SerializeField] private List<GameObject> screensToHideOnSphere;
     private GameObject currentPlacingObject;
+    private GameObject currentPreviewObject;
     private GameObject currentTextAsset = null;
 
     private Audio currentPickedAudio;
@@ -117,6 +121,9 @@ public class SoundscapePlayerEditor: MonoBehaviour
     //Called by the Sphere to set azimuth and latitude
     public void FirstPlaceAudio(Vector3 worldPos)
     {
+        Destroy(currentPreviewObject);
+        currentPreviewObject = null;
+
         if(worldPos.Equals(INVALID_VEC_POS)) return;
         if(!soundscapeWrapper.HasSoundscape()) return;
         if(currentState != State.TryPlace && currentState != State.TryMove) return;
@@ -154,12 +161,33 @@ public class SoundscapePlayerEditor: MonoBehaviour
         SetSphereActive(false);
     }
 
+    public void PreviewPlaceAudio(Vector3 worldPos)
+    {
+        if(worldPos.Equals(INVALID_VEC_POS)) return;
+        if(!soundscapeWrapper.HasSoundscape()) return;
+        if(currentState != State.TryPlace && currentState != State.TryMove) return;
+        if(currentPreviewObject == null)
+        {
+            CreatePlaceholderPreview(worldPos);
+        }
+
+        currentPreviewObject.transform.position = worldPos-(audioSourcePlacerObject.transform.localScale/2);
+    }
+
     private void CreatePlaceholderPlacer(Vector3 worldPos)
     {
         currentPlacingObject = Instantiate(audioSourcePlacerObject);
         currentPlacingObject.transform.position = worldPos;
         currentPlacingObject.GetComponent<MeshRenderer>().material = placingMaterial;
     }
+
+    private void CreatePlaceholderPreview(Vector3 worldPos)
+    {
+        currentPreviewObject = Instantiate(audioSourcePlacerObject);
+        currentPreviewObject.transform.position = worldPos;
+        currentPreviewObject.GetComponent<MeshRenderer>().material = previewMaterial;
+    }
+
     
     private Vector3 GetSelectionPoint(ActivateEventArgs args)
     {
