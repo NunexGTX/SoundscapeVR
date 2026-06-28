@@ -9,7 +9,7 @@ public class InteractorRaycast : MonoBehaviour
     [SerializeField] private SoundscapePlayerEditor editor;
     [SerializeField] private NearFarInteractor UiInteractor;
 
-    void FixedUpdate()
+    void LateUpdate()
     {
         if (vrStateData.IsInVr)
         {

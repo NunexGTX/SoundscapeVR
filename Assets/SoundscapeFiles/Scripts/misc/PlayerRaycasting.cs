@@ -10,7 +10,7 @@ public class PlayerRaycasting : MonoBehaviour
     [SerializeField] private LayerMask soundSourcesLayer; 
     [SerializeField] private LayerMask UiLayer;
 
-    void FixedUpdate()
+    void LateUpdate()
     {
         if (!vrStateData.IsInVr)
         {
