@@ -26,6 +26,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     public Material deletingMaterial;
     public Material selectingMaterial;
     [SerializeField] private float scrollStep = 0.2f;
+    [SerializeField] private float previewMovSpeed = 40f;
     [SerializeField] private GameObject distanceTextAsset;
     [SerializeField] private EditSoundscapeScript editUi;
     [SerializeField] private AudioEffectScript effectFiltersUi;
@@ -39,6 +40,8 @@ public class SoundscapePlayerEditor: MonoBehaviour
     private AudioSource pickedAudioAsSource;
     private GameObject currentSelectedSourceObject;
     private AudioSource.AudioData copiedAudioData = null;
+    private bool placingAudio = false;
+
     private enum State
     {
         //standby
@@ -121,12 +124,14 @@ public class SoundscapePlayerEditor: MonoBehaviour
     //Called by the Sphere to set azimuth and latitude
     public void FirstPlaceAudio(Vector3 worldPos)
     {
-        Destroy(currentPreviewObject);
-        currentPreviewObject = null;
-
         if(worldPos.Equals(INVALID_VEC_POS)) return;
         if(!soundscapeWrapper.HasSoundscape()) return;
         if(currentState != State.TryPlace && currentState != State.TryMove) return;
+
+        placingAudio = true;
+        Destroy(currentPreviewObject);
+        currentPreviewObject = null;
+
         Vector3 sphereCoords = SoundscapeLibrary.WorldToSphere(worldPos);
         if(currentState == State.TryPlace)
         {    
@@ -135,6 +140,8 @@ public class SoundscapePlayerEditor: MonoBehaviour
                 UnselectLibraryAudio();
                 CancelState();
                 Debug.LogError("Tried to place a null audio");
+
+                placingAudio = false;
                 return;
             }
             Debug.Log("Placing audio: " + currentPickedAudio.id + " at " + worldPos);
@@ -148,6 +155,8 @@ public class SoundscapePlayerEditor: MonoBehaviour
                 UnselectLibraryAudio();
                 CancelState();
                 Debug.LogError("Tried to move a null world audio source");
+
+                placingAudio = false;
                 return;
             }
             WorldAudioSource src = currentSelectedSourceObject.GetComponent<WorldAudioSource>();
@@ -159,10 +168,12 @@ public class SoundscapePlayerEditor: MonoBehaviour
         CreatePlaceholderPlacer(worldPos);
         DistanceFeedback(worldPos);
         SetSphereActive(false);
+        placingAudio = false;
     }
 
     public void PreviewPlaceAudio(Vector3 worldPos)
     {
+        if (placingAudio) return;
         if(worldPos.Equals(INVALID_VEC_POS)) return;
         if(!soundscapeWrapper.HasSoundscape()) return;
         if(currentState != State.TryPlace && currentState != State.TryMove) return;
@@ -171,7 +182,14 @@ public class SoundscapePlayerEditor: MonoBehaviour
             CreatePlaceholderPreview(worldPos);
         }
 
-        currentPreviewObject.transform.position = worldPos;
+        Vector3 targetPos = new(
+            Math.Min((aimingSphere.transform.localScale.x/100)-audioSourcePlacerObject.transform.localScale.x,worldPos.x),
+            Math.Min((aimingSphere.transform.localScale.y/100)-audioSourcePlacerObject.transform.localScale.y,worldPos.y),
+            Math.Min((aimingSphere.transform.localScale.z/100)-audioSourcePlacerObject.transform.localScale.z,worldPos.z));
+        currentPreviewObject.transform.position = Vector3.MoveTowards(
+            currentPreviewObject.transform.position,
+            targetPos,
+            Time.deltaTime * previewMovSpeed);
     }
 
     private void CreatePlaceholderPlacer(Vector3 worldPos)
@@ -186,6 +204,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         currentPreviewObject = Instantiate(audioSourcePlacerObject);
         currentPreviewObject.transform.position = worldPos;
         currentPreviewObject.GetComponent<MeshRenderer>().material = previewMaterial;
+        currentPreviewObject.layer = LayerMask.NameToLayer("SoundSources");
     }
 
     
@@ -317,6 +336,11 @@ public class SoundscapePlayerEditor: MonoBehaviour
             {
                 Destroy(currentPlacingObject);       
                 currentPlacingObject = null;
+            }
+            if (currentPreviewObject != null)
+            {
+                Destroy(currentPreviewObject);
+                currentPreviewObject = null;
             }
             SetSphereActive(false);
             DestroyTextAsset();

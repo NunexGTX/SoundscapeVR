@@ -10,14 +10,6 @@ public class PlayerRaycasting : MonoBehaviour
     [SerializeField] private LayerMask soundSourcesLayer; 
     [SerializeField] private LayerMask UiLayer;
 
-    void FixedUpdate()
-    {
-        if (!vrStateData.IsInVr)
-        {
-            editor.PreviewPlaceAudio(RaycastSphere());
-        }
-    }
-
     void Update()
     {
         if(!vrStateData.IsInVr){
@@ -32,6 +24,10 @@ public class PlayerRaycasting : MonoBehaviour
                 }
                 
                 editor.FirstPlaceAudio(RaycastSphere());
+            }
+            else
+            {
+                editor.PreviewPlaceAudio(RaycastSphere());
             }
         }
     }

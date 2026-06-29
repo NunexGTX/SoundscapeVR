@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Interactors.Casters;
 
-public class InteractorRaycast : MonoBehaviour
+public class InteractorRaycasting : MonoBehaviour
 {
     [SerializeField] private VrStateData vrStateData;
     [SerializeField] private LayerMask sphereLayer;
