@@ -11,7 +11,7 @@ public class InteractorRaycasting : MonoBehaviour
 
     void LateUpdate()
     {
-        if (vrStateData.IsInVr)
+        if (vrStateData.IsInVr && editor.ShouldPreview())
         {
              editor.PreviewPlaceAudio(RaycastSphere());
         }

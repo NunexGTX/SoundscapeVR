@@ -78,10 +78,11 @@ public class SoundscapePlayerEditor: MonoBehaviour
         deleteAction.action.performed -= DeleteAction;
     }
 
-    //Called by edit UI, when clicking on an audio source
+    //Called by edit UI, when clicking on an audio
     public bool SelectAudio(Audio audio)
     {
-        if(!soundscapeWrapper.HasSoundscape() || currentState != State.Standby) return false;
+        if(!soundscapeWrapper.HasSoundscape() || (currentState != State.Standby && currentState != State.Select)) return false;
+        CancelState();
         currentPickedAudio = audio;
         currentState = State.TryPlace;
         SetSphereActive(true);
@@ -159,9 +160,11 @@ public class SoundscapePlayerEditor: MonoBehaviour
                 placingAudio = false;
                 return;
             }
+            
             WorldAudioSource src = currentSelectedSourceObject.GetComponent<WorldAudioSource>();
             Debug.Log("Moving audio source: " + src.audioSource.GetAudioId() + " to " + worldPos);
             pickedAudioAsSource = new AudioSource(src.audioSource).WithNewPosition(sphereCoords);
+            currentSelectedSourceObject.GetComponent<MeshRenderer>().enabled = false;
             //change state
             currentState = State.AdjustMove;
         }
@@ -328,8 +331,10 @@ public class SoundscapePlayerEditor: MonoBehaviour
         }
         else
         {
-            UnselectSource();
             currentState = State.Standby;
+            if(currentSelectedSourceObject != null)
+                currentSelectedSourceObject.GetComponent<MeshRenderer>().enabled = true;
+            UnselectSource();
             UnselectLibraryAudio();
             //currentSelectedAudio = null;
             if(currentPlacingObject != null)
@@ -420,5 +425,10 @@ public class SoundscapePlayerEditor: MonoBehaviour
     {
         if(copiedAudioData == null) return "";
         else return copiedAudioData.audioId;
+    }
+
+    internal bool ShouldPreview()
+    {
+        return currentState == State.TryPlace || currentState == State.TryMove;
     }
 }
