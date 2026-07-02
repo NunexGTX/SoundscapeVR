@@ -5,6 +5,10 @@ using UnityEngine.UIElements;
 public abstract class AudioEffectData
 {
     public string effectId;
+    protected bool IsAudioAmbisonic()
+    {
+        return SoundscapeLibrary.GetAudioType(effectId) == Audio.TYPE_AMBISONIC;
+    }
     
  /*   public void ApplyEffectToSource(GameObject audioClipObject, AudioEffectData data)
     {

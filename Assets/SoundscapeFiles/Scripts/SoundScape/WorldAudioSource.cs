@@ -98,11 +98,6 @@ public class WorldAudioSource: MonoBehaviour
         
     }
 
-    bool isWorldSourceAmbisonic()
-    {
-        return library.GetAudioType(audioSource.GetAudioId()) == Audio.TYPE_AMBISONIC;
-    }
-
     //called when playing or replaying audio source.
     public async Task PlayAudio(bool incLoading)
     {
@@ -117,7 +112,7 @@ public class WorldAudioSource: MonoBehaviour
             }
             src.generator = gen;
             src.time = 0;
-            if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
+            if (SoundscapeLibrary.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
             {
                 src.spatializePostEffects = false;
                 src.spatialize = false;
