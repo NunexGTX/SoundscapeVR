@@ -424,12 +424,12 @@ public class SoundscapePlayerEditor: MonoBehaviour
 
     private void DistanceAdjustClue(Vector3 worldPos)
     {
-        if(currentDistanceClueAsset)
+        if(currentDistanceClueAsset == null)
             currentDistanceClueAsset = Instantiate(distanceClue);
 
         Vector3 cluePosition = AudioSourceCubeRightSide(worldPos);
         
-        currentDistanceClueAsset.GetComponent<DistText>().SetAndPlace(worldPos);
+        currentDistanceClueAsset.GetComponent<AudioSourceClue>().SetAndPlace(cluePosition);
     }
     
     /*

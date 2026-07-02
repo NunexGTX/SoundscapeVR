@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 1065984032789805654}
   - component: {fileID: 5236444170834413994}
   - component: {fileID: 1714269349472843841}
-  - component: {fileID: 2064167230398575183}
+  - component: {fileID: 4687782008802088803}
   m_Layer: 5
   m_Name: RightTriggerDistanceAdjust
   m_TagString: Untagged
@@ -313,7 +313,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 0
---- !u!114 &2064167230398575183
+--- !u!114 &4687782008802088803
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -322,8 +322,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7548355003463832129}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84f199d4fad2be04c96b15a6aeb15a4c, type: 3}
+  m_Script: {fileID: 11500000, guid: 276da304a107a20ddab938771fb6b5e3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DistText
+  m_EditorClassIdentifier: Assembly-CSharp::AudioSourceClue
   playerManager: {fileID: 0}
   lerperMult: 5
