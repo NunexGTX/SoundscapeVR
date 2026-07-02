@@ -28,6 +28,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     [SerializeField] private float scrollStep = 0.2f;
     [SerializeField] private float previewMovSpeed = 40f;
     [SerializeField] private GameObject distanceTextAsset;
+    [SerializeField] private GameObject distanceClue;
     [SerializeField] private EditSoundscapeScript editUi;
     [SerializeField] private AudioEffectScript effectFiltersUi;
     [SerializeField] private PlayerManager playerManager;
@@ -35,7 +36,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     private GameObject currentPlacingObject;
     private GameObject currentPreviewObject;
     private GameObject currentTextAsset = null;
-
+    private GameObject currentDistanceClueAsset = null;
     private Audio currentPickedAudio;
     private AudioSource pickedAudioAsSource;
     private GameObject currentSelectedSourceObject;
@@ -170,6 +171,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         }
         CreatePlaceholderPlacer(worldPos);
         DistanceFeedback(worldPos);
+        DistanceAdjustClue(worldPos);
         SetSphereActive(false);
         placingAudio = false;
     }
@@ -251,6 +253,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
             soundscapeWrapper.PlaceNewAudioSource(pickedAudioAsSource);
         currentState = State.Standby;
         DestroyTextAsset();
+        DestroyDistanceAdjustClue();
         UnselectLibraryAudio();
         UnselectSource(goExists: false);
         SetUIVisibility(true);
@@ -349,6 +352,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
             }
             SetSphereActive(false);
             DestroyTextAsset();
+            DestroyDistanceAdjustClue();
         }
         SetUIVisibility(true);
     }
@@ -359,7 +363,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(currentState != State.AdjustPlace && currentState != State.AdjustMove) return;
         Vector2 scrollValue = context.ReadValue<Vector2>();
         float scrollY = scrollValue.y;
-        if(math.abs(scrollY) < 0.5) return;    
+        if(math.abs(scrollY) < 0.5) return;
         Vector3 sphereCoords = pickedAudioAsSource.GetSpherePosition();
         Vector3 newCoords = new()
         {
@@ -372,6 +376,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         CreatePlaceholderPlacer(worldPos);
         pickedAudioAsSource.WithNewPosition(newCoords);
         DistanceFeedback(worldPos);
+        DistanceAdjustClue(worldPos);
     }
 
     private void DeleteAction(InputAction.CallbackContext context)
@@ -401,11 +406,42 @@ public class SoundscapePlayerEditor: MonoBehaviour
         }
     }
 
+    private void DestroyDistanceAdjustClue()
+    {
+        if(currentDistanceClueAsset != null)
+        {
+            Destroy(currentDistanceClueAsset);
+            currentDistanceClueAsset = null;
+        }
+    }
+
     private void DistanceFeedback(Vector3 worldPos)
     {
         if(currentTextAsset == null)
             currentTextAsset = Instantiate(distanceTextAsset);
         currentTextAsset.GetComponent<DistText>().SetAndPlace(worldPos);
+    }
+
+    private void DistanceAdjustClue(Vector3 worldPos)
+    {
+        if(currentDistanceClueAsset)
+            currentDistanceClueAsset = Instantiate(distanceClue);
+
+        Vector3 cluePosition = AudioSourceCubeRightSide(worldPos);
+        
+        currentDistanceClueAsset.GetComponent<DistText>().SetAndPlace(worldPos);
+    }
+    
+    /*
+    Calculates the right side position for the AudioSourcePlacerObject so we can put the distance move UI cue there.
+    In this case, we only calculate the right side based on the face facing the player, ignoring the cube's depth
+    */
+    private Vector3 AudioSourceCubeRightSide(Vector3 sphereSourceWorldPos)
+    {
+        Vector3 audioCubeScaleBounds = audioSourcePlacerObject.GetComponent<Renderer>().bounds.size;
+        float halfSide = audioCubeScaleBounds.z/2; //Since its a cube any side is fine
+
+        return sphereSourceWorldPos + new Vector3(0,0,halfSide);
     }
 
     public void CopyData(AudioSource.AudioData audioData)

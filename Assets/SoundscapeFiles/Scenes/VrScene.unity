@@ -1648,6 +1648,7 @@ MonoBehaviour:
   scrollStep: 0.2
   previewMovSpeed: 40
   distanceTextAsset: {fileID: 7548355003463832129, guid: efdbd5ff3a559644a85935edef2b1f1d, type: 3}
+  distanceClue: {fileID: 7548355003463832129, guid: 80ac3f2e3844c4d5098fca39713e9b74, type: 3}
   editUi: {fileID: 2043944001}
   effectFiltersUi: {fileID: 2125151702}
   playerManager: {fileID: 657310048}
