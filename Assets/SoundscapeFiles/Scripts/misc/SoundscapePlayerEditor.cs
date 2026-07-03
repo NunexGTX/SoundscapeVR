@@ -29,6 +29,9 @@ public class SoundscapePlayerEditor: MonoBehaviour
     [SerializeField] private float previewMovSpeed = 40f;
     [SerializeField] private GameObject distanceTextAsset;
     [SerializeField] private GameObject distanceClue;
+    [SerializeField] private GameObject distanceClueNoVR;
+    [SerializeField] private GameObject deleteClue;
+    [SerializeField] private GameObject deleteClueNoVR;
     [SerializeField] private EditSoundscapeScript editUi;
     [SerializeField] private AudioEffectScript effectFiltersUi;
     [SerializeField] private PlayerManager playerManager;
@@ -37,6 +40,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
     private GameObject currentPreviewObject;
     private GameObject currentTextAsset = null;
     private GameObject currentDistanceClueAsset = null;
+    private GameObject currentDeleteClueAsset = null;
     private Audio currentPickedAudio;
     private AudioSource pickedAudioAsSource;
     private GameObject currentSelectedSourceObject;
@@ -272,7 +276,26 @@ public class SoundscapePlayerEditor: MonoBehaviour
         effectFiltersUi.SetValues(src.GetComponent<WorldAudioSource>().audioSource.audioData);
         effectFiltersUi.gameObject.SetActive(true);
         currentState = State.Select;
+        Vector3 worldPos = currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource.GetSpherePosition();
+        ShowSourceDeleteClue(worldPos);
         Debug.Log("State changed to select");
+    }
+
+    private void ShowSourceDeleteClue(Vector3 worldPos)
+    {
+        if(currentDeleteClueAsset == null)
+        {
+            if(soundscapeWrapper.vrStateData.IsInVr == true)
+            {
+                currentDeleteClueAsset = Instantiate(deleteClue);
+            }
+            else
+            {
+                currentDeleteClueAsset = Instantiate(deleteClueNoVR);
+            }
+        }
+        
+        currentDeleteClueAsset.GetComponent<AudioSourceClue>().SetAndPlace(worldPos);
     }
 
     //called by audio effect UI to collect the data from it and write it into currentSelectedSourceObject
@@ -307,6 +330,17 @@ public class SoundscapePlayerEditor: MonoBehaviour
             currentSelectedSourceObject.GetComponent<WorldAudioSource>().ResetMaterial(defaultMaterial);
         currentSelectedSourceObject = null;
         effectFiltersUi.gameObject.SetActive(false);
+
+        DestroySourceDeleteClue();
+    }
+
+    private void DestroySourceDeleteClue()
+    {
+        if(currentDeleteClueAsset != null)
+        {
+            Destroy(currentDeleteClueAsset);
+            currentDeleteClueAsset = null;
+        }
     }
 
     //called by audio effect UI button to move the source.
@@ -425,11 +459,18 @@ public class SoundscapePlayerEditor: MonoBehaviour
     private void DistanceAdjustClue(Vector3 worldPos)
     {
         if(currentDistanceClueAsset == null)
-            currentDistanceClueAsset = Instantiate(distanceClue);
-
-        Vector3 cluePosition = AudioSourceCubeRightSide(worldPos);
+        {
+            if(soundscapeWrapper.vrStateData.IsInVr == true)
+            {
+                currentDistanceClueAsset = Instantiate(distanceClue);
+            }
+            else
+            {
+                currentDistanceClueAsset = Instantiate(distanceClueNoVR);
+            }
+        }
         
-        currentDistanceClueAsset.GetComponent<AudioSourceClue>().SetAndPlace(cluePosition);
+        currentDistanceClueAsset.GetComponent<AudioSourceClue>().SetAndPlace(worldPos);
     }
     
     /*

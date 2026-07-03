@@ -1021,7 +1021,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &375924655
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1649,6 +1649,9 @@ MonoBehaviour:
   previewMovSpeed: 40
   distanceTextAsset: {fileID: 7548355003463832129, guid: efdbd5ff3a559644a85935edef2b1f1d, type: 3}
   distanceClue: {fileID: 7548355003463832129, guid: 80ac3f2e3844c4d5098fca39713e9b74, type: 3}
+  distanceClueNoVR: {fileID: 7548355003463832129, guid: 145d1603df4624ec88f5084f9391c46c, type: 3}
+  deleteClue: {fileID: 7548355003463832129, guid: 12015e2d4f4043656b8adefd829ae9c7, type: 3}
+  deleteClueNoVR: {fileID: 7548355003463832129, guid: 12015e2d4f4043656b8adefd829ae9c7, type: 3}
   editUi: {fileID: 2043944001}
   effectFiltersUi: {fileID: 2125151702}
   playerManager: {fileID: 657310048}
@@ -1742,7 +1745,7 @@ RectTransform:
   m_Father: {fileID: 977132029}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5092,7 +5095,7 @@ RectTransform:
   m_Father: {fileID: 2037751218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
