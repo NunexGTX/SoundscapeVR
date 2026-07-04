@@ -33,7 +33,7 @@ public class OcclusionEffectData : AudioEffectData
         return this;
     }
     
-    public override void ApplyEffectToSource(GameObject audioClipObject)
+    public override void ApplyEffectToSource(GameObject audioClipObject, bool isAmbisonic)
     {
         if(audioClipObject.GetComponent<SteamAudioSource>() == null) audioClipObject.AddComponent<SteamAudioSource>();
         SteamAudioSource steamSource = audioClipObject.GetComponent<SteamAudioSource>();
@@ -54,7 +54,7 @@ public class OcclusionEffectData : AudioEffectData
 
     public override bool IsEffectAppliedInUI(VisualElement root) => root.Q<Toggle>("occlusionToggle").value;
 
-    public override AudioEffectData CollectFromUI(VisualElement root)
+    public override AudioEffectData CollectFromUI(VisualElement root, bool isAmbisonic)
     {
         bool dependency = root.Q<Toggle>("freqToggle").value;
         float occlusionValue = root.Q<Slider>("occlusionValue").value;
@@ -64,7 +64,7 @@ public class OcclusionEffectData : AudioEffectData
         return new OcclusionEffectData(dependency, occlusionValue, lowOcc, midOcc, highOcc).WithId(effectId);
     }
 
-    public override void ApplyDefaultUI(VisualElement root)
+    public override void ApplyDefaultUI(VisualElement root, bool isAmbisonic)
     {
         root.Q<Foldout>("occlusionFoldout").value = false;
         root.Q<Toggle>("occlusionToggle").value = false;
@@ -80,7 +80,7 @@ public class OcclusionEffectData : AudioEffectData
         root.Q<Slider>("midFreqOcc").value = occlusion_mid_freq;
         root.Q<Slider>("highFreqOcc").value = occlusion_high_freq;
     }
-    public override string[] GetTrackParams()
+    public override string[] GetTrackParams(bool isAmbisonic)
     {
         return new string[] { "true", frequency_dependent.ToString(), occlusion_value.ToString(), occlusion_low_freq.ToString(), occlusion_mid_freq.ToString(), occlusion_high_freq.ToString() };
     }

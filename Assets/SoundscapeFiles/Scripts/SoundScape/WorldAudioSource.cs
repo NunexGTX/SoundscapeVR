@@ -93,7 +93,7 @@ public class WorldAudioSource: MonoBehaviour
         
         foreach(AudioEffectInstance audioEffectInstance in audioSourceEffects)
         {
-            reaperController.AddEffectToAudio(audioSource.GetUUID(),audioEffectInstance);
+            reaperController.AddEffectToAudio(audioSource.GetUUID(),audioEffectInstance, SoundscapeLibrary.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC));
         }
         
     }

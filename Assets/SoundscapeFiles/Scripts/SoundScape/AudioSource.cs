@@ -29,31 +29,6 @@ public class AudioSource : ISerializationCallbackReceiver
         private set => _audioData = value;
     }
 
-    /*public List<AudioEffectInstance> audioEffects
-    {
-        get => audioData.effectInstances;
-    }
-    public float volume
-    {
-        get => audioData.volume;
-    }
-    public bool mute
-    {
-        get => audioData.mute;
-    }
-    public int delaySeconds
-    {
-        get => audioData.delaySeconds;
-    }
-    public bool loop
-    {
-        get => audioData.loop;
-    }
-    public bool visible
-    {
-        get => audioData.visible;
-    }*/
-
     public AudioSource(AudioSource other)
     {
         this.audioId = other.audioId;
@@ -101,7 +76,7 @@ public class AudioSource : ISerializationCallbackReceiver
     {
         var effects = audioData.effectInstances ?? new List<AudioEffectInstance>();
         
-        foreach(AudioEffectInstance effect in effects) effect.ApplyEffectToSource(go);
+        foreach(AudioEffectInstance effect in effects) effect.ApplyEffectToSource(go, SoundscapeLibrary.GetAudioType(audioId).Equals(Audio.TYPE_AMBISONIC));
         go.GetComponent<UnityEngine.AudioSource>().volume = audioData.volume;
         go.GetComponent<UnityEngine.AudioSource>().loop = audioData.loop;
     }
@@ -183,6 +158,14 @@ public class AudioSource : ISerializationCallbackReceiver
             newList.Add(new(effect));
         }
         return newList;
+    }
+
+    public AudioSource CloneWithEffect(AudioEffectInstance effectToApply)
+    {
+        AudioSource clone = new(this);
+        clone.AudioEffects.RemoveAll(eff => eff.effectData.effectId.Equals(effectToApply.effectData.effectId));
+        clone.AudioEffects.Add(effectToApply);
+        return clone;
     }
 
     public record AudioData(

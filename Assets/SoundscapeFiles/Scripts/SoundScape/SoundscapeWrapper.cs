@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.XR.CoreUtils;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -87,7 +88,7 @@ public class SoundscapeWrapper: MonoBehaviour
         WorldAudioSource worldAudioSource = srcObject.GetComponent<WorldAudioSource>();
         UpdateSource((worldAudioSource == null) ? null : worldAudioSource.GetUUID(), worldAudioSource.audioSource);
     }
-    public void UpdateSource(Guid? sourceId, AudioSource audioSource)
+    public void UpdateSource(Guid? sourceId, AudioSource audioSource, bool propagate = true)
     {
         if(sourceId != null && !sourceId.HasValue)
             Debug.LogWarning("Warning!: give source UUID is not null but has no value! Consider changing UpdateSource() method!");
@@ -96,6 +97,21 @@ public class SoundscapeWrapper: MonoBehaviour
         DeleteAudio(sourceId.Value);
         //2. add it.
         PlaceNewAudioSource(audioSource);
+
+        //3. Propagate reverb effect to every other effect.
+        if(!propagate || SoundscapeLibrary.IsAudioAmbisonic(audioSource.GetAudioId())) return;
+        AudioEffectInstance reverbEffect = audioSource.AudioEffects.Find(eff => eff.effectData.effectId.Equals(AudioEffects.REVERB_EFFECT.effectId));
+        if(reverbEffect == null) return;
+        foreach(KeyValuePair<Guid, GameObject> src in new Dictionary<Guid, GameObject>(placedAudios))
+        {
+            //skip this source
+            if(src.Key == sourceId) continue;
+            AudioSource iteratorSource = src.Value.GetComponent<WorldAudioSource>().audioSource;
+            if(SoundscapeLibrary.GetAudioType(iteratorSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC)) continue;
+            //create new AudioSource for iterator source.
+            AudioSource srcWithUpdatedReverb = iteratorSource.CloneWithEffect(reverbEffect);
+            UpdateSource(src.Key, srcWithUpdatedReverb, propagate: false);
+        }
     }
 
     public void DeleteAudio(Guid audioId)

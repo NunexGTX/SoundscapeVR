@@ -15,9 +15,9 @@ public class AudioEffectInstance
     {
         this.effectData = other.effectData;
     }
-    public void ApplyEffectToSource(GameObject audioClipObject)
+    public void ApplyEffectToSource(GameObject audioClipObject, bool isAmbisonic)
     {
-        effectData?.ApplyEffectToSource(audioClipObject);
+        effectData?.ApplyEffectToSource(audioClipObject, isAmbisonic);
     }
 
 

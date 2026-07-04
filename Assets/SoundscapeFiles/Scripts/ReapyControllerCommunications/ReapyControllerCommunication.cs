@@ -480,9 +480,9 @@ public class ReapyControllerCommunication : MonoBehaviour
     }
 
     //Effects
-    public void AddEffectToAudio(Guid soundUUID, AudioEffectInstance audioEffectInstance)
+    public void AddEffectToAudio(Guid soundUUID, AudioEffectInstance audioEffectInstance, bool isAmbisonic)
     {
-        string[] effectParams = trackEffectParams(audioEffectInstance); //Gather effect params that are valid to use in reaper controller
+        string[] effectParams = trackEffectParams(audioEffectInstance, isAmbisonic); //Gather effect params that are valid to use in reaper controller
 
         if (effectParams == null)
         {
@@ -503,6 +503,6 @@ public class ReapyControllerCommunication : MonoBehaviour
         message_beeboop(json);
     }
 
-    string[] trackEffectParams(AudioEffectInstance audioEffectInstance) => audioEffectInstance.effectData.GetTrackParams();
+    string[] trackEffectParams(AudioEffectInstance audioEffectInstance, bool isAmbisonic) => audioEffectInstance.effectData.GetTrackParams(isAmbisonic);
     
 }

@@ -516,6 +516,11 @@ public class SoundscapeLibrary: MonoBehaviour
         if(customClip == null) return null;
         return customClip;
     }
+
+    public static bool IsAudioAmbisonic(string audioId)
+    {
+        return GetAudioType(audioId).Equals(Audio.TYPE_AMBISONIC);
+    }
     public static string GetAudioType(string audioId)
     {
         foreach(Audio audio in INSTANCE.audioList.GetAudios())
