@@ -21,6 +21,13 @@ public class ClockSyncResult: ReapyControllerCommand
     public long offset;
 }
 
+public class HeadRotation: ReapyControllerCommand
+{
+    public float yaw;
+    public float pitch;
+    public float roll;
+}
+
 public class NewSoundscape: ReapyControllerCommand
 {
     public int Duration;
