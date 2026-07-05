@@ -1651,7 +1651,9 @@ MonoBehaviour:
   distanceClue: {fileID: 7548355003463832129, guid: 80ac3f2e3844c4d5098fca39713e9b74, type: 3}
   distanceClueNoVR: {fileID: 7548355003463832129, guid: 145d1603df4624ec88f5084f9391c46c, type: 3}
   deleteClue: {fileID: 7548355003463832129, guid: 12015e2d4f4043656b8adefd829ae9c7, type: 3}
-  deleteClueNoVR: {fileID: 7548355003463832129, guid: 12015e2d4f4043656b8adefd829ae9c7, type: 3}
+  deleteClueNoVR: {fileID: 7548355003463832129, guid: e02d88b74300dc5468559ce1325f74d2, type: 3}
+  confirmDeleteClue: {fileID: 7548355003463832129, guid: ce4556bbb8d4e394d8a1603477bb9a0d, type: 3}
+  confirmDeleteClueNoVR: {fileID: 7548355003463832129, guid: 94371cde161395d499c571ca9b76be33, type: 3}
   editUi: {fileID: 2043944001}
   effectFiltersUi: {fileID: 2125151702}
   playerManager: {fileID: 657310048}
@@ -5490,6 +5492,7 @@ MonoBehaviour:
   ReapyCommunicationPort: 6337
   connectionTimeOutMillis: 5000
   HeadRotationUpdateIntervalMs: 200
+  HeadRotationLowPriotityMode: 1
   vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   loadingManager: {fileID: 0}
 --- !u!1 &2037751217

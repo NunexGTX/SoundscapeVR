@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 1714269349472843841}
   - component: {fileID: 4687782008802088803}
   m_Layer: 5
-  m_Name: DeleteSoundRightSideTrigger
+  m_Name: DeleteVR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -295,7 +295,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &1714269349472843841
 MonoBehaviour:
   m_ObjectHideFlags: 0

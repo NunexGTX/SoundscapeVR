@@ -142,6 +142,9 @@ public class SoundscapeWrapper: MonoBehaviour
         PlaceBaseSource(src, inEditMode);
     }
 
+    public void HideSources(){foreach(GameObject go in placedAudios.Values) go.GetComponent<MeshRenderer>().enabled = false;}
+    public void ShowSources(){foreach(GameObject go in placedAudios.Values) go.GetComponent<MeshRenderer>().enabled = true;}
+
     private void PlaceBaseSource(AudioSource src, bool debug)
     {
         if(placedAudios.ContainsKey(src.GetUUID())) return;
