@@ -213,7 +213,14 @@ public class SoundscapeLibrary: MonoBehaviour
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
-            form = await GoogleForm.FetchForm(json);
+            try
+            {
+                form = await GoogleForm.FetchForm(json);            
+            } catch
+            {
+                Debug.LogWarning($"[SoundscapeVR] Failed to load questionnaire information.");
+                form = new();
+            }
         }
         else
         {

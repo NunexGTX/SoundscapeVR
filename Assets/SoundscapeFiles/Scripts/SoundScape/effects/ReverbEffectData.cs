@@ -61,12 +61,15 @@ public class ReverbEffectData: AudioEffectData
     public override void ApplyDefaultUI(VisualElement root)
     {
         root.Q<Foldout>("reverbFoldout").value = false;
-       root.Q<DropdownField>("reverbPresetDropdown").choices = getPresetNames();
+        root.Q<Toggle>("applyReverb").value = false;
+        root.Q<DropdownField>("reverbPresetDropdown").choices = getPresetNames();
     }
 
     public override void ApplyValuesToUI(VisualElement root)
     {
         root.Q<DropdownField>("reverbPresetDropdown").value = currentPreset.ToString();
+        root.Q<Foldout>("reverbFoldout").value = true;
+        root.Q<Toggle>("applyReverb").value = true;
     }
 
     public override string[] GetTrackParams()
