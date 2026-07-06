@@ -18,6 +18,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     public bool rotationUpdate = true;
     public int HeadRotationUpdateIntervalMs = 200;
     public bool HeadRotationLowPriotityMode = true; //This will ignore the head rotation update if there are any other requests in queue when its trying to send the rotation update
+    public Vector3 rotationOffset = new Vector3(0,90,0);
     private Coroutine rotationUpdateCoroutine;
     public VrStateData vrStateData;
     private TcpClient client;
@@ -122,7 +123,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     float[] cameraRotation()
     {
         Vector3 cameraRotation = Camera.main.transform.eulerAngles;
-        return new float[3] {cameraRotation.x,cameraRotation.y,cameraRotation.z};
+        return new float[3] {cameraRotation.x - rotationOffset.x,cameraRotation.y - rotationOffset.y,cameraRotation.z - rotationOffset.z};
     }
 
     IEnumerator updatePlayerCameraRotationCoroutine()
@@ -505,9 +506,9 @@ public class ReapyControllerCommunication : MonoBehaviour
     public void HeadRotationUpdate(float[] cameraRotation)
     {
         //Translate from 0 to 360 to -180 to 180
-        float yawRot = (cameraRotation[0] > 180f) ? cameraRotation[0] - 360f : cameraRotation[0];
-        float pitchRot = (cameraRotation[1] > 180f) ? cameraRotation[1] - 360f : cameraRotation[1];
-        float rollRot = (cameraRotation[2] > 180f) ? cameraRotation[2] - 360f : cameraRotation[2];
+        float yawRot = -((cameraRotation[1] > 180f) ? cameraRotation[1] - 360f : cameraRotation[1]);
+        float pitchRot = -((cameraRotation[0] > 180f) ? cameraRotation[0] - 360f : cameraRotation[0]);
+        float rollRot = -((cameraRotation[2] > 180f) ? cameraRotation[2] - 360f : cameraRotation[2]);
 
         var msg = new HeadRotation {command = HeadRotationUpdateCommand, yaw = yawRot, pitch = pitchRot, roll = rollRot};
         string json = JsonUtility.ToJson(msg);
