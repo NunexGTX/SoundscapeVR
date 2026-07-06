@@ -54,15 +54,7 @@ public class WindowsHEVC : MonoBehaviour
             else
                 ShowNoPluginMessage();
         #elif UNITY_EDITOR
-            //ShowNoPluginMessage();
-
-            //TEMPORARY
-            IsAvailable = Check();
-            Debug.Log($"[WindowsHEVCChecker] HEVC decoder available: {IsAvailable}");
-            if (IsAvailable)
-                SoundscapeSceneLoad.LoadMainScene();
-            else
-                ShowNoPluginMessage();
+            ShowNoPluginMessage();
         #else
             Debug.LogWarning("This system is not running Microsoft Windows (or maybe a really old one). Please remove the Windows HEVC Checker scene from this build");
             SoundscapeSceneLoad.LoadMainScene();
