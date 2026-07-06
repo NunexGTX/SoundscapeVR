@@ -5491,8 +5491,10 @@ MonoBehaviour:
   autoconnect: 1
   ReapyCommunicationPort: 6337
   connectionTimeOutMillis: 5000
+  rotationUpdate: 1
   HeadRotationUpdateIntervalMs: 200
   HeadRotationLowPriotityMode: 1
+  rotationOffset: {x: 0, y: 90, z: 0}
   vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   loadingManager: {fileID: 0}
 --- !u!1 &2037751217
