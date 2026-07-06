@@ -165,6 +165,8 @@ public class FormScript : MonoBehaviour
         introduction.Q<Label>("description").text = "Form has been submited. Thanks for participating.";
         formRoot.Add(introduction);
         GoogleForm.submitForm(answersHolder,library.form.formViewId);
+        formPosition = -1;
+        answersHolder.Clear();
     }
 
     private void RemoveSection()
