@@ -14,7 +14,9 @@ public class WindowsHEVC : MonoBehaviour
         @"SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages";
 
     private const uint KEY_READ = 0x20019;
+    private const uint KEY_WOW64_64KEY = 0x0100; // always read the 64-bit view, even from a 32-bit build
     private const int ERROR_SUCCESS = 0;
+    private const int ERROR_MORE_DATA = 234;
     private const int ERROR_NO_MORE_ITEMS = 259;
 
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode)]
@@ -50,33 +52,45 @@ public class WindowsHEVC : MonoBehaviour
 
     public static bool Check()
     {
-        if (CheckHive(HKLM)) return true;
-        if (CheckHive(HKCU)) return true;
-        Debug.LogWarning("[WindowsHEVCChecker] HEVC Video Extensions not found.");
+        if (CheckHive(HKLM, "HKLM")) return true;
+        if (CheckHive(HKCU, "HKCU")) return true;
+        Debug.LogWarning("[WindowsHEVCChecker] HEVC Video Extensions not found in any registry hive.");
         return false;
     }
 
-    static bool CheckHive(IntPtr hive)
+    static bool CheckHive(IntPtr hive, string hiveName)
     {
-        if (RegOpenKeyExW(hive, PackagesPath, 0, KEY_READ, out IntPtr hKey) != ERROR_SUCCESS)
+        int open = RegOpenKeyExW(hive, PackagesPath, 0, KEY_READ | KEY_WOW64_64KEY, out IntPtr hKey);
+        if (open != ERROR_SUCCESS)
+        {
+            Debug.LogWarning($"[WindowsHEVCChecker] Could not open Packages key under {hiveName} (error {open}).");
             return false;
+        }
 
         try
         {
-            var sb = new StringBuilder(256);
-            uint nameLen = (uint)sb.Capacity;
-            for (uint i = 0; ; i++, nameLen = (uint)sb.Capacity)
+            var sb = new StringBuilder(512);
+            int count = 0;
+            for (uint i = 0; ; i++)
             {
+                uint nameLen = (uint)sb.Capacity;
                 int ret = RegEnumKeyExW(hKey, i, sb, ref nameLen, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, out _);
                 if (ret == ERROR_NO_MORE_ITEMS) break;
-                if (ret != ERROR_SUCCESS) break;
+                if (ret == ERROR_MORE_DATA) continue; // name longer than buffer; not an HEVC package name
+                if (ret != ERROR_SUCCESS)
+                {
+                    Debug.LogWarning($"[WindowsHEVCChecker] RegEnumKeyExW failed at index {i} under {hiveName} (error {ret}).");
+                    break;
+                }
 
+                count++;
                 if (sb.ToString().StartsWith("Microsoft.HEVCVideoExtension", StringComparison.OrdinalIgnoreCase))
                 {
-                    Debug.Log($"[WindowsHEVCChecker] Found HEVC package: {sb}");
+                    Debug.Log($"[WindowsHEVCChecker] Found HEVC package under {hiveName}: {sb}");
                     return true;
                 }
             }
+            Debug.Log($"[WindowsHEVCChecker] Enumerated {count} packages under {hiveName}, no HEVC extension found.");
         }
         finally
         {
