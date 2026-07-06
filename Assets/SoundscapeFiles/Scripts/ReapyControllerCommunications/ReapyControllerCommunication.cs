@@ -279,6 +279,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
         Debug.LogError($"Reaper Controller: Failed to reconnect after {MaxReconnectAttempts} attempts.");
         _isReconnecting = false;
+        set_connection_status(connectionTypes[0]);
     }
 
     public static string readIPFile()
@@ -351,6 +352,7 @@ public class ReapyControllerCommunication : MonoBehaviour
            if(connectionStatus == connectionTypes[2])
             {
                 rotationUpdateCoroutine = StartCoroutine(updatePlayerCameraRotationCoroutine());
+                StopSoundscape();
             }
             else
             {
