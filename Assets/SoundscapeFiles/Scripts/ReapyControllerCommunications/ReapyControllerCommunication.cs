@@ -15,6 +15,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     private string ServerIP;
     [SerializeField] private int ReapyCommunicationPort = 6337;
     public Int32 connectionTimeOutMillis = 5000;
+    public bool rotationUpdate = true;
     public int HeadRotationUpdateIntervalMs = 200;
     public bool HeadRotationLowPriotityMode = true; //This will ignore the head rotation update if there are any other requests in queue when its trying to send the rotation update
     private Coroutine rotationUpdateCoroutine;
@@ -135,7 +136,7 @@ public class ReapyControllerCommunication : MonoBehaviour
                 yield return new WaitForSeconds(HeadRotationUpdateIntervalMs/1000f);
             }
 
-
+            HeadRotationUpdate(rotations);
 
             yield return new WaitForSeconds(HeadRotationUpdateIntervalMs/1000f);
         }        
@@ -344,14 +345,20 @@ public class ReapyControllerCommunication : MonoBehaviour
     {
         connectionStatus = connect_status;
 
-        if(connectionStatus == connectionTypes[3])
+        if (rotationUpdate)
         {
-            rotationUpdateCoroutine = StartCoroutine(updatePlayerCameraRotationCoroutine());
-        }
-        else
-        {
-            StopCoroutine(rotationUpdateCoroutine);
-            rotationUpdateCoroutine = null;
+           if(connectionStatus == connectionTypes[2])
+            {
+                rotationUpdateCoroutine = StartCoroutine(updatePlayerCameraRotationCoroutine());
+            }
+            else
+            {
+                if(rotationUpdateCoroutine != null)
+                {
+                    StopCoroutine(rotationUpdateCoroutine);
+                    rotationUpdateCoroutine = null;
+                }
+            } 
         }
 
         //Set UI if available
@@ -497,7 +504,12 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     public void HeadRotationUpdate(float[] cameraRotation)
     {
-        var msg = new HeadRotation {command = HeadRotationUpdateCommand, yaw = cameraRotation[0], pitch = cameraRotation[1], roll = cameraRotation[2]};
+        //Translate from 0 to 360 to -180 to 180
+        float yawRot = (cameraRotation[0] > 180f) ? cameraRotation[0] - 360f : cameraRotation[0];
+        float pitchRot = (cameraRotation[1] > 180f) ? cameraRotation[1] - 360f : cameraRotation[1];
+        float rollRot = (cameraRotation[2] > 180f) ? cameraRotation[2] - 360f : cameraRotation[2];
+
+        var msg = new HeadRotation {command = HeadRotationUpdateCommand, yaw = yawRot, pitch = pitchRot, roll = rollRot};
         string json = JsonUtility.ToJson(msg);
 
         message_beeboop(json);
