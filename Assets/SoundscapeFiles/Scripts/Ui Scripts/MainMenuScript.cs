@@ -108,12 +108,6 @@ public class UiTestClick : MonoBehaviour
     }
     void OnQuitClicked()
     {
-        // 1. Stop XR Subsystems (Tells SteamVR the session is over)
-        if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
-        {
-            XRGeneralSettings.Instance.Manager.StopSubsystems();
-            XRGeneralSettings.Instance.Manager.DeinitializeLoader();
-        }
         // Reference the quitter logic or call directly
         Debug.Log("Quitting...");
         #if UNITY_EDITOR
