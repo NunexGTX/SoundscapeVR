@@ -566,6 +566,7 @@ public class FormScript : MonoBehaviour
     {
         if (string.IsNullOrEmpty(url) || targetImageField == null) return;
 
+        Debug.Log($"[SoundscapeVR] Loading image {url}");
         using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))
         {
             // Send the request and wait asynchronously until it finishes
