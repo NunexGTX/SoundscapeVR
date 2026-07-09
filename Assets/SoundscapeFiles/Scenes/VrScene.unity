@@ -5491,7 +5491,7 @@ MonoBehaviour:
   autoconnect: 1
   ReapyCommunicationPort: 6337
   connectionTimeOutMillis: 5000
-  rotationUpdate: 1
+  rotationUpdate: 0
   HeadRotationUpdateIntervalMs: 200
   HeadRotationLowPriotityMode: 1
   rotationOffset: {x: 0, y: 90, z: 0}
