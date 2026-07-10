@@ -1884,6 +1884,7 @@ GameObject:
   m_Component:
   - component: {fileID: 761094808}
   - component: {fileID: 761094807}
+  - component: {fileID: 761094809}
   m_Layer: 0
   m_Name: QuitHelper
   m_TagString: Untagged
@@ -1918,6 +1919,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &761094809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 761094806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddb3d302629d5b64ab4d24780bc1434a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StartupManager
+  vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
 --- !u!1 &812061678
 GameObject:
   m_ObjectHideFlags: 0

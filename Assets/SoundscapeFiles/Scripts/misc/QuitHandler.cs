@@ -30,6 +30,7 @@ public class QuitHandler : MonoBehaviour
             yield return null;
         }
         _xrTornDown = true;
+        yield return null;
         Application.Quit();
     }
 }
