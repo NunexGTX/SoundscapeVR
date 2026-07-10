@@ -421,7 +421,7 @@ public class FormScript : MonoBehaviour
                     case FormElement.IMAGE:
                         VisualElement imageInstance = imageElement.Instantiate();
                         Image imageField = imageInstance.Q<Image>("image");
-                        _ = LoadImageAsync(extras[0], imageField);
+                        SetImage(library.form.GetImageForQuestion(id), imageField);
                         formRoot.Add(imageInstance);
                         break;
                     case FormElement.GRID_RADIO:
@@ -562,50 +562,20 @@ public class FormScript : MonoBehaviour
         return result;
     }
     
-    private async Task LoadImageAsync(string url, Image targetImageField)
+    private void SetImage(Texture2D texture, Image targetImageField)
     {
-        if (string.IsNullOrEmpty(url) || targetImageField == null) return;
-
-        Debug.Log($"[SoundscapeVR] Loading image {url}");
-        using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))
+        if (texture != null)
         {
-            // Send the request and wait asynchronously until it finishes
-            UnityWebRequestAsyncOperation operation = request.SendWebRequest();
+            if(targetImageField != null) targetImageField.image = texture;
+            
+            targetImageField.style.width = Length.Percent(100);
 
-            while (!operation.isDone)
-            {
-                await Task.Yield(); // Yield control back to Unity, preventing freezing
-            }
+            float aspectRatio = (float)texture.width / texture.height;
 
-            // Handle network errors or bad responses
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError($"Failed to load image from URL: {url}. Error: {request.error}");
-                return;
-            }
+            targetImageField.style.aspectRatio = aspectRatio;
 
-            // Extract the downloaded Texture2D
-            Texture2D downloadedTexture = DownloadHandlerTexture.GetContent(request);
-
-            if (downloadedTexture != null)
-            {
-                // Assign the texture directly to the UI Toolkit Image component
-                if(targetImageField != null) targetImageField.image = downloadedTexture;
-                
-                // 1. Force the image to match the horizontal width of the UI container
-                targetImageField.style.width = Length.Percent(100);
-
-                // 2. Calculate the aspect ratio (Width / Height)
-                float aspectRatio = (float)downloadedTexture.width / downloadedTexture.height;
-
-                // 3. Use USS AspectRatio property to force UI Toolkit to compute height dynamically
-                // Formula handled internally by Unity layout engine: height = width / aspectRatio
-                targetImageField.style.aspectRatio = aspectRatio;
-
-                // 4. Ensure height isn't overridden by stale layout rules
-                targetImageField.style.height = StyleKeyword.Null;
-                targetImageField.style.flexGrow = 0;
-            }
+            targetImageField.style.height = StyleKeyword.Null;
+            targetImageField.style.flexGrow = 0;
         }
     }
 
