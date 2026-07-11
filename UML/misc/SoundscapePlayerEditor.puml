@@ -1,0 +1,39 @@
+@startuml
+class SoundscapePlayerEditor {
+    + SelectAudio(audio:Audio) : bool
+    + SetSphereActive(isActive:bool) : void
+    + FirstPlaceAudio(eventArgs:ActivateEventArgs) : void
+    + FirstPlaceAudio(worldPos:Vector3) : void
+    + SelectAudioSource(src:GameObject) : void
+    + UpdateSourceData(audioData:AudioSource.AudioData) : void
+    + MoveAudioSource() : void
+    + CancelState(leaving:bool) : void
+    + LeaveEdit() : void
+    + CopyData(audioData:AudioSource.AudioData) : void
+    + PasteData() : AudioSource.AudioData
+    + GetCopiedName() : string
+}
+enum State {
+    Standby,
+    TryPlace,
+    AdjustPlace,
+    TryRemove,
+    Select,
+    TryMove,
+    AdjustMove,
+}
+MonoBehaviour <|-- SoundscapePlayerEditor
+SoundscapePlayerEditor --> "soundscapeWrapper" SoundscapeWrapper
+SoundscapePlayerEditor --> "confirmAction" InputActionReference
+SoundscapePlayerEditor --> "cancelAction" InputActionReference
+SoundscapePlayerEditor --> "deleteAction" InputActionReference
+SoundscapePlayerEditor --> "scrollAction" InputActionReference
+SoundscapePlayerEditor --> "aimingSphere" GameObject
+SoundscapePlayerEditor --> "audioSourcePlacerObject" GameObject
+SoundscapePlayerEditor --> "placingMaterial" Material
+SoundscapePlayerEditor --> "defaultMaterial" Material
+SoundscapePlayerEditor --> "deletingMaterial" Material
+SoundscapePlayerEditor --> "selectingMaterial" Material
+SoundscapePlayerEditor o-> "INVALID_VEC_POS" Vector3
+SoundscapePlayerEditor +-- State
+@enduml

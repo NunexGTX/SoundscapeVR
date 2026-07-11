@@ -1,0 +1,7 @@
+@startuml
+class SoundscapeSceneLoad {
+    + <<const>> SoundscapeVRSceneName : string = "VrScene"
+    + {static} LoadMainScene() : void
+}
+MonoBehaviour <|-- SoundscapeSceneLoad
+@enduml

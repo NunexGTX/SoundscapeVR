@@ -1,0 +1,5 @@
+@startuml
+class IPTools {
+    + {static} IsValidIP(ip:string) : bool
+}
+@enduml

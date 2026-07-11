@@ -1,0 +1,6 @@
+@startuml
+class GoogleForm {
+    + {static} submitForm(answers:FormAnswersHolder, viewFormID:string) : void
+    + <<async>> {static} FetchForm(questionnaireJson:string) : Task<Form>
+}
+@enduml

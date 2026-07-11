@@ -1,0 +1,7 @@
+@startuml
+class PlayerRaycasting {
+    + RaycastAudioSources() : GameObject
+    + RaycastSphere() : Vector3
+}
+MonoBehaviour <|-- PlayerRaycasting
+@enduml

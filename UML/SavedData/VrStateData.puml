@@ -1,0 +1,12 @@
+@startuml
+class VrStateData {
+    + IsInVr : bool <<get>> <<set>>
+    + CurrentVisualChoice : int <<get>> <<set>>
+    + CurrentAudioChoice : int <<get>> <<set>>
+    + HeightOffset : float <<get>> <<set>>
+    + CurrentReaperControllerServerIP : string <<get>> <<set>>
+    + GetCurrentVisuals() : VisualType
+    + GetCurrentAudio() : AudioListeningType
+}
+ScriptableObject <|-- VrStateData
+@enduml

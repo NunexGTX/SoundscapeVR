@@ -1,0 +1,14 @@
+@startuml
+class LoadingManager {
+    + SetInfo(text:string) : void
+    + OnLoaded(action:Action) : void
+    + CanLoad(queueUp:bool) : bool
+    + SetToStart(end:float) : void
+    + Increment(amount:float) : void
+    + GetCurrentProgress() : float
+    + EndLoading() : void
+    + OnTimeout(onTimeout:Action, timeoutSeconds:int) : LoadingManager
+}
+MonoBehaviour <|-- LoadingManager
+LoadingManager --> "player" PlayerControl
+@enduml

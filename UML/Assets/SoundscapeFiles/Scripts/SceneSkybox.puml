@@ -1,0 +1,11 @@
+@startuml
+class SceneSkybox {
+    + RoomLayerIndex : int = 6
+    + reactivateRoom() : void
+    + ApplyDefaultSkybox() : void
+}
+MonoBehaviour <|-- SceneSkybox
+SceneSkybox --> "Instance" SceneSkybox
+SceneSkybox --> "skyboxMaterial" Material
+SceneSkybox --> "skyboxMaterial2" Material
+@enduml

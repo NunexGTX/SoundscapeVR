@@ -1,0 +1,5 @@
+@startuml
+class SoundscapeListScript {
+}
+MonoBehaviour <|-- SoundscapeListScript
+@enduml

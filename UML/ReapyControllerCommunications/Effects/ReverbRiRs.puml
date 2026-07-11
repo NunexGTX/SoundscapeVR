@@ -1,0 +1,8 @@
+@startuml
+class ReverbRiRs {
+    + {static} getPresetCode(preset:ReverbEffectData.ReverbPresets) : string
+}
+class "Dictionary`2"<T1,T2> {
+}
+ReverbRiRs o-> "ReaperReverbPresets<ReverbEffectData.ReverbPresets,string>" "Dictionary`2"
+@enduml

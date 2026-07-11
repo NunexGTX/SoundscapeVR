@@ -1,0 +1,15 @@
+@startuml
+class Form {
+    + formTitle : string = ""
+    + formViewId : string = ""
+    + formEditId : string = ""
+    + description : string = ""
+    + GetImageForQuestion(elementId:string) : Texture2D
+}
+class "List`1"<T> {
+}
+class "Dictionary`2"<T1,T2> {
+}
+Form o-> "questions<FormElement>" "List`1"
+Form o-> "cachedImages<string,Texture2D>" "Dictionary`2"
+@enduml

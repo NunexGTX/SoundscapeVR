@@ -1,0 +1,23 @@
+@startuml
+class FormElement {
+    + <<const>> SECTION_BREAK : string = "BREAK"
+    + <<const>> HEADER : string = "TITLE"
+    + <<const>> RADIO : string = "RADIO"
+    + <<const>> CHECKBOX : string = "CHECKBOX"
+    + <<const>> DROP_DOWN : string = "DROP_DOWN"
+    + <<const>> SCALE : string = "SCALE"
+    + <<const>> PARAGRAPH : string = "PARAGRAPH"
+    + <<const>> TEXT : string = "TEXT"
+    + <<const>> IMAGE : string = "IMAGE"
+    + <<const>> GRID_RADIO : string = "GRID_RADIO"
+    + id : string
+    + type : string
+    + description : string
+    + required : bool = false
+    + shuffle : bool = false
+    + <<override>> ToString() : string
+}
+class "List`1"<T> {
+}
+FormElement --> "extra<string>" "List`1"
+@enduml

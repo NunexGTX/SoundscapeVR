@@ -1,0 +1,14 @@
+@startuml
+class UiTestClick {
+}
+enum MenuType {
+    MAIN,
+    CONFIG,
+    SOUNDSCAPE,
+    EDIT,
+    FORM,
+    HOME,
+}
+MonoBehaviour <|-- UiTestClick
+UiTestClick +-- MenuType
+@enduml

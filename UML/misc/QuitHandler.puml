@@ -1,0 +1,5 @@
+@startuml
+class QuitHandler {
+}
+MonoBehaviour <|-- QuitHandler
+@enduml

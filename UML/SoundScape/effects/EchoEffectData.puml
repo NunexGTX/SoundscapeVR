@@ -1,0 +1,25 @@
+@startuml
+class EchoEffectData {
+    + delay_ms : int = 500
+    + decay_ratio : float = 0.5f
+    + wet_mix : float = 1.0f
+    + dry_mix : float = 1.0f
+    + <<const>> minDelay : int = 10
+    + <<const>> maxDelay : int = 5000
+    + <<const>> minDecay : float = 0f
+    + <<const>> maxDecay : float = 1f
+    + <<const>> minWet : float = 0f
+    + <<const>> maxWet : float = 1f
+    + <<const>> minDry : float = 0f
+    + <<const>> maxDry : float = 1f
+    + EchoEffectData(delay:int, decay:float, wet:float, dry:float)
+    + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
+    + <<override>> ApplyEffectToSource(audioClipObject:GameObject) : void
+    + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
+    + <<override>> CollectFromUI(root:VisualElement) : AudioEffectData
+    + <<override>> ApplyDefaultUI(root:VisualElement) : void
+    + <<override>> ApplyValuesToUI(root:VisualElement) : void
+    + <<override>> GetTrackParams() : string[]
+}
+AudioEffectData <|-- EchoEffectData
+@enduml

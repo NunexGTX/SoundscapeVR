@@ -1,0 +1,19 @@
+@startuml
+class HighLowPassEffectData {
+    + lowPassFreq : int
+    + highPassFreq : int
+    + <<const>> minLowPassFreq : int = 1000
+    + <<const>> maxLowPassFreq : int = 22000
+    + <<const>> minHighPassFreq : int = 0
+    + <<const>> maxHighPassFreq : int = 1000
+    + HighLowPassEffectData(lowPassFreq:int, highPassFreq:int)
+    + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
+    + <<override>> ApplyEffectToSource(audioClipObject:GameObject) : void
+    + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
+    + <<override>> CollectFromUI(root:VisualElement) : AudioEffectData
+    + <<override>> ApplyDefaultUI(root:VisualElement) : void
+    + <<override>> ApplyValuesToUI(root:VisualElement) : void
+    + <<override>> GetTrackParams() : string[]
+}
+AudioEffectData <|-- HighLowPassEffectData
+@enduml

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="264px" preserveAspectRatio="none" style="width:332px;height:264px;" version="1.1" viewBox="0 0 332 264" width="332px" zoomAndPan="magnify"><defs><filter height="300%" id="fc997nasddex4" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[bbaa3c458e26285cb9eb4a3408788cf0]
+class VisualType--><rect fill="#FEFECE" filter="url(#fc997nasddex4)" height="99.2188" id="VisualType" style="stroke: #A80036; stroke-width: 1.5;" width="127" x="18.5" y="8"/><ellipse cx="46.55" cy="24" fill="#EB937F" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;"/><path d="M50.6594,30 L42.9406,30 L42.9406,17.6094 L50.6594,17.6094 L50.6594,19.7656 L45.3938,19.7656 L45.3938,22.4375 L50.1594,22.4375 L50.1594,24.5938 L45.3938,24.5938 L45.3938,27.8438 L50.6594,27.8438 L50.6594,30 Z "/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="66" x="63.45" y="28.1543">VisualType</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="19.5" x2="144.5" y1="40" y2="40"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="64" x="24.5" y="54.2104">STATIC= 1,</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="115" x="24.5" y="67.0151">ENCOMPASSING= 2,</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="60" x="24.5" y="79.8198">BOTH= -1,</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="56" x="24.5" y="92.6245">NONE= 0,</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="19.5" x2="144.5" y1="99.2188" y2="99.2188"/><!--MD5=[e09f3ba00482253eeaac2a3eb8b42b5a]
+class AudioSourceType--><rect fill="#FEFECE" filter="url(#fc997nasddex4)" height="86.4141" id="AudioSourceType" style="stroke: #A80036; stroke-width: 1.5;" width="140" x="181" y="14.5"/><ellipse cx="196" cy="30.5" fill="#EB937F" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;"/><path d="M200.1094,36.5 L192.3906,36.5 L192.3906,24.1094 L200.1094,24.1094 L200.1094,26.2656 L194.8438,26.2656 L194.8438,28.9375 L199.6094,28.9375 L199.6094,31.0938 L194.8438,31.0938 L194.8438,34.3438 L200.1094,34.3438 L200.1094,36.5 Z "/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="108" x="210" y="34.6543">AudioSourceType</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="182" x2="320" y1="46.5" y2="46.5"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="58" x="187" y="60.7104">BINAURAL,</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="95" x="187" y="73.5151">ENCOMPASSING,</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="36" x="187" y="86.3198">NONE,</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="182" x2="320" y1="92.9141" y2="92.9141"/><!--MD5=[d476776b1200e845a7f1816694bfe151]
+class AudioListeningType--><rect fill="#FEFECE" filter="url(#fc997nasddex4)" height="86.4141" id="AudioListeningType" style="stroke: #A80036; stroke-width: 1.5;" width="152" x="6" y="167"/><ellipse cx="21" cy="183" fill="#EB937F" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;"/><path d="M25.1094,189 L17.3906,189 L17.3906,176.6094 L25.1094,176.6094 L25.1094,178.7656 L19.8438,178.7656 L19.8438,181.4375 L24.6094,181.4375 L24.6094,183.5938 L19.8438,183.5938 L19.8438,186.8438 L25.1094,186.8438 L25.1094,189 Z "/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="120" x="35" y="187.1543">AudioListeningType</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="157" y1="199" y2="199"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="78" x="12" y="213.2104">BINAURAL= 1,</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="115" x="12" y="226.0151">ENCOMPASSING= 2,</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="56" x="12" y="238.8198">NONE= 0,</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="157" y1="245.4141" y2="245.4141"/><!--MD5=[1912db3281e64b65e72a28456a445eb7]
+link VisualType to AudioSourceType--><!--MD5=[fe7e5e279d8c0c511bd1a9355725070f]
+link VisualType to AudioListeningType--><!--MD5=[0d2a7379e5fcfff3296a39f4671e5638]
+@startuml
+enum VisualType {
+    STATIC= 1,
+    ENCOMPASSING= 2,
+    BOTH= -1,
+    NONE= 0,
+}
+enum AudioSourceType {
+    BINAURAL,
+    ENCOMPASSING,
+    NONE,
+}
+enum AudioListeningType {
+    BINAURAL= 1,
+    ENCOMPASSING= 2,
+    NONE= 0,
+}
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 10:22:07 UTC 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 17.0.19+10
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: null
+--></g></svg>

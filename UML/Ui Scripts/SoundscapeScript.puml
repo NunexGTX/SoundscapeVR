@@ -1,0 +1,6 @@
+@startuml
+class SoundscapeScript {
+}
+MonoBehaviour <|-- SoundscapeScript
+SoundscapeScript --> "buttonTemplate" VisualTreeAsset
+@enduml

@@ -1,0 +1,42 @@
+@startuml
+class IsExternalInit <<static>> {
+}
+class AudioSource {
+    + AudioSource(other:AudioSource)
+    + AudioSource(audioId:string, spherePosition:Vector3, uuid:Guid)
+    + AudioSource(audioId:string, spherePosition:Vector3)
+    + AudioSource(audio:Audio, spherePosition:Vector3)
+    + GetAudioId() : string
+    + GetUUID() : Guid
+    + SetUUID(id:Guid) : void
+    + GetSpherePosition() : Vector3
+    + WithNewPosition(newCoords:Vector3) : AudioSource
+    + ApplyEffects(go:GameObject) : void
+    + Loop : bool <<get>>
+    + Mute : bool <<get>>
+    + Visible : bool <<get>>
+    + DelaySeconds : int <<get>>
+    + Volume : float <<get>>
+    + OnBeforeSerialize() : void
+    + OnAfterDeserialize() : void
+    + PasteDataFrom(other:AudioSource) : void
+    + PasteDataFrom(otherData:AudioData) : void
+    + SetMute(newMute:bool) : void
+}
+class "List`1"<T> {
+}
+class AudioData <<record>> {
+    + volume : float <<get>> <<init>> = 1f
+    + delaySeconds : int <<get>> <<init>> = 0
+    + loop : bool <<get>> <<init>> = true
+    + mute : bool <<get>> <<init>> = false
+    + visible : bool <<get>> <<init>> = false
+    + audioId : string <<get>> <<init>> = ""
+}
+ISerializationCallbackReceiver <|-- AudioSource
+AudioSource --> "audioData" AudioData
+AudioSource --> "AudioEffects<AudioEffectInstance>" "List`1"
+AudioSource +-- AudioData
+AudioData o-> "effectInstances<AudioEffectInstance>" "List`1"
+AudioData o-> "effectInstances<AudioEffectInstance>" "List`1"
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+class DistText {
+    + SetAndPlace(worldPos:Vector3) : void
+}
+MonoBehaviour <|-- DistText
+DistText o-> "playerManager" PlayerManager
+@enduml

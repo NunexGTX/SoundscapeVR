@@ -1,0 +1,9 @@
+@startuml
+struct SerializableVector3 {
+    + x : float
+    + y : float
+    + z : float
+    + SerializableVector3(v3:Vector3)
+    + ToVector3() : Vector3
+}
+@enduml

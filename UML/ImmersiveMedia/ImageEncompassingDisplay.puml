@@ -1,0 +1,9 @@
+@startuml
+class ImageEncompassingDisplay {
+    + imagePath : string
+    + projectionType : string = ""
+}
+MonoBehaviour <|-- ImageEncompassingDisplay
+ImageEncompassingDisplay o-> "onImagePrepared" Action
+ImageEncompassingDisplay o-> "onImageFailed" Action
+@enduml

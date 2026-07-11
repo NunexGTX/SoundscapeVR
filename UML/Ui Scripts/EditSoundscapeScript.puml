@@ -1,0 +1,8 @@
+@startuml
+class EditSoundscapeScript {
+    + Return() : void
+    + UnselectAudio() : void
+}
+MonoBehaviour <|-- EditSoundscapeScript
+EditSoundscapeScript o-> "selectedSoundscape" Soundscape
+@enduml

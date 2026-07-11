@@ -1,0 +1,13 @@
+@startuml
+abstract class AudioEffectData {
+    + effectId : string
+    + {abstract} CopyValues(other:AudioEffectData) : AudioEffectData
+    + {abstract} ApplyEffectToSource(audioClipObject:GameObject) : void
+    + WithId(effectId:string) : AudioEffectData
+    + {abstract} GetTrackParams() : string[]
+    + {abstract} IsEffectAppliedInUI(root:VisualElement) : bool
+    + {abstract} CollectFromUI(root:VisualElement) : AudioEffectData
+    + {abstract} ApplyDefaultUI(root:VisualElement) : void
+    + {abstract} ApplyValuesToUI(root:VisualElement) : void
+}
+@enduml

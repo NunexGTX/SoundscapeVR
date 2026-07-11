@@ -1,0 +1,25 @@
+@startuml
+class SoundscapeWrapper {
+    + inEditMode : bool <<get>> = false
+    + MarkEdited() : void
+    + SetSoundscape(ss:Soundscape) : void
+    + DeleteAudio(srcObject:GameObject) : void
+    + UpdateSource(srcObject:GameObject) : void
+    + UpdateSource(sourceId:Guid?, audioSource:AudioSource) : void
+    + DeleteAudio(audioId:Guid) : void
+    + PlaceNewAudioSource(src:AudioSource) : void
+    + <<async>> PrepareSoundscape(debug:bool) : Task
+    + StopSoundscape(title:string) : void
+    + StopSoundscape() : void
+    + SetAndStartSoundscape(ss:Soundscape, debug:bool) : void
+    + HasSoundscape() : bool
+    + GetSoundscape() : Soundscape
+}
+MonoBehaviour <|-- SoundscapeWrapper
+SoundscapeWrapper --> "playerManager" PlayerManager
+SoundscapeWrapper --> "vrStateData" VrStateData
+SoundscapeWrapper --> "audioSourceObject" GameObject
+SoundscapeWrapper --> "soundscapeLibrary" SoundscapeLibrary
+SoundscapeWrapper --> "reapyController" ReapyControllerCommunication
+SoundscapeWrapper --> "untargetableSoundSourceLayer" LayerMask
+@enduml

@@ -1,0 +1,6 @@
+@startuml
+class WorldSrcBinding {
+    + SelectSelf(context:ActivateEventArgs) : void
+}
+MonoBehaviour <|-- WorldSrcBinding
+@enduml
