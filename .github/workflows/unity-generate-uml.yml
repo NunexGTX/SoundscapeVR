@@ -9,6 +9,11 @@ jobs:
   generate-uml:
     name: 'Generate UML'
     runs-on: ubuntu-latest
+
+    # ADD THESE TWO LINES RIGHT HERE:
+    permissions:
+      contents: write
+
     env:
       CODE_PATH: "./Assets/SoundscapeFiles/Scripts/"
       UML_OUTPUT_PATH: "./UML/"
