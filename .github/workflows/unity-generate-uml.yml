@@ -48,7 +48,7 @@ jobs:
         id: get_file_names
       - name: Generate SVG Diagrams
         if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
-        uses: cloudbees/plantuml-github-action@master
+        uses: Crashedmind/plantuml-github-action@master
         with:
           args: -v -tsvg ${{ steps.get_file_names.outputs.UML_FILES }}
 
