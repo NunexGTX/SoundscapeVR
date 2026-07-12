@@ -65,6 +65,23 @@ jobs:
         run: |
           plantuml -v -tsvg "${{ env.UML_OUTPUT_PATH }}include.puml"
 
+      - name: Show context around syntax error (only runs if the above failed)
+        if: ${{ failure() && steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        run: |
+          FILE="${{ env.UML_OUTPUT_PATH }}include.puml"
+          # Re-run plantuml just to capture the error line number cleanly
+          LINE=$(plantuml -v -tsvg "$FILE" 2>&1 | grep -oP 'Error line \K[0-9]+' | head -1)
+          if [ -n "$LINE" ]; then
+            echo "----- Context around line $LINE in $FILE -----"
+            START=$((LINE - 15))
+            END=$((LINE + 15))
+            [ $START -lt 1 ] && START=1
+            sed -n "${START},${END}p" "$FILE" | nl -ba -v"$START"
+          else
+            echo "Could not determine error line automatically. Dumping first 200 lines instead:"
+            sed -n '1,200p' "$FILE" | nl -ba
+          fi
+
       - name: Remove intermediate per-package .puml files
         if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
         # Keep only the combined include.puml + its rendered SVG, discard the per-namespace fragments
