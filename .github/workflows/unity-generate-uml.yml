@@ -16,7 +16,7 @@ jobs:
     env:
       CODE_PATH: "./Assets/SoundscapeFiles/Scripts/"
       UML_OUTPUT_PATH: "./docs/UMLs/"
-      UMP_GENERATION_PARAMETERS: -public -createAssociation -allInOne -excludePaths Windows/WindowsHEVCChecker.cs
+      UMP_GENERATION_PARAMETERS: -public -createAssociation -allInOne
 
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,15 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y graphviz default-jre
-          curl -L -o plantuml.jar $(curl -s https://api.github.com/repos/plantuml/plantuml/releases/latest | grep "browser_download_url.*\.jar\"" | grep -v sources | cut -d '"' -f 4 | head -1)
+          curl -L -o plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
+          # Sanity check: a real plantuml.jar is tens of MB. If it's tiny, the download failed.
+          SIZE=$(stat -c%s plantuml.jar)
+          if [ "$SIZE" -lt 1000000 ]; then
+            echo "Downloaded plantuml.jar is only $SIZE bytes — download likely failed."
+            cat plantuml.jar
+            exit 1
+          fi
+          java -jar plantuml.jar -version
 
       - name: Generate combined SVG diagram
         if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
