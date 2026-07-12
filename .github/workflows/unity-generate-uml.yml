@@ -10,13 +10,12 @@ jobs:
     name: 'Generate UML'
     runs-on: ubuntu-latest
 
-    # ADD THESE TWO LINES RIGHT HERE:
     permissions:
       contents: write
 
     env:
       CODE_PATH: "./Assets/SoundscapeFiles/Scripts/"
-      UML_OUTPUT_PATH: "./UML/"
+      UML_OUTPUT_PATH: "./docs/UMLs/"
       UMP_GENERATION_PARAMETERS: -public -createAssociation -allInOne
 
     steps:
@@ -59,11 +58,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y plantuml graphviz
 
-      - name: Generate SVG Diagrams
+      - name: Generate combined SVG diagram
         if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
-        # Adding || true ensures the workflow passes even if a single syntax error is found
+        # Only render include.puml (the -allInOne combined file) — no per-package diagrams.
+        # No error suppression: if PlantUML syntax fails, we want to see why.
         run: |
-          plantuml -v -tsvg "${{ env.UML_OUTPUT_PATH }}**/*.puml" || echo "Some syntax errors were found, but moving forward!"
+          plantuml -v -tsvg "${{ env.UML_OUTPUT_PATH }}include.puml"
+
+      - name: Remove intermediate per-package .puml files
+        if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        # Keep only the combined include.puml + its rendered SVG, discard the per-namespace fragments
+        run: |
+          find ${{ env.UML_OUTPUT_PATH }} -name "*.puml" ! -name "include.puml" -delete
+          find ${{ env.UML_OUTPUT_PATH }} -mindepth 1 -type d -empty -delete
 
       - uses: EndBug/add-and-commit@v9
         with:
