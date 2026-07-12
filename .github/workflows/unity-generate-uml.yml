@@ -14,7 +14,7 @@ jobs:
       contents: write
 
     env:
-      CODE_PATH: "./Assets/GameFiles/Scripts/"
+      CODE_PATH: "./Assets/SoundscapeFiles/Scripts/"
       UML_OUTPUT_PATH: "./docs/UMLs/"
       UMP_GENERATION_PARAMETERS: -public -createAssociation -allInOne
 
