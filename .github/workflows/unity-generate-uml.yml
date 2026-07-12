@@ -72,7 +72,7 @@ jobs:
         # Only render include.puml (the -allInOne combined file) — no per-package diagrams.
         # No error suppression: if PlantUML syntax fails, we want to see why.
         run: |
-          java -jar plantuml.jar -v -tsvg "${{ env.UML_OUTPUT_PATH }}include.puml"
+          java -jar plantuml.jar -v -tsvg "${{ env.UML_OUTPUT_PATH }}SoundscapeVR.puml"
 
       - name: Show context around syntax error (only runs if the above failed)
         if: ${{ failure() && steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
