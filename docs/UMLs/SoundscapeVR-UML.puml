@@ -43,6 +43,11 @@ class ClockSync {
 class ClockSyncResult {
     + offset : long
 }
+class HeadRotation {
+    + yaw : float
+    + pitch : float
+    + roll : float
+}
 class NewSoundscape {
     + Duration : int
     + Loop : bool
@@ -83,6 +88,7 @@ class removeAudioEffect {
 ReapyControllerCommand <|-- TrackCommand
 ReapyControllerCommand <|-- ClockSync
 ReapyControllerCommand <|-- ClockSyncResult
+ReapyControllerCommand <|-- HeadRotation
 ReapyControllerCommand <|-- NewSoundscape
 ReapyControllerCommand <|-- StartSoundscape
 ReapyControllerCommand <|-- SkipStartSoundscape
@@ -97,6 +103,9 @@ TrackCommand <|-- removeAudioEffect
 class ReapyControllerCommunication {
     + EnableCommunication : bool = true
     + autoconnect : bool = true
+    + rotationUpdate : bool = true
+    + HeadRotationUpdateIntervalMs : int = 200
+    + HeadRotationLowPriotityMode : bool = true
     + startReaperCommunication() : void
     + {static} readIPFile() : string
     + setServerIP(ip:string) : void
@@ -117,10 +126,12 @@ class ReapyControllerCommunication {
     + UnmuteTrack(soundUUID:Guid) : void
     + DeleteTrack(soundUUID:Guid) : void
     + Reset() : void
-    + AddEffectToAudio(soundUUID:Guid, audioEffectInstance:AudioEffectInstance) : void
+    + AddEffectToAudio(soundUUID:Guid, audioEffectInstance:AudioEffectInstance, isAmbisonic:bool) : void
+    + HeadRotationUpdate(cameraRotation:float[]) : void
 }
 MonoBehaviour <|-- ReapyControllerCommunication
 ReapyControllerCommunication o-> "connectionTimeOutMillis" Int32
+ReapyControllerCommunication o-> "rotationOffset" Vector3
 ReapyControllerCommunication --> "vrStateData" VrStateData
 ReapyControllerCommunication o-> "loadingManager" LoadingManager
 class StaticDisplay {
@@ -166,6 +177,17 @@ class FormEntry {
     + formEntryValue(newValue:string) : void
     + getValue() : string
 }
+class WindowsHEVC {
+    + IsAvailable : bool <<get>>
+    + {static} Check() : bool
+}
+struct MFT_REGISTER_TYPE_INFO {
+}
+MonoBehaviour <|-- WindowsHEVC
+WindowsHEVC --> "HEVCWarningUI" GameObject
+WindowsHEVC +-- MFT_REGISTER_TYPE_INFO
+MFT_REGISTER_TYPE_INFO --> "guidMajorType" Guid
+MFT_REGISTER_TYPE_INFO --> "guidSubtype" Guid
 class VrStateData {
     + IsInVr : bool <<get>> <<set>>
     + CurrentVisualChoice : int <<get>> <<set>>
@@ -273,9 +295,11 @@ class SoundscapeWrapper {
     + SetSoundscape(ss:Soundscape) : void
     + DeleteAudio(srcObject:GameObject) : void
     + UpdateSource(srcObject:GameObject) : void
-    + UpdateSource(sourceId:Guid?, audioSource:AudioSource) : void
+    + UpdateSource(sourceId:Guid?, audioSource:AudioSource, propagate:bool) : void
     + DeleteAudio(audioId:Guid) : void
     + PlaceNewAudioSource(src:AudioSource) : void
+    + HideSources() : void
+    + ShowSources() : void
     + <<async>> PrepareSoundscape(debug:bool) : Task
     + StopSoundscape(title:string) : void
     + StopSoundscape() : void
@@ -352,7 +376,8 @@ class SoundscapeLibrary {
     + {static} WorldToSphere(worldCoords:Vector3) : Vector3
     + {static} SphereToWorld(sphereCoords:Vector3) : Vector3
     + {static} DistanceInSphere(sphere1:Vector3, sphere2:Vector3) : float
-    + GetAudioType(audioId:string) : string
+    + {static} IsAudioAmbisonic(audioId:string) : bool
+    + {static} GetAudioType(audioId:string) : string
     + IsAudioLoaded(audioId:string) : bool
     + GetIconForAudio(audioId:string) : Texture2D
 }
@@ -452,6 +477,7 @@ class AudioSource {
     + PasteDataFrom(other:AudioSource) : void
     + PasteDataFrom(otherData:AudioData) : void
     + SetMute(newMute:bool) : void
+    + CloneWithEffect(effectToApply:AudioEffectInstance) : AudioSource
 }
 class "List`1"<T> {
 }
@@ -499,6 +525,14 @@ class PlayerManager {
     + SetUiPos() : void
 }
 MonoBehaviour <|-- PlayerManager
+class AudioSourceClue {
+    + SetAndPlace(worldPos:Vector3) : void
+}
+MonoBehaviour <|-- AudioSourceClue
+AudioSourceClue o-> "playerManager" PlayerManager
+class InteractorRaycasting {
+}
+MonoBehaviour <|-- InteractorRaycasting
 class VRSwitcher <<static>> {
     + {static} EnableXRCoroutine() : IEnumerator
     + {static} DisableXR() : void
@@ -508,6 +542,7 @@ class SoundscapePlayerEditor {
     + SetSphereActive(isActive:bool) : void
     + FirstPlaceAudio(eventArgs:ActivateEventArgs) : void
     + FirstPlaceAudio(worldPos:Vector3) : void
+    + PreviewPlaceAudio(worldPos:Vector3) : void
     + SelectAudioSource(src:GameObject) : void
     + UpdateSourceData(audioData:AudioSource.AudioData) : void
     + MoveAudioSource() : void
@@ -535,6 +570,7 @@ SoundscapePlayerEditor --> "scrollAction" InputActionReference
 SoundscapePlayerEditor --> "aimingSphere" GameObject
 SoundscapePlayerEditor --> "audioSourcePlacerObject" GameObject
 SoundscapePlayerEditor --> "placingMaterial" Material
+SoundscapePlayerEditor --> "previewMaterial" Material
 SoundscapePlayerEditor --> "defaultMaterial" Material
 SoundscapePlayerEditor --> "deletingMaterial" Material
 SoundscapePlayerEditor --> "selectingMaterial" Material
@@ -631,19 +667,19 @@ FormElement --> "extra<string>" "List`1"
 class AudioEffectInstance {
     + AudioEffectInstance(audioEffectData:AudioEffectData)
     + AudioEffectInstance(other:AudioEffectInstance)
-    + ApplyEffectToSource(audioClipObject:GameObject) : void
+    + ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
 }
 AudioEffectInstance --> "effectData" AudioEffectData
 class ReverbEffectData {
     + getPresetNames() : List<string>
     + ReverbEffectData(reverbEffectData:ReverbPresets)
     + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
-    + <<override>> ApplyEffectToSource(audioClipObject:GameObject) : void
+    + <<override>> ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
     + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
-    + <<override>> CollectFromUI(root:VisualElement) : AudioEffectData
-    + <<override>> ApplyDefaultUI(root:VisualElement) : void
+    + <<override>> CollectFromUI(root:VisualElement, isAmbisonic:bool) : AudioEffectData
+    + <<override>> ApplyDefaultUI(root:VisualElement, isAmbisonic:bool) : void
     + <<override>> ApplyValuesToUI(root:VisualElement) : void
-    + <<override>> GetTrackParams() : string[]
+    + <<override>> GetTrackParams(isAmbisonic:bool) : string[]
 }
 enum ReverbPresets {
     Auditorium,
@@ -667,12 +703,12 @@ class EchoEffectData {
     + <<const>> maxDry : float = 1f
     + EchoEffectData(delay:int, decay:float, wet:float, dry:float)
     + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
-    + <<override>> ApplyEffectToSource(audioClipObject:GameObject) : void
+    + <<override>> ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
     + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
-    + <<override>> CollectFromUI(root:VisualElement) : AudioEffectData
-    + <<override>> ApplyDefaultUI(root:VisualElement) : void
+    + <<override>> CollectFromUI(root:VisualElement, isAmbisonic:bool) : AudioEffectData
+    + <<override>> ApplyDefaultUI(root:VisualElement, isAmbisonic:bool) : void
     + <<override>> ApplyValuesToUI(root:VisualElement) : void
-    + <<override>> GetTrackParams() : string[]
+    + <<override>> GetTrackParams(isAmbisonic:bool) : string[]
 }
 AudioEffectData <|-- EchoEffectData
 class OcclusionEffectData {
@@ -685,23 +721,23 @@ class OcclusionEffectData {
     + <<const>> maxOcclusion : float = 1f
     + OcclusionEffectData(frequencyDependent:bool, occlusionValue:float, lowFreqOcc:float, midFreqOcc:float, highFreqOcc:float)
     + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
-    + <<override>> ApplyEffectToSource(audioClipObject:GameObject) : void
+    + <<override>> ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
     + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
-    + <<override>> CollectFromUI(root:VisualElement) : AudioEffectData
-    + <<override>> ApplyDefaultUI(root:VisualElement) : void
+    + <<override>> CollectFromUI(root:VisualElement, isAmbisonic:bool) : AudioEffectData
+    + <<override>> ApplyDefaultUI(root:VisualElement, isAmbisonic:bool) : void
     + <<override>> ApplyValuesToUI(root:VisualElement) : void
-    + <<override>> GetTrackParams() : string[]
+    + <<override>> GetTrackParams(isAmbisonic:bool) : string[]
 }
 AudioEffectData <|-- OcclusionEffectData
 abstract class AudioEffectData {
     + effectId : string
     + {abstract} CopyValues(other:AudioEffectData) : AudioEffectData
-    + {abstract} ApplyEffectToSource(audioClipObject:GameObject) : void
+    + {abstract} ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
     + WithId(effectId:string) : AudioEffectData
-    + {abstract} GetTrackParams() : string[]
+    + {abstract} GetTrackParams(isAmbisonic:bool) : string[]
     + {abstract} IsEffectAppliedInUI(root:VisualElement) : bool
-    + {abstract} CollectFromUI(root:VisualElement) : AudioEffectData
-    + {abstract} ApplyDefaultUI(root:VisualElement) : void
+    + {abstract} CollectFromUI(root:VisualElement, isAmbisonic:bool) : AudioEffectData
+    + {abstract} ApplyDefaultUI(root:VisualElement, isAmbisonic:bool) : void
     + {abstract} ApplyValuesToUI(root:VisualElement) : void
 }
 class HighLowPassEffectData {
@@ -713,12 +749,12 @@ class HighLowPassEffectData {
     + <<const>> maxHighPassFreq : int = 1000
     + HighLowPassEffectData(lowPassFreq:int, highPassFreq:int)
     + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
-    + <<override>> ApplyEffectToSource(audioClipObject:GameObject) : void
+    + <<override>> ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
     + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
-    + <<override>> CollectFromUI(root:VisualElement) : AudioEffectData
-    + <<override>> ApplyDefaultUI(root:VisualElement) : void
+    + <<override>> CollectFromUI(root:VisualElement, isAmbisonic:bool) : AudioEffectData
+    + <<override>> ApplyDefaultUI(root:VisualElement, isAmbisonic:bool) : void
     + <<override>> ApplyValuesToUI(root:VisualElement) : void
-    + <<override>> GetTrackParams() : string[]
+    + <<override>> GetTrackParams(isAmbisonic:bool) : string[]
 }
 AudioEffectData <|-- HighLowPassEffectData
 class AudioEffects {
