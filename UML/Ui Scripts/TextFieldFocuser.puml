@@ -1,6 +1,0 @@
-@startuml
-class TextFieldFocuser {
-    + UpdateFields() : void
-}
-MonoBehaviour <|-- TextFieldFocuser
-@enduml

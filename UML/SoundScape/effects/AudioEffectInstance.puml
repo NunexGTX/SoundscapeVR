@@ -1,8 +1,0 @@
-@startuml
-class AudioEffectInstance {
-    + AudioEffectInstance(audioEffectData:AudioEffectData)
-    + AudioEffectInstance(other:AudioEffectInstance)
-    + ApplyEffectToSource(audioClipObject:GameObject) : void
-}
-AudioEffectInstance --> "effectData" AudioEffectData
-@enduml

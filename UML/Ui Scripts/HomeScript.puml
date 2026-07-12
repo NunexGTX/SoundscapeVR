@@ -1,5 +1,0 @@
-@startuml
-class HomeScript {
-}
-MonoBehaviour <|-- HomeScript
-@enduml

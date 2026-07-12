@@ -1,6 +1,0 @@
-@startuml
-class VRSwitcher <<static>> {
-    + {static} EnableXRCoroutine() : IEnumerator
-    + {static} DisableXR() : void
-}
-@enduml

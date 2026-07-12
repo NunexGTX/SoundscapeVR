@@ -1,6 +1,0 @@
-@startuml
-class AudioClipFlags {
-    + {static} showAllAudioClipFlags() : void
-}
-MonoBehaviour <|-- AudioClipFlags
-@enduml

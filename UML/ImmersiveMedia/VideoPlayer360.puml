@@ -1,6 +1,0 @@
-@startuml
-class VideoPlayer360 {
-}
-MonoBehaviour <|-- VideoPlayer360
-VideoPlayer360 --> "Video360Material" Material
-@enduml

@@ -1,9 +1,0 @@
-@startuml
-class FormEntry {
-    + entryID : string
-    + questionType : string
-    + questionName : string
-    + formEntryValue(newValue:string) : void
-    + getValue() : string
-}
-@enduml

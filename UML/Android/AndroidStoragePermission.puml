@@ -1,9 +1,0 @@
-@startuml
-class AndroidStoragePermission {
-    + maxPermissionTries : int = 3
-    + {static} checkManageStoragePermission() : bool
-    + RequestManageStoragePermission() : void
-    + {static} skipStoragePermissions() : void
-}
-MonoBehaviour <|-- AndroidStoragePermission
-@enduml

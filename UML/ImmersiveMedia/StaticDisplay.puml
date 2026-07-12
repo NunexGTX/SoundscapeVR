@@ -1,9 +1,0 @@
-@startuml
-class StaticDisplay {
-    + imagePath : string
-    + video : bool
-}
-MonoBehaviour <|-- StaticDisplay
-StaticDisplay --> "onImagePrepared" Action
-StaticDisplay --> "onLoadFailed" Action
-@enduml

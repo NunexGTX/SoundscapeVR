@@ -1,8 +1,0 @@
-@startuml
-class ConfigScript {
-    + connectionTimeout : bool = false
-    + setConnectionMessage(connectionStatus:string) : void
-}
-MonoBehaviour <|-- ConfigScript
-ConfigScript --> "playerManager" PlayerManager
-@enduml

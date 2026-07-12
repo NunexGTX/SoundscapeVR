@@ -1,7 +1,0 @@
-@startuml
-class FormScript {
-    + <<const>> SoundscapeInit : string = "LoadSoundscape:"
-    + disappearAllMandatoryTimeout : int = 5
-}
-MonoBehaviour <|-- FormScript
-@enduml

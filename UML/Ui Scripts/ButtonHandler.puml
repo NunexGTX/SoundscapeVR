@@ -1,9 +1,0 @@
-@startuml
-class ButtonHandler {
-    + ButtonHandler(btn:Button, id:string)
-    + SetId(id:string) : void
-    + GetId() : string
-    + SetAction(newAction:System.Action) : void
-    + Clear() : void
-}
-@enduml

@@ -1,5 +1,0 @@
-@startuml
-class StartupManager {
-}
-MonoBehaviour <|-- StartupManager
-@enduml

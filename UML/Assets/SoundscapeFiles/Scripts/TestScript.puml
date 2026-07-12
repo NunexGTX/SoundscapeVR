@@ -1,6 +1,0 @@
-@startuml
-class LoadAmbisonicWav {
-    + filePath : string
-}
-MonoBehaviour <|-- LoadAmbisonicWav
-@enduml

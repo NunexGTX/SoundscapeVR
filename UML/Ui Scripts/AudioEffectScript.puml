@@ -1,7 +1,0 @@
-@startuml
-class AudioEffectScript {
-    + SetValues(data:AudioSource.AudioData) : void
-}
-MonoBehaviour <|-- AudioEffectScript
-AudioEffectScript o-> "editor" SoundscapePlayerEditor
-@enduml

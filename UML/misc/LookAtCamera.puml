@@ -1,6 +1,0 @@
-@startuml
-class LookAtCamera {
-}
-MonoBehaviour <|-- LookAtCamera
-LookAtCamera --> "manager" PlayerManager
-@enduml
