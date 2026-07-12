@@ -166,17 +166,6 @@ class FormEntry {
     + formEntryValue(newValue:string) : void
     + getValue() : string
 }
-class WindowsHEVC {
-    + IsAvailable : bool <<get>>
-    + {static} Check() : bool
-}
-struct MFT_REGISTER_TYPE_INFO {
-}
-MonoBehaviour <|-- WindowsHEVC
-WindowsHEVC --> "HEVCWarningUI" GameObject
-WindowsHEVC +-- MFT_REGISTER_TYPE_INFO
-MFT_REGISTER_TYPE_INFO --> "guidMajorType" Guid
-MFT_REGISTER_TYPE_INFO --> "guidSubtype" Guid
 class VrStateData {
     + IsInVr : bool <<get>> <<set>>
     + CurrentVisualChoice : int <<get>> <<set>>
