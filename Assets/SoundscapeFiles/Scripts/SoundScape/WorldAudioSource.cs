@@ -93,14 +93,9 @@ public class WorldAudioSource: MonoBehaviour
         
         foreach(AudioEffectInstance audioEffectInstance in audioSourceEffects)
         {
-            reaperController.AddEffectToAudio(audioSource.GetUUID(),audioEffectInstance);
+            reaperController.AddEffectToAudio(audioSource.GetUUID(),audioEffectInstance, SoundscapeLibrary.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC));
         }
         
-    }
-
-    bool isWorldSourceAmbisonic()
-    {
-        return library.GetAudioType(audioSource.GetAudioId()) == Audio.TYPE_AMBISONIC;
     }
 
     //called when playing or replaying audio source.
@@ -117,7 +112,7 @@ public class WorldAudioSource: MonoBehaviour
             }
             src.generator = gen;
             src.time = 0;
-            if (library.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
+            if (SoundscapeLibrary.GetAudioType(audioSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC))
             {
                 src.spatializePostEffects = false;
                 src.spatialize = false;

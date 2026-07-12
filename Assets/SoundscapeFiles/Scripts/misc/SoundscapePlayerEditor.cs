@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.XR.CoreUtils;
@@ -5,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Interactors.Casters;
 
@@ -19,22 +21,35 @@ public class SoundscapePlayerEditor: MonoBehaviour
     public GameObject aimingSphere;
     public GameObject audioSourcePlacerObject;
     public Material placingMaterial;
+    public Material previewMaterial;
     public Material defaultMaterial;
     public Material deletingMaterial;
     public Material selectingMaterial;
     [SerializeField] private float scrollStep = 0.2f;
+    [SerializeField] private float previewMovSpeed = 40f;
     [SerializeField] private GameObject distanceTextAsset;
+    [SerializeField] private GameObject distanceClue;
+    [SerializeField] private GameObject distanceClueNoVR;
+    [SerializeField] private GameObject deleteClue;
+    [SerializeField] private GameObject deleteClueNoVR;
+    [SerializeField] private GameObject confirmDeleteClue;
+    [SerializeField] private GameObject confirmDeleteClueNoVR;
     [SerializeField] private EditSoundscapeScript editUi;
     [SerializeField] private AudioEffectScript effectFiltersUi;
     [SerializeField] private PlayerManager playerManager;
     [SerializeField] private List<GameObject> screensToHideOnSphere;
     private GameObject currentPlacingObject;
+    private GameObject currentPreviewObject;
     private GameObject currentTextAsset = null;
-
+    private GameObject clueDistanceCurrent = null;
+    private GameObject clueDeleteCurrent = null;
+    private GameObject clueConfirmDeleteCurrent = null;
     private Audio currentPickedAudio;
     private AudioSource pickedAudioAsSource;
     private GameObject currentSelectedSourceObject;
     private AudioSource.AudioData copiedAudioData = null;
+    private bool placingAudio = false;
+
     private enum State
     {
         //standby
@@ -71,10 +86,11 @@ public class SoundscapePlayerEditor: MonoBehaviour
         deleteAction.action.performed -= DeleteAction;
     }
 
-    //Called by edit UI, when clicking on an audio source
+    //Called by edit UI, when clicking on an audio
     public bool SelectAudio(Audio audio)
     {
-        if(!soundscapeWrapper.HasSoundscape() || currentState != State.Standby) return false;
+        if(!soundscapeWrapper.HasSoundscape() || (currentState != State.Standby && currentState != State.Select)) return false;
+        CancelState();
         currentPickedAudio = audio;
         currentState = State.TryPlace;
         SetSphereActive(true);
@@ -120,6 +136,11 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(worldPos.Equals(INVALID_VEC_POS)) return;
         if(!soundscapeWrapper.HasSoundscape()) return;
         if(currentState != State.TryPlace && currentState != State.TryMove) return;
+
+        placingAudio = true;
+        Destroy(currentPreviewObject);
+        currentPreviewObject = null;
+
         Vector3 sphereCoords = SoundscapeLibrary.WorldToSphere(worldPos);
         if(currentState == State.TryPlace)
         {    
@@ -128,6 +149,8 @@ public class SoundscapePlayerEditor: MonoBehaviour
                 UnselectLibraryAudio();
                 CancelState();
                 Debug.LogError("Tried to place a null audio");
+
+                placingAudio = false;
                 return;
             }
             Debug.Log("Placing audio: " + currentPickedAudio.id + " at " + worldPos);
@@ -141,17 +164,44 @@ public class SoundscapePlayerEditor: MonoBehaviour
                 UnselectLibraryAudio();
                 CancelState();
                 Debug.LogError("Tried to move a null world audio source");
+
+                placingAudio = false;
                 return;
             }
+            
             WorldAudioSource src = currentSelectedSourceObject.GetComponent<WorldAudioSource>();
             Debug.Log("Moving audio source: " + src.audioSource.GetAudioId() + " to " + worldPos);
             pickedAudioAsSource = new AudioSource(src.audioSource).WithNewPosition(sphereCoords);
+            currentSelectedSourceObject.GetComponent<MeshRenderer>().enabled = false;
             //change state
             currentState = State.AdjustMove;
         }
         CreatePlaceholderPlacer(worldPos);
         DistanceFeedback(worldPos);
+        DistanceAdjustClue(worldPos);
         SetSphereActive(false);
+        placingAudio = false;
+    }
+
+    public void PreviewPlaceAudio(Vector3 worldPos)
+    {
+        if (placingAudio) return;
+        if(worldPos.Equals(INVALID_VEC_POS)) return;
+        if(!soundscapeWrapper.HasSoundscape()) return;
+        if(currentState != State.TryPlace && currentState != State.TryMove) return;
+        if(currentPreviewObject == null)
+        {
+            CreatePlaceholderPreview(worldPos);
+        }
+
+        Vector3 targetPos = new(
+            Math.Min((aimingSphere.transform.localScale.x/100)-audioSourcePlacerObject.transform.localScale.x,worldPos.x),
+            Math.Min((aimingSphere.transform.localScale.y/100)-audioSourcePlacerObject.transform.localScale.y,worldPos.y),
+            Math.Min((aimingSphere.transform.localScale.z/100)-audioSourcePlacerObject.transform.localScale.z,worldPos.z));
+        currentPreviewObject.transform.position = Vector3.MoveTowards(
+            currentPreviewObject.transform.position,
+            targetPos,
+            Time.deltaTime * previewMovSpeed);
     }
 
     private void CreatePlaceholderPlacer(Vector3 worldPos)
@@ -160,6 +210,15 @@ public class SoundscapePlayerEditor: MonoBehaviour
         currentPlacingObject.transform.position = worldPos;
         currentPlacingObject.GetComponent<MeshRenderer>().material = placingMaterial;
     }
+
+    private void CreatePlaceholderPreview(Vector3 worldPos)
+    {
+        currentPreviewObject = Instantiate(audioSourcePlacerObject);
+        currentPreviewObject.transform.position = worldPos;
+        currentPreviewObject.GetComponent<MeshRenderer>().material = previewMaterial;
+        currentPreviewObject.layer = LayerMask.NameToLayer("SoundSources");
+    }
+
     
     private Vector3 GetSelectionPoint(ActivateEventArgs args)
     {
@@ -201,6 +260,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
             soundscapeWrapper.PlaceNewAudioSource(pickedAudioAsSource);
         currentState = State.Standby;
         DestroyTextAsset();
+        DestroyDistanceAdjustClue();
         UnselectLibraryAudio();
         UnselectSource(goExists: false);
         SetUIVisibility(true);
@@ -219,9 +279,60 @@ public class SoundscapePlayerEditor: MonoBehaviour
         effectFiltersUi.SetValues(src.GetComponent<WorldAudioSource>().audioSource.audioData);
         effectFiltersUi.gameObject.SetActive(true);
         currentState = State.Select;
+        Vector3 worldPos = currentSelectedSourceObject.GetComponent<WorldAudioSource>().transform.position/2;
+        ShowSourceDeleteClue(worldPos);
         Debug.Log("State changed to select");
     }
 
+    private void ShowSourceDeleteClue(Vector3 worldPos)
+    {
+        if(clueDeleteCurrent == null)
+        {
+            if(soundscapeWrapper.vrStateData.IsInVr == true)
+            {
+                clueDeleteCurrent = Instantiate(deleteClue);
+            }
+            else
+            {
+                clueDeleteCurrent = Instantiate(deleteClueNoVR);
+            }
+        }
+        
+        clueDeleteCurrent.GetComponent<AudioSourceClue>().SetAndPlace(worldPos);
+    }
+
+    private void DistanceAdjustClue(Vector3 worldPos)
+    {
+        if(clueDistanceCurrent == null)
+        {
+            if(soundscapeWrapper.vrStateData.IsInVr == true)
+            {
+                clueDistanceCurrent = Instantiate(distanceClue);
+            }
+            else
+            {
+                clueDistanceCurrent = Instantiate(distanceClueNoVR);
+            }
+        }
+        
+        clueDistanceCurrent.GetComponent<AudioSourceClue>().SetAndPlace(worldPos);
+    }
+    private void ConfirmDeleteClue(Vector3 worldPos)
+    {
+        if(clueConfirmDeleteCurrent == null)
+        {
+            if(soundscapeWrapper.vrStateData.IsInVr == true)
+            {
+                clueConfirmDeleteCurrent = Instantiate(confirmDeleteClue);
+            }
+            else
+            {
+                clueConfirmDeleteCurrent = Instantiate(confirmDeleteClueNoVR);
+            }
+        }
+        
+        clueConfirmDeleteCurrent.GetComponent<AudioSourceClue>().SetAndPlace(worldPos);
+    }
     //called by audio effect UI to collect the data from it and write it into currentSelectedSourceObject
     public void UpdateSourceData(AudioSource.AudioData audioData){
         AudioSource src = currentSelectedSourceObject.GetComponent<WorldAudioSource>().audioSource;
@@ -241,11 +352,36 @@ public class SoundscapePlayerEditor: MonoBehaviour
             soundscapeWrapper.DeleteAudio(currentSelectedSourceObject);
             UnselectSource(false);
             currentState = State.Standby;
+            ShowDeleteWarning(false);
         }
         else if (currentState == State.Select)
         {
             currentSelectedSourceObject.GetComponent<MeshRenderer>().material = deletingMaterial;
             currentState = State.TryRemove;
+            ShowDeleteWarning(true);
+        }
+    }
+
+    private void ShowDeleteWarning(bool show)
+    {
+        //1. hide UI
+        SetUIVisibility(!show);
+        
+        if(show) soundscapeWrapper.HideSources();
+        else soundscapeWrapper.ShowSources();
+        if(currentSelectedSourceObject != null)
+            currentSelectedSourceObject.GetComponent<MeshRenderer>().enabled = true;
+
+        //2. add text to inform user
+        if(show)
+            ConfirmDeleteClue(currentSelectedSourceObject.transform.position);
+        else
+        {
+            if(clueConfirmDeleteCurrent != null)
+            {
+                Destroy(clueConfirmDeleteCurrent);
+                clueConfirmDeleteCurrent = null;
+            }
         }
     }
     private void UnselectSource(bool goExists = true)
@@ -254,6 +390,17 @@ public class SoundscapePlayerEditor: MonoBehaviour
             currentSelectedSourceObject.GetComponent<WorldAudioSource>().ResetMaterial(defaultMaterial);
         currentSelectedSourceObject = null;
         effectFiltersUi.gameObject.SetActive(false);
+
+        DestroySourceDeleteClue();
+    }
+
+    private void DestroySourceDeleteClue()
+    {
+        if(clueDeleteCurrent != null)
+        {
+            Destroy(clueDeleteCurrent);
+            clueDeleteCurrent = null;
+        }
     }
 
     //called by audio effect UI button to move the source.
@@ -273,16 +420,19 @@ public class SoundscapePlayerEditor: MonoBehaviour
     {
         if(currentState == State.Standby && !leaving) return;
         
-        if(currentState == State.TryRemove && !leaving)
+        if(currentState == State.TryRemove)
         {
+            ShowDeleteWarning(false);
             if(currentSelectedSourceObject != null)
                 currentSelectedSourceObject.GetComponent<MeshRenderer>().material = selectingMaterial; 
             currentState = State.Select;
         }
         else
         {
-            UnselectSource();
             currentState = State.Standby;
+            if(currentSelectedSourceObject != null)
+                currentSelectedSourceObject.GetComponent<MeshRenderer>().enabled = true;
+            UnselectSource();
             UnselectLibraryAudio();
             //currentSelectedAudio = null;
             if(currentPlacingObject != null)
@@ -290,8 +440,14 @@ public class SoundscapePlayerEditor: MonoBehaviour
                 Destroy(currentPlacingObject);       
                 currentPlacingObject = null;
             }
+            if (currentPreviewObject != null)
+            {
+                Destroy(currentPreviewObject);
+                currentPreviewObject = null;
+            }
             SetSphereActive(false);
             DestroyTextAsset();
+            DestroyDistanceAdjustClue();
         }
         SetUIVisibility(true);
     }
@@ -302,7 +458,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         if(currentState != State.AdjustPlace && currentState != State.AdjustMove) return;
         Vector2 scrollValue = context.ReadValue<Vector2>();
         float scrollY = scrollValue.y;
-        if(math.abs(scrollY) < 0.5) return;    
+        if(math.abs(scrollY) < 0.5) return;
         Vector3 sphereCoords = pickedAudioAsSource.GetSpherePosition();
         Vector3 newCoords = new()
         {
@@ -315,6 +471,7 @@ public class SoundscapePlayerEditor: MonoBehaviour
         CreatePlaceholderPlacer(worldPos);
         pickedAudioAsSource.WithNewPosition(newCoords);
         DistanceFeedback(worldPos);
+        DistanceAdjustClue(worldPos);
     }
 
     private void DeleteAction(InputAction.CallbackContext context)
@@ -344,11 +501,32 @@ public class SoundscapePlayerEditor: MonoBehaviour
         }
     }
 
+    private void DestroyDistanceAdjustClue()
+    {
+        if(clueDistanceCurrent != null)
+        {
+            Destroy(clueDistanceCurrent);
+            clueDistanceCurrent = null;
+        }
+    }
+
     private void DistanceFeedback(Vector3 worldPos)
     {
         if(currentTextAsset == null)
             currentTextAsset = Instantiate(distanceTextAsset);
         currentTextAsset.GetComponent<DistText>().SetAndPlace(worldPos);
+    }
+    
+    /*
+    Calculates the right side position for the AudioSourcePlacerObject so we can put the distance move UI cue there.
+    In this case, we only calculate the right side based on the face facing the player, ignoring the cube's depth
+    */
+    private Vector3 AudioSourceCubeRightSide(Vector3 sphereSourceWorldPos)
+    {
+        Vector3 audioCubeScaleBounds = audioSourcePlacerObject.GetComponent<Renderer>().bounds.size;
+        float halfSide = audioCubeScaleBounds.z/2; //Since its a cube any side is fine
+
+        return sphereSourceWorldPos + new Vector3(0,0,halfSide);
     }
 
     public void CopyData(AudioSource.AudioData audioData)
@@ -368,5 +546,10 @@ public class SoundscapePlayerEditor: MonoBehaviour
     {
         if(copiedAudioData == null) return "";
         else return copiedAudioData.audioId;
+    }
+
+    internal bool ShouldPreview()
+    {
+        return currentState == State.TryPlace || currentState == State.TryMove;
     }
 }

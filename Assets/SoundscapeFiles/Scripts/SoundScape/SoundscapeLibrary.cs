@@ -10,6 +10,7 @@ using System.Linq;
 
 public class SoundscapeLibrary: MonoBehaviour
 {
+    private static SoundscapeLibrary INSTANCE = null;
     public AudioList audioList = new();
     public SoundscapeList soundscapeList = new();
     public Form form = new();
@@ -22,6 +23,7 @@ public class SoundscapeLibrary: MonoBehaviour
     private static readonly string QUESTIONNAIREJSON_PATH = "questionnaire.json";
     private async void Start()
     {
+        if(INSTANCE == null) INSTANCE = this;
         Debug.Log("[SoundscapeVR] Loading files...");
         //await CheckPermissions();
         await LoadFiles(GetSoundscapeFilePath(), GetAudioFilePath(), GetFormFilePath());
@@ -571,9 +573,14 @@ public class SoundscapeLibrary: MonoBehaviour
         if(customClip == null) return null;
         return customClip;
     }
-    public string GetAudioType(string audioId)
+
+    public static bool IsAudioAmbisonic(string audioId)
     {
-        foreach(Audio audio in audioList.GetAudios())
+        return GetAudioType(audioId).Equals(Audio.TYPE_AMBISONIC);
+    }
+    public static string GetAudioType(string audioId)
+    {
+        foreach(Audio audio in INSTANCE.audioList.GetAudios())
         {
             if(audio.id.Equals(audioId)) return audio.type;
         }

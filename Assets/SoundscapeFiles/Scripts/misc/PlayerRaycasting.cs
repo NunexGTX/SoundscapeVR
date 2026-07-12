@@ -12,17 +12,23 @@ public class PlayerRaycasting : MonoBehaviour
 
     void Update()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame && !vrStateData.IsInVr)
-        {
-            GameObject obj = RaycastAudioSources();
-            if(obj != null)
+        if(!vrStateData.IsInVr){
+            if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                editor.SelectAudioSource(obj);
-                obj.GetComponent<WorldAudioSource>().FlipMuteState();
-                return;
+                GameObject obj = RaycastAudioSources();
+                if(obj != null)
+                {
+                    editor.SelectAudioSource(obj);
+                    obj.GetComponent<WorldAudioSource>().FlipMuteState();
+                    return;
+                }
+                
+                editor.FirstPlaceAudio(RaycastSphere());
             }
-            
-            editor.FirstPlaceAudio(RaycastSphere());
+            else
+            {
+                editor.PreviewPlaceAudio(RaycastSphere());
+            }
         }
     }
 

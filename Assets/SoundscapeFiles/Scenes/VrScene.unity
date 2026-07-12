@@ -1021,7 +1021,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &375924655
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1559,6 +1559,7 @@ GameObject:
   - component: {fileID: 657310049}
   - component: {fileID: 657310048}
   - component: {fileID: 657310050}
+  - component: {fileID: 657310053}
   - component: {fileID: 657310051}
   - component: {fileID: 657310052}
   m_Layer: 0
@@ -1640,11 +1641,19 @@ MonoBehaviour:
   aimingSphere: {fileID: 468564577}
   audioSourcePlacerObject: {fileID: 4017158347209711136, guid: 7994b6627bcf14f458477dc662f6548a, type: 3}
   placingMaterial: {fileID: 2100000, guid: 82c97886f55849f46bb8d8b491654bf4, type: 2}
+  previewMaterial: {fileID: 2100000, guid: 7305936122398102e91a79b3f2b300f3, type: 2}
   defaultMaterial: {fileID: 2100000, guid: cb58b00933386e844a4fe82d340b5ee7, type: 2}
   deletingMaterial: {fileID: 2100000, guid: bfa274fe4e5a5ff429e239d47d668ce3, type: 2}
   selectingMaterial: {fileID: 2100000, guid: 82c97886f55849f46bb8d8b491654bf4, type: 2}
   scrollStep: 0.2
+  previewMovSpeed: 40
   distanceTextAsset: {fileID: 7548355003463832129, guid: efdbd5ff3a559644a85935edef2b1f1d, type: 3}
+  distanceClue: {fileID: 7548355003463832129, guid: 80ac3f2e3844c4d5098fca39713e9b74, type: 3}
+  distanceClueNoVR: {fileID: 7548355003463832129, guid: 145d1603df4624ec88f5084f9391c46c, type: 3}
+  deleteClue: {fileID: 7548355003463832129, guid: 12015e2d4f4043656b8adefd829ae9c7, type: 3}
+  deleteClueNoVR: {fileID: 7548355003463832129, guid: e02d88b74300dc5468559ce1325f74d2, type: 3}
+  confirmDeleteClue: {fileID: 7548355003463832129, guid: ce4556bbb8d4e394d8a1603477bb9a0d, type: 3}
+  confirmDeleteClueNoVR: {fileID: 7548355003463832129, guid: 94371cde161395d499c571ca9b76be33, type: 3}
   editUi: {fileID: 2043944001}
   effectFiltersUi: {fileID: 2125151702}
   playerManager: {fileID: 657310048}
@@ -1687,6 +1696,24 @@ MonoBehaviour:
   scrollSpeed: 500
   threshold: 0.1
   invertVertical: 0
+--- !u!114 &657310053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 657310047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf55b7a8edf73d1285b6b8770406c2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractorRaycast
+  vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
+  sphereLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  editor: {fileID: 657310050}
+  UiInteractor: {fileID: 49396375}
 --- !u!1 &720126414
 GameObject:
   m_ObjectHideFlags: 0
@@ -1720,7 +1747,7 @@ RectTransform:
   m_Father: {fileID: 977132029}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4160,7 +4187,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2314523925997562660, guid: 763522a439f36ac4d881f5652181a2ee, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2314523925997562660, guid: 763522a439f36ac4d881f5652181a2ee, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4211,8 +4238,24 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1148877396}
     - target: {fileID: 2314523925997562667, guid: 763522a439f36ac4d881f5652181a2ee, type: 3}
+      propertyPath: m_KeyboardOffset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2314523925997562667, guid: 763522a439f36ac4d881f5652181a2ee, type: 3}
       propertyPath: m_KeyboardOffset.y
       value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2314523925997562667, guid: 763522a439f36ac4d881f5652181a2ee, type: 3}
+      propertyPath: m_KeyboardOffset.z
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2314523925997562667, guid: 763522a439f36ac4d881f5652181a2ee, type: 3}
+      propertyPath: m_FacingKeyboardThreshold
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2314523925997562667, guid: 763522a439f36ac4d881f5652181a2ee, type: 3}
+      propertyPath: m_RepositionOutOfViewKeyboardOnOpen
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5112,7 +5155,7 @@ RectTransform:
   m_Father: {fileID: 2037751218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5506,6 +5549,10 @@ MonoBehaviour:
   autoconnect: 1
   ReapyCommunicationPort: 6337
   connectionTimeOutMillis: 5000
+  rotationUpdate: 0
+  HeadRotationUpdateIntervalMs: 200
+  HeadRotationLowPriotityMode: 1
+  rotationOffset: {x: 0, y: 90, z: 0}
   vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   loadingManager: {fileID: 0}
 --- !u!1 &2037751217

@@ -36,7 +36,7 @@ public class EchoEffectData : AudioEffectData
         return this;
     }
     
-    public override void ApplyEffectToSource(GameObject audioClipObject)
+    public override void ApplyEffectToSource(GameObject audioClipObject, bool isAmbisonic)
     {
         AudioEchoFilter filter = audioClipObject.AddComponent<AudioEchoFilter>();
         filter.delay = delay_ms;
@@ -47,7 +47,7 @@ public class EchoEffectData : AudioEffectData
 
     public override bool IsEffectAppliedInUI(VisualElement root) => root.Q<Toggle>("echoToggle").value;
 
-    public override AudioEffectData CollectFromUI(VisualElement root)
+    public override AudioEffectData CollectFromUI(VisualElement root, bool isAmbisonic)
     {
         int echoDelay = root.Q<SliderInt>("echoDelay").value;
         float echoDecay = root.Q<Slider>("echoDecay").value;
@@ -56,7 +56,7 @@ public class EchoEffectData : AudioEffectData
         return new EchoEffectData(echoDelay, echoDecay, wet: echoWet, dry: echoDry).WithId(effectId);
     }
 
-    public override void ApplyDefaultUI(VisualElement root)
+    public override void ApplyDefaultUI(VisualElement root, bool isAmbisonic)
     {
         root.Q<Foldout>("echoFoldout").value = false;
         root.Q<Toggle>("echoToggle").value = false;
@@ -72,7 +72,7 @@ public class EchoEffectData : AudioEffectData
         root.Q<Slider>("echoWet").value = wet_mix;
     }
 
-    public override string[] GetTrackParams()
+    public override string[] GetTrackParams(bool isAmbisonic)
     {
         return new string[] { "true", delay_ms.ToString(), decay_ratio.ToString(), dry_mix.ToString(), wet_mix.ToString() };
     }

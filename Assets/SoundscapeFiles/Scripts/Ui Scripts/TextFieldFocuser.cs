@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 using UnityEngine.XR.Interaction.Toolkit.Samples.SpatialKeyboard;
 
@@ -14,14 +15,24 @@ public class TextFieldFocuser : MonoBehaviour
 
     void OnEnable()
     {
+        keyboardManager.HideKeyboard();
         RegisterAllTextFields();
     }
 
     void OnDisable()
-    {UnregisterAllCallbacks();}
+    {
+        UnregisterAllCallbacks();
+        keyboardManager.HideKeyboard(); //Close the keyboard if leaving current menu
+    }
     private void RegisterAllTextFields()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+
+        EventCallback<PointerDownEvent> pointDown = _ => OnRootClicked();
+        root.RegisterCallback<PointerDownEvent>(pointDown);
+        
+        unbindingActions.Add(() => root.UnregisterCallback(pointDown));
+
         var allFields = root.Query<VisualElement>()
             .Where(e => e is TextField || e is IntegerField || e is FloatField)
             .ToList();
@@ -53,6 +64,7 @@ public class TextFieldFocuser : MonoBehaviour
             playerManager.JustStopPlayer(false);
             return;
         }
+        
         _activeField = field;
         if(field is TextField textField)
         {
@@ -77,10 +89,6 @@ public class TextFieldFocuser : MonoBehaviour
             playerManager.JustStopPlayer(true);
             return;
         }
-        /*if (_activeField == field)
-        {
-            OnKeyboardClosed();
-        }*/
     }
 
     private void OnKeyboardTextUpdate(KeyboardTextEventArgs args)
@@ -115,6 +123,11 @@ public class TextFieldFocuser : MonoBehaviour
         keyboardManager.keyboard.onTextUpdated.RemoveListener(OnKeyboardTextUpdate);
         keyboardManager.keyboard.onTextUpdated.RemoveListener(OnKeyboardClosed);
         _activeField = null;
+    }
+
+    private void OnRootClicked()
+    {
+        keyboardManager.HideKeyboard();
     }
 
     public void UpdateFields()

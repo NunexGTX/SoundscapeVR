@@ -28,7 +28,7 @@ public class HighLowPassEffectData : AudioEffectData
         return this;
     }
     
-    public override void ApplyEffectToSource(GameObject audioClipObject)
+    public override void ApplyEffectToSource(GameObject audioClipObject, bool isAmbisonic)
     {
         AudioLowPassFilter lowPass = audioClipObject.AddComponent<AudioLowPassFilter>();
         AudioHighPassFilter highPass = audioClipObject.AddComponent<AudioHighPassFilter>();
@@ -38,14 +38,14 @@ public class HighLowPassEffectData : AudioEffectData
 
     public override bool IsEffectAppliedInUI(VisualElement root) => root.Q<Toggle>("passToggle").value;
 
-    public override AudioEffectData CollectFromUI(VisualElement root)
+    public override AudioEffectData CollectFromUI(VisualElement root, bool isAmbisonic)
     {
         int lowFreq = root.Q<SliderInt>("lowPassFreq").value;
         int highFreq = root.Q<SliderInt>("highPassFreq").value;
         return new HighLowPassEffectData(lowFreq, highFreq).WithId(effectId);
     }
 
-    public override void ApplyDefaultUI(VisualElement root)
+    public override void ApplyDefaultUI(VisualElement root, bool isAmbisonic)
     {
         root.Q<Foldout>("highAndLowPassFoldout").value = false;
         root.Q<Toggle>("passToggle").value = false;
@@ -58,7 +58,7 @@ public class HighLowPassEffectData : AudioEffectData
         root.Q<SliderInt>("lowPassFreq").value = lowPassFreq;
         root.Q<SliderInt>("highPassFreq").value = highPassFreq;
     }
-    public override string[] GetTrackParams()
+    public override string[] GetTrackParams(bool isAmbisonic)
     {
         return new string[] { "true", highPassFreq.ToString(), lowPassFreq.ToString() };
     }

@@ -44,22 +44,30 @@ public class ReverbEffectData: AudioEffectData
         return this;
     }
 
-    public override void ApplyEffectToSource(GameObject audioClipObject)
+    public override void ApplyEffectToSource(GameObject audioClipObject, bool isAmbisonic)
     {
+        if(isAmbisonic) return;
         AudioReverbFilter reverbFilter = audioClipObject.AddComponent<AudioReverbFilter>();
         reverbFilter.reverbPreset = unityEffectPreset(currentPreset);
     }
 
     public override bool IsEffectAppliedInUI(VisualElement root) => root.Q<Toggle>("applyReverb").value;
 
-    public override AudioEffectData CollectFromUI(VisualElement root)
+    public override AudioEffectData CollectFromUI(VisualElement root, bool isAmbisonic)
     {
+        if(isAmbisonic) return null;
         ReverbPresets reverbPreset = Enum.Parse<ReverbPresets>(root.Q<DropdownField>("reverbPresetDropdown").value);
         return new ReverbEffectData(reverbPreset).WithId(effectId);
     }
 
-    public override void ApplyDefaultUI(VisualElement root)
+    public override void ApplyDefaultUI(VisualElement root, bool isAmbisonic)
     {
+        if (isAmbisonic)
+        {
+            root.Q<Foldout>("reverbFoldout").visible = false;
+            return;   
+        }
+        root.Q<Foldout>("reverbFoldout").visible = true;
         root.Q<Foldout>("reverbFoldout").value = false;
         root.Q<Toggle>("applyReverb").value = false;
         root.Q<DropdownField>("reverbPresetDropdown").choices = getPresetNames();
@@ -68,13 +76,15 @@ public class ReverbEffectData: AudioEffectData
     public override void ApplyValuesToUI(VisualElement root)
     {
         root.Q<DropdownField>("reverbPresetDropdown").value = currentPreset.ToString();
+        root.Q<Foldout>("reverbFoldout").visible = true;
         root.Q<Foldout>("reverbFoldout").value = true;
         root.Q<Toggle>("applyReverb").value = true;
     }
 
-    public override string[] GetTrackParams()
+    public override string[] GetTrackParams(bool isAmbisonic)
     {
         //Can only be used for reaper in this case
+        if(isAmbisonic) return null;
         return new string[] {"true", ReverbRiRs.getPresetCode(currentPreset)};
     }
     

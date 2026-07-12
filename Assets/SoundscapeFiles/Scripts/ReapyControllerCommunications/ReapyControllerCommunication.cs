@@ -5,6 +5,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections;
 
 
 public class ReapyControllerCommunication : MonoBehaviour
@@ -12,9 +13,13 @@ public class ReapyControllerCommunication : MonoBehaviour
     public bool EnableCommunication = true;
     public bool autoconnect = true;
     private string ServerIP;
-    [SerializeField]
-    private int ReapyCommunicationPort = 6337;
+    [SerializeField] private int ReapyCommunicationPort = 6337;
     public Int32 connectionTimeOutMillis = 5000;
+    public bool rotationUpdate = true;
+    public int HeadRotationUpdateIntervalMs = 200;
+    public bool HeadRotationLowPriotityMode = true; //This will ignore the head rotation update if there are any other requests in queue when its trying to send the rotation update
+    public Vector3 rotationOffset = new Vector3(0,90,0);
+    private Coroutine rotationUpdateCoroutine;
     public VrStateData vrStateData;
     private TcpClient client;
     private NetworkStream stream;
@@ -37,6 +42,8 @@ public class ReapyControllerCommunication : MonoBehaviour
     private const string ClockSyncCommand = "clock_sync";
     [SerializeField]
     private const string ClockSyncResultCommand = "clock_sync_result";
+    [SerializeField]
+    private const string HeadRotationUpdateCommand = "head_rotation";
     [SerializeField]
     private const string newSoundscapeCommand = "new_soundscape";
     [SerializeField]
@@ -111,6 +118,29 @@ public class ReapyControllerCommunication : MonoBehaviour
         {
             Debug.LogError("Reaper Communication can't start since no server IP was set");
         }
+    }
+
+    float[] cameraRotation()
+    {
+        Vector3 cameraRotation = Camera.main.transform.eulerAngles;
+        return new float[3] {cameraRotation.x - rotationOffset.x,cameraRotation.y - rotationOffset.y,cameraRotation.z - rotationOffset.z};
+    }
+
+    IEnumerator updatePlayerCameraRotationCoroutine()
+    {
+        while (true)
+        {
+            float[] rotations = cameraRotation();
+
+            if(HeadRotationLowPriotityMode && _streamLock.CurrentCount == 0)
+            {
+                yield return new WaitForSeconds(HeadRotationUpdateIntervalMs/1000f);
+            }
+
+            HeadRotationUpdate(rotations);
+
+            yield return new WaitForSeconds(HeadRotationUpdateIntervalMs/1000f);
+        }        
     }
 
     async void ConnectAsync() => await TryConnectAsync(_cts.Token);
@@ -249,6 +279,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
         Debug.LogError($"Reaper Controller: Failed to reconnect after {MaxReconnectAttempts} attempts.");
         _isReconnecting = false;
+        set_connection_status(connectionTypes[0]);
     }
 
     public static string readIPFile()
@@ -315,6 +346,23 @@ public class ReapyControllerCommunication : MonoBehaviour
     void set_connection_status(string connect_status)
     {
         connectionStatus = connect_status;
+
+        if (rotationUpdate)
+        {
+           if(connectionStatus == connectionTypes[2])
+            {
+                rotationUpdateCoroutine = StartCoroutine(updatePlayerCameraRotationCoroutine());
+                StopSoundscape();
+            }
+            else
+            {
+                if(rotationUpdateCoroutine != null)
+                {
+                    StopCoroutine(rotationUpdateCoroutine);
+                    rotationUpdateCoroutine = null;
+                }
+            } 
+        }
 
         //Set UI if available
         ConfigScript configUI = FindFirstObjectByType<ConfigScript>();
@@ -442,10 +490,9 @@ public class ReapyControllerCommunication : MonoBehaviour
     }
 
     //Effects
-    public void AddEffectToAudio(Guid soundUUID, AudioEffectInstance audioEffectInstance)
+    public void AddEffectToAudio(Guid soundUUID, AudioEffectInstance audioEffectInstance, bool isAmbisonic)
     {
-
-        string[] effectParams = trackEffectParams(audioEffectInstance); //Gather effect params that are valid to use in reaper controller
+        string[] effectParams = trackEffectParams(audioEffectInstance, isAmbisonic); //Gather effect params that are valid to use in reaper controller
 
         if (effectParams == null)
         {
@@ -458,6 +505,19 @@ public class ReapyControllerCommunication : MonoBehaviour
         message_beeboop(json, soundUUID);
     }
 
-    string[] trackEffectParams(AudioEffectInstance audioEffectInstance) => audioEffectInstance.effectData.GetTrackParams();
+    public void HeadRotationUpdate(float[] cameraRotation)
+    {
+        //Translate from 0 to 360 to -180 to 180
+        float yawRot = -((cameraRotation[1] > 180f) ? cameraRotation[1] - 360f : cameraRotation[1]);
+        float pitchRot = -((cameraRotation[0] > 180f) ? cameraRotation[0] - 360f : cameraRotation[0]);
+        float rollRot = -((cameraRotation[2] > 180f) ? cameraRotation[2] - 360f : cameraRotation[2]);
+
+        var msg = new HeadRotation {command = HeadRotationUpdateCommand, yaw = yawRot, pitch = pitchRot, roll = rollRot};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
+    string[] trackEffectParams(AudioEffectInstance audioEffectInstance, bool isAmbisonic) => audioEffectInstance.effectData.GetTrackParams(isAmbisonic);
     
 }

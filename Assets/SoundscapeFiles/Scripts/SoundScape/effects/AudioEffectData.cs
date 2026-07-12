@@ -15,14 +15,14 @@ public abstract class AudioEffectData
 
     public abstract AudioEffectData CopyValues(AudioEffectData other);
     //called to apply this effect to the source GameObject
-    public abstract void ApplyEffectToSource(GameObject audioClipObject);
+    public abstract void ApplyEffectToSource(GameObject audioClipObject, bool isAmbisonic);
 
     public AudioEffectData WithId(string effectId)
     {
         this.effectId = effectId;
         return this;
     }
-    public abstract string[] GetTrackParams();
+    public abstract string[] GetTrackParams(bool isAmbisonic);
     /// <summary>
     /// called to check if, according to the AudioEffectsUI, this effect was applied (should be the checkbox corresponding to this effect).
     /// will call CollectFromUI right after
@@ -35,13 +35,13 @@ public abstract class AudioEffectData
     /// </summary>
     /// <param name="root"> root of the UI document</param>
     /// <returns> a new instance of this effect class</returns>
-    public abstract AudioEffectData CollectFromUI(VisualElement root);
+    public abstract AudioEffectData CollectFromUI(VisualElement root, bool isAmbisonic);
     /// <summary>
     /// Set the values in the UI to the default (aka, what should it be by default if the effect is not applied.)
     /// Should generally just be setting the checkbox and foldout values to false.
     /// </summary>
     /// <param name="root"> root of the UI document</param>
-    public abstract void ApplyDefaultUI(VisualElement root);
+    public abstract void ApplyDefaultUI(VisualElement root, bool isAmbisonic);
     /// <summary>
     /// Apply the values of this very effect data instance to the UI.
     /// </summary>
