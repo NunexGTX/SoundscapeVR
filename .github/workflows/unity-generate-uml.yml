@@ -1,0 +1,117 @@
+name: Generate UML
+on:
+  push:
+    branches:
+      - main
+      - uml-main-test
+  workflow_dispatch:
+
+jobs:
+  generate-uml:
+    name: 'Generate UML'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    env:
+      CODE_PATH: "./Assets/SoundscapeFiles/Scripts/"
+      UML_OUTPUT_PATH: "./docs/UMLs/"
+      UML_FILE_NAME: "SoundscapeVR-UML"
+      UMP_GENERATION_PARAMETERS: -public -createAssociation -allInOne -excludePaths **/WindowsHEVC.cs
+      
+    steps:
+      - uses: actions/checkout@v4
+ 
+      - name: Remove old diagrams
+        run: rm -r ${{ env.UML_OUTPUT_PATH }} || true
+ 
+      - name: Check if there is code
+        id: check_for_code
+        run: |
+          if [ -d "${{ env.CODE_PATH }}" ]; then
+            echo "CODE_EXISTS=true" >> "$GITHUB_OUTPUT"
+          fi
+ 
+      - uses: actions/setup-dotnet@v4
+        if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        with:
+          dotnet-version: 8.0.x
+ 
+      - name: Install PlantUmlClassDiagramGenerator
+        if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        run: |
+          dotnet tool install --global PlantUmlClassDiagramGenerator --version 1.4.0
+          dotnet tool restore
+ 
+      - name: Create a folder for diagrams
+        if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        run: mkdir -p ${{ env.UML_OUTPUT_PATH }}
+ 
+      - name: Generate PlantUML files
+        if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        run: |
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          puml-gen ${{ env.CODE_PATH }} ${{ env.UML_OUTPUT_PATH }} -dir ${{ env.UMP_GENERATION_PARAMETERS }}
+          mv "${{ env.UML_OUTPUT_PATH }}include.puml" "${{ env.UML_OUTPUT_PATH }}${{ env.UML_FILE_NAME }}.puml"
+ 
+      - name: Install PlantUML (latest release) and Graphviz
+        if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz default-jre
+          curl -L -o plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
+          # Sanity check: a real plantuml.jar is tens of MB. If it's tiny, the download failed.
+          SIZE=$(stat -c%s plantuml.jar)
+          if [ "$SIZE" -lt 1000000 ]; then
+            echo "Downloaded plantuml.jar is only $SIZE bytes — download likely failed."
+            cat plantuml.jar
+            exit 1
+          fi
+          java -jar plantuml.jar -version
+ 
+      - name: Generate combined SVG diagram
+        if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        # Only render the combined -allInOne file — no per-package diagrams.
+        # No error suppression: if PlantUML syntax fails, we want to see why.
+        run: |
+          java -jar plantuml.jar -v -tsvg "${{ env.UML_OUTPUT_PATH }}${{ env.UML_FILE_NAME }}.puml"
+ 
+      - name: Show context around syntax error (only runs if the above failed)
+        if: ${{ failure() && steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        run: |
+          FILE="${{ env.UML_OUTPUT_PATH }}${{ env.UML_FILE_NAME }}.puml"
+          # Re-run plantuml just to capture the error line number cleanly
+          LINE=$(java -jar plantuml.jar -v -tsvg "$FILE" 2>&1 | grep -oP 'Error line \K[0-9]+' | head -1)
+          if [ -n "$LINE" ]; then
+            echo "----- Context around line $LINE in $FILE -----"
+            START=$((LINE - 15))
+            END=$((LINE + 15))
+            [ $START -lt 1 ] && START=1
+            sed -n "${START},${END}p" "$FILE" | nl -ba -v"$START"
+          else
+            echo "Could not determine error line automatically. Dumping first 200 lines instead:"
+            sed -n '1,200p' "$FILE" | nl -ba
+          fi
+ 
+      - name: Upload UML files as artifact for debugging
+        if: ${{ failure() && steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: uml-debug-output
+          path: ${{ env.UML_OUTPUT_PATH }}
+          retention-days: 3
+ 
+      - name: Remove intermediate per-package .puml files
+        if: ${{ steps.check_for_code.outputs.CODE_EXISTS == 'true' }}
+        # Keep only the combined diagram + its rendered SVG, discard the per-namespace fragments
+        run: |
+          find ${{ env.UML_OUTPUT_PATH }} -name "*.puml" ! -name "${{ env.UML_FILE_NAME }}.puml" -delete
+          find ${{ env.UML_OUTPUT_PATH }} -mindepth 1 -type d -empty -delete
+ 
+      - uses: EndBug/add-and-commit@v9
+        with:
+          author_name: 'UML Bot'
+          message: 'Generate UML (${{ github.workflow }})'
+          author_email: 41898282+uml-bot[bot]@users.noreply.github.com
+
