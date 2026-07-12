@@ -16,7 +16,7 @@ jobs:
     env:
       CODE_PATH: "./Assets/SoundscapeFiles/Scripts/"
       UML_OUTPUT_PATH: "./docs/UMLs/"
-      UMP_GENERATION_PARAMETERS: -public -createAssociation -allInOne
+      UMP_GENERATION_PARAMETERS: -public -createAssociation -allInOne -excludePaths Windows/WindowsHEVCChecker.cs
 
     steps:
       - uses: actions/checkout@v4
