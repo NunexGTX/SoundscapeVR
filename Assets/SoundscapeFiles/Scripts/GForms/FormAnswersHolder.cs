@@ -82,4 +82,11 @@ public class FormAnswersHolder
         }
         return result;
     }
+
+    public void Clear()
+    {
+        repeatableAnswers.Clear();
+        singleAnswers.Clear();
+        requiredQuestions.Clear();
+    }
 }

@@ -41,12 +41,10 @@ public class ConfigScript : MonoBehaviour
         heightBtn.clicked += CalibrateHeight;
 
         VRToggle = root.Q<Toggle>("vrToggle");
-        #if UNITY_ANDROID && !UNITY_EDITOR
         VRToggle.visible = false;
         VRToggle.enabledSelf = false;
+        #if UNITY_ANDROID && !UNITY_EDITOR
         VRToggle = null; 
-        #else       
-        VRToggle.RegisterValueChangedCallback(DoToggleVr);
         #endif
 
         reapySetup();

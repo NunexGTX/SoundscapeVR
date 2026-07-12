@@ -27,12 +27,13 @@ public class SoundscapeLibrary: MonoBehaviour
         Debug.Log("[SoundscapeVR] Loading files...");
         //await CheckPermissions();
         await LoadFiles(GetSoundscapeFilePath(), GetAudioFilePath(), GetFormFilePath());
-        Debug.Log("[SoundscapeVR] Files loaded. Loading audio icons...");
+        
+        Debug.Log("[SoundscapeVR] Files loaded. Caching assets...");
+        Task audioIconsTask = LoadAudioIcons(audioList.GetAudios(), loadingManager);
+        Task formImagesTask = LoadFormImages();
 
-        _ = LoadAudioIcons(audioList.GetAudios(), loadingManager);
-        Debug.Log("[SoundscapeVR] Audio icons loaded.");
-
-
+        await Task.WhenAll(audioIconsTask, formImagesTask);
+        Debug.Log("[SoundscapeVR] All audio icons and form images cached successfully.");
     }
     public void ReplaceOrAddSoundscape(Soundscape updatedSoundscape)
     {
@@ -216,7 +217,14 @@ public class SoundscapeLibrary: MonoBehaviour
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
-            form = await GoogleForm.FetchForm(json);
+            try
+            {
+                form = await GoogleForm.FetchForm(json);            
+            } catch
+            {
+                Debug.LogWarning($"[SoundscapeVR] Failed to load questionnaire information.");
+                form = new();
+            }
         }
         else
         {
@@ -224,8 +232,57 @@ public class SoundscapeLibrary: MonoBehaviour
             form = new();
         }
     }
+    private async Task LoadFormImages()
+    {
+        if (form == null || form.questions == null) return;
 
-    
+        form.cachedImages ??= new Dictionary<string, Texture2D>();
+
+        foreach (FormElement element in form.questions)
+        {
+            if (element.type != FormElement.IMAGE) continue;
+            if (form.cachedImages.ContainsKey(element.id)) continue;
+
+            // find url, prioritize the first slot in extra, falling back to description
+            string url = "";
+            if (element.extra != null && element.extra.Count > 0 && !string.IsNullOrWhiteSpace(element.extra[0]))
+            {
+                url = element.extra[0];
+            }
+            else if (!string.IsNullOrWhiteSpace(element.description))
+            {
+                url = element.description;
+            }
+
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                Debug.LogWarning($"[SoundscapeVR] Form element {element.id} is marked as IMAGE but has no URL in 'extra' or 'description'.");
+                continue;
+            }
+
+
+            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(url))
+            {
+                var operation = uwr.SendWebRequest();
+
+                while (!operation.isDone)
+                {
+                    await Task.Yield(); // Keeps execution bound safely to Unity's main thread loop
+                }
+
+                if (uwr.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"[SoundscapeVR] Form Image download failed for element {element.id} from URL '{url}': {uwr.error}");
+                }
+                else
+                {
+                    Texture2D loadedTexture = DownloadHandlerTexture.GetContent(uwr);
+                    loadedTexture.wrapMode = TextureWrapMode.Clamp;
+                    form.cachedImages[element.id] = loadedTexture;
+                }
+            }
+        }
+    }
     private async Task LoadFiles(string soundscapePath, string audioPath, string formPath)
     {
         soundscapeList = await Task.Run(() => SoundscapeList.ReadFromJson(soundscapePath));

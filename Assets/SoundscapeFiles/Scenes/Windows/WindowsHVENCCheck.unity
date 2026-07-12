@@ -261,9 +261,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   configMenu: {fileID: 0}
+  audioVideoMenu: {fileID: 0}
   soundscapeMenu: {fileID: 0}
   editMenu: {fileID: 0}
   formMenu: {fileID: 0}
+  homeMenu: {fileID: 0}
 --- !u!114 &44520194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1053,7 +1055,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &636928279
 Transform:
   m_ObjectHideFlags: 0
@@ -1239,6 +1241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3a9e2597798beb4bb3df6b69c22cb5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  UIGameObject: {fileID: 0}
   vrCamera: {fileID: 1148877395}
   playerCamera: {fileID: 525683844}
   vrUICamera: {fileID: 1693604676}
@@ -2784,7 +2787,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1431457733
 Transform:
   m_ObjectHideFlags: 0

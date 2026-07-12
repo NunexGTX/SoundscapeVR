@@ -69,8 +69,8 @@ public class ReverbEffectData: AudioEffectData
         }
         root.Q<Foldout>("reverbFoldout").visible = true;
         root.Q<Foldout>("reverbFoldout").value = false;
-        root.Q<DropdownField>("reverbPresetDropdown").choices = getPresetNames();
         root.Q<Toggle>("applyReverb").value = false;
+        root.Q<DropdownField>("reverbPresetDropdown").choices = getPresetNames();
     }
 
     public override void ApplyValuesToUI(VisualElement root)
