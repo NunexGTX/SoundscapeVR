@@ -395,7 +395,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 86987618}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
@@ -1094,7 +1094,7 @@ GameObject:
   - component: {fileID: 425035694}
   m_Layer: 5
   m_Name: MainMenu
-  m_TagString: UI
+  m_TagString: AimingSphere
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1708,6 +1708,7 @@ MonoBehaviour:
   - {fileID: 2125151695}
   - {fileID: 86987618}
   - {fileID: 2043943999}
+  - {fileID: 425035692}
 --- !u!114 &657310051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4472,7 +4473,7 @@ GameObject:
   - component: {fileID: 1569034412}
   m_Layer: 5
   m_Name: Credits
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
