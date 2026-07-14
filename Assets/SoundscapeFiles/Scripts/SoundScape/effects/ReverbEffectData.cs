@@ -37,8 +37,9 @@ public class ReverbEffectData: AudioEffectData
         return AudioReverbPreset.Off;
     }
 
-    public ReverbEffectData(ReverbPresets reverbEffectData = ReverbPresets.Parliment)
+    public ReverbEffectData(ReverbPresets reverbEffectData = ReverbPresets.Parliment, float wet = 0.2f)
     {
+        this.wet = wet;
         this.currentPreset = reverbEffectData;
     }
 
@@ -54,6 +55,9 @@ public class ReverbEffectData: AudioEffectData
         if(isAmbisonic) return;
         AudioReverbFilter reverbFilter = audioClipObject.AddComponent<AudioReverbFilter>();
         reverbFilter.reverbPreset = unityEffectPreset(currentPreset);
+        reverbFilter.reverbPreset = AudioReverbPreset.User;
+        float mdB = 10000*(wet - 1);
+        reverbFilter.room  = mdB;
     }
 
     public override bool IsEffectAppliedInUI(VisualElement root) => root.Q<Toggle>("applyReverb").value;
@@ -62,7 +66,8 @@ public class ReverbEffectData: AudioEffectData
     {
         if(isAmbisonic) return null;
         ReverbPresets reverbPreset = Enum.Parse<ReverbPresets>(root.Q<DropdownField>("reverbPresetDropdown").value);
-        return new ReverbEffectData(reverbPreset).WithId(effectId);
+        float wetVal = root.Q<Slider>("wetLevel").value;
+        return new ReverbEffectData(reverbPreset, wetVal).WithId(effectId);
     }
 
     public override void ApplyDefaultUI(VisualElement root, bool isAmbisonic)
@@ -84,6 +89,7 @@ public class ReverbEffectData: AudioEffectData
         root.Q<Foldout>("reverbFoldout").visible = true;
         root.Q<Foldout>("reverbFoldout").value = true;
         root.Q<Toggle>("applyReverb").value = true;
+        root.Q<Slider>("wetLevel").value = wet;
     }
 
     public override string[] GetTrackParams(bool isAmbisonic)
