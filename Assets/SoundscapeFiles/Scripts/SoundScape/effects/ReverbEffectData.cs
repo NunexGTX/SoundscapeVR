@@ -10,8 +10,11 @@ public class ReverbEffectData: AudioEffectData
     public enum ReverbPresets
     {
         Auditorium,
-        Parliment
+        Parliment,
+        Cinema
     }
+
+    public float wet = 0.2f;
 
     public ReverbPresets currentPreset = ReverbPresets.Parliment;
 
@@ -28,6 +31,8 @@ public class ReverbEffectData: AudioEffectData
                 return AudioReverbPreset.Auditorium;
             case ReverbPresets.Parliment:
                 return AudioReverbPreset.Bathroom;
+            case ReverbPresets.Cinema:
+                return AudioReverbPreset.Concerthall;
         }
         return AudioReverbPreset.Off;
     }
@@ -85,7 +90,7 @@ public class ReverbEffectData: AudioEffectData
     {
         //Can only be used for reaper in this case
         if(isAmbisonic) return null;
-        return new string[] {"true", ReverbRiRs.getPresetCode(currentPreset)};
+        return new string[] {"true", ReverbRiRs.getPresetCode(currentPreset), wet.ToString()};
     }
     
 }

@@ -42,6 +42,7 @@
             <ui:Toggle label="Apply Reverb" name="applyReverb"/>
             <ui:Label text="Reverb presets and their effects may differ between Unity&apos;s Binaural mode and the Reaper Controller" triple-click-selects-line="false" double-click-selects-word="false" display-tooltip-when-elided="false" name="Label" style="flex-wrap: wrap; flex-direction: column; white-space: normal; width: auto; left: -25px; -unity-font-style: normal;"/>
             <ui:DropdownField label="Reverb Preset" choices="" name="reverbPresetDropdown"/>
+            <ui:Slider label="Wet" value="0.2" high-value="1" inverted="false" fill="true" show-input-field="true"/>
         </ui:Foldout>
     </ui:ScrollView>
 </ui:UXML>
