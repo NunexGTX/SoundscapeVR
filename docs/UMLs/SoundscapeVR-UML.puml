@@ -662,7 +662,7 @@ AudioEffectInstance --> "effectData" AudioEffectData
 class ReverbEffectData {
     + wet : float = 0.2f
     + getPresetNames() : List<string>
-    + ReverbEffectData(reverbEffectData:ReverbPresets)
+    + ReverbEffectData(reverbEffectData:ReverbPresets, wet:float)
     + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
     + <<override>> ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
     + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
