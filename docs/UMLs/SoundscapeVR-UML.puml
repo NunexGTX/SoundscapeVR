@@ -660,6 +660,7 @@ class AudioEffectInstance {
 }
 AudioEffectInstance --> "effectData" AudioEffectData
 class ReverbEffectData {
+    + wet : float = 0.2f
     + getPresetNames() : List<string>
     + ReverbEffectData(reverbEffectData:ReverbPresets)
     + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
@@ -673,6 +674,7 @@ class ReverbEffectData {
 enum ReverbPresets {
     Auditorium,
     Parliment,
+    Cinema,
 }
 AudioEffectData <|-- ReverbEffectData
 ReverbEffectData o-> "currentPreset" ReverbPresets
