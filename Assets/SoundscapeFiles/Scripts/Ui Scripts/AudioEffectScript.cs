@@ -49,7 +49,7 @@ public class AudioEffectScript: MonoBehaviour
         root.Q<Label>("audioName").text = audioData.audioId;
 
         foreach(AudioEffectData data in AudioEffects.GetEffects())
-            data.ApplyDefaultUI(root, SoundscapeLibrary.GetAudioType(audioData.audioId).Equals(Audio.TYPE_AMBISONIC));
+            data.ApplyDefaultUI(root, SoundscapeLibrary.IsAudioAmbisonic(audioData.audioId));
 
         foreach(AudioEffectInstance effect in audioData.effectInstances)
             effect.effectData.ApplyValuesToUI(root);

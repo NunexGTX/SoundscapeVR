@@ -98,6 +98,11 @@ public class AudioSource : ISerializationCallbackReceiver
     public float Volume => audioData.volume;
     public List<AudioEffectInstance> AudioEffects => audioData.effectInstances;
 
+    public AudioEffectInstance GetEffect(AudioEffectData audioEffect)
+    {
+        return AudioEffects.Find(eff => eff.effectData.effectId.Equals(audioEffect.effectId));
+    }
+
     //called before unity serializes the class into json.
     //we basically want to fill in the shadow methods
     public void OnBeforeSerialize()
@@ -162,9 +167,15 @@ public class AudioSource : ISerializationCallbackReceiver
 
     public AudioSource CloneWithEffect(AudioEffectInstance effectToApply)
     {
-        AudioSource clone = new(this);
-        clone.AudioEffects.RemoveAll(eff => eff.effectData.effectId.Equals(effectToApply.effectData.effectId));
+        AudioSource clone = CloneWithoutEffect(effectToApply.effectData);
         clone.AudioEffects.Add(effectToApply);
+        return clone;
+    }
+
+    public AudioSource CloneWithoutEffect(AudioEffectData effectToRemove)
+    {
+        AudioSource clone = new(this);
+        clone.AudioEffects.RemoveAll(eff => eff.effectData.effectId.Equals(effectToRemove.effectId));
         return clone;
     }
 

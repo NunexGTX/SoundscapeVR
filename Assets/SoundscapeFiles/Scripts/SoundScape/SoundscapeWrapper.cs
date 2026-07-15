@@ -100,14 +100,27 @@ public class SoundscapeWrapper: MonoBehaviour
 
         //3. Propagate reverb effect to every other effect.
         if(!propagate || SoundscapeLibrary.IsAudioAmbisonic(audioSource.GetAudioId())) return;
-        AudioEffectInstance reverbEffect = audioSource.AudioEffects.Find(eff => eff.effectData.effectId.Equals(AudioEffects.REVERB_EFFECT.effectId));
-        if(reverbEffect == null) return;
+        AudioEffectInstance reverbEffect = audioSource.GetEffect(AudioEffects.REVERB_EFFECT);
+        //if no reverb is found, remove it on any audio source
+        if(reverbEffect == null)
+        {
+            foreach(KeyValuePair<Guid, GameObject> src in new Dictionary<Guid, GameObject>(placedAudios))
+            {
+                if(src.Key == sourceId) continue;
+                AudioSource iteratorSource = src.Value.GetComponent<WorldAudioSource>().audioSource;
+                if(SoundscapeLibrary.IsAudioAmbisonic(iteratorSource.GetAudioId()) || iteratorSource.GetEffect(AudioEffects.REVERB_EFFECT) == null) continue;
+
+                AudioSource srcWithoutReverb = iteratorSource.CloneWithoutEffect(AudioEffects.REVERB_EFFECT);
+                UpdateSource(src.Key, srcWithoutReverb, propagate: false);
+            }
+            return;
+        }
         foreach(KeyValuePair<Guid, GameObject> src in new Dictionary<Guid, GameObject>(placedAudios))
         {
             //skip this source
             if(src.Key == sourceId) continue;
             AudioSource iteratorSource = src.Value.GetComponent<WorldAudioSource>().audioSource;
-            if(SoundscapeLibrary.GetAudioType(iteratorSource.GetAudioId()).Equals(Audio.TYPE_AMBISONIC)) continue;
+            if(SoundscapeLibrary.IsAudioAmbisonic(iteratorSource.GetAudioId())) continue;
             //create new AudioSource for iterator source.
             AudioSource srcWithUpdatedReverb = iteratorSource.CloneWithEffect(reverbEffect);
             UpdateSource(src.Key, srcWithUpdatedReverb, propagate: false);
