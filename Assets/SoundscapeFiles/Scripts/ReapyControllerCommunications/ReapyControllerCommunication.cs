@@ -303,7 +303,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
         catch (IOException e)
         {
-            Debug.LogWarning($"Failed to read config file: {e.Message}");
+            Debug.Log($"Failed to read config file: {e.Message}");
             return null;
         }
     }
