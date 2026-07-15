@@ -27,6 +27,7 @@ public class SoundscapeWrapper: MonoBehaviour
     [SerializeField] private LoadingManager loadingManager;
     [SerializeField] private SoundscapePlayerEditor playerEditor;
     [SerializeField] private GameObject editListUi, editSsUi;
+    private AudioEffectInstance sharedReverbEffect = null;
 
     void OnEnable()
     {
@@ -101,29 +102,13 @@ public class SoundscapeWrapper: MonoBehaviour
         //3. Propagate reverb effect to every other effect.
         if(!propagate || SoundscapeLibrary.IsAudioAmbisonic(audioSource.GetAudioId())) return;
         AudioEffectInstance reverbEffect = audioSource.GetEffect(AudioEffects.REVERB_EFFECT);
-        //if no reverb is found, remove it on any audio source
-        if(reverbEffect == null)
-        {
-            foreach(KeyValuePair<Guid, GameObject> src in new Dictionary<Guid, GameObject>(placedAudios))
-            {
-                if(src.Key == sourceId) continue;
-                AudioSource iteratorSource = src.Value.GetComponent<WorldAudioSource>().audioSource;
-                if(SoundscapeLibrary.IsAudioAmbisonic(iteratorSource.GetAudioId()) || iteratorSource.GetEffect(AudioEffects.REVERB_EFFECT) == null) continue;
-
-                AudioSource srcWithoutReverb = iteratorSource.CloneWithoutEffect(AudioEffects.REVERB_EFFECT);
-                UpdateSource(src.Key, srcWithoutReverb, propagate: false);
-            }
-            return;
-        }
+        sharedReverbEffect = reverbEffect;
         foreach(KeyValuePair<Guid, GameObject> src in new Dictionary<Guid, GameObject>(placedAudios))
         {
-            //skip this source
             if(src.Key == sourceId) continue;
             AudioSource iteratorSource = src.Value.GetComponent<WorldAudioSource>().audioSource;
-            if(SoundscapeLibrary.IsAudioAmbisonic(iteratorSource.GetAudioId())) continue;
-            //create new AudioSource for iterator source.
-            AudioSource srcWithUpdatedReverb = iteratorSource.CloneWithEffect(reverbEffect);
-            UpdateSource(src.Key, srcWithUpdatedReverb, propagate: false);
+            if(SoundscapeLibrary.IsAudioAmbisonic(iteratorSource.GetAudioId()) || iteratorSource.GetEffect(AudioEffects.REVERB_EFFECT) == null) continue;
+            UpdateSource(src.Key, iteratorSource, propagate: false);
         }
     }
 
@@ -145,8 +130,9 @@ public class SoundscapeWrapper: MonoBehaviour
     public void PlaceNewAudioSource(AudioSource src)
     {
         if(currentSoundscape == null) return;
-        PlaceBaseSource(src, debug: true);
-        EditSoundscape(src, add: true);
+        AudioSource srcClone = sharedReverbEffect == null ? src.CloneWithoutEffect(AudioEffects.REVERB_EFFECT) : src.CloneWithEffect(sharedReverbEffect);
+        PlaceBaseSource(srcClone, debug: true);
+        EditSoundscape(srcClone, add: true);
     }
     
     private void PlaceSoundscapeAudioSource(AudioSource src)
@@ -217,11 +203,6 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         inEditMode = debug;
         playerManager.HideCameraLayers(inEditMode ? PlayerManager.HIDE_EDITING : PlayerManager.HIDE_ALL);
-        /*if (debug)
-        {
-            StartSoundscape(debug);
-            return;
-        }*/
         playerManager.SetPlayerMovement(inEditMode);
         while (!loadingManager.CanLoad(true))
         {
@@ -289,7 +270,11 @@ public class SoundscapeWrapper: MonoBehaviour
         Debug.Log($"[SoundscapeVR] Loading audios for soundscape.");
         List<string> audioIds = new();
         foreach(AudioSource src in currentSoundscape.GetAudioSources())
+        {            
             audioIds.Add(src.GetAudioId());
+            AudioEffectInstance reverbInstance = src.GetEffect(AudioEffects.REVERB_EFFECT);
+            sharedReverbEffect = reverbInstance;
+        }
             
         if(vrStateData.GetCurrentAudio() == AudioListeningType.BINAURAL)
         {
@@ -440,6 +425,7 @@ public class SoundscapeWrapper: MonoBehaviour
         loadingManager.EndLoading();
 
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING) reapyController.StopSoundscape();
+        sharedReverbEffect = null;
         //playerEditor?.LeaveEdit();
     }
 
