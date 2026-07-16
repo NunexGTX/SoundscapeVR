@@ -219,6 +219,7 @@ public class SoundscapeWrapper: MonoBehaviour
         //when loading the visuals was successful
         currentSoundscape.OnVisualsLoaded(() =>
         {
+            Debug.Log("Visuals have indeed been loaded.");
             loadingManager.Increment();
             currentSoundscape.ClearVisualsBinding();
             _ = PrepareAudiosAndPlaySoundscape();
@@ -251,6 +252,8 @@ public class SoundscapeWrapper: MonoBehaviour
     private async Task OnVisualFail(string errorMessage)
     {
         Debug.LogWarning($"[SoundscapeVR] Failed to load visuals for soundscape. {errorMessage}");
+        ssVisual = null;
+        videoPlaying = false;
         loadingManager.SetInfo(errorMessage); 
         int increments = 10;
         for(int i = 0; i < increments; i++)
@@ -286,10 +289,6 @@ public class SoundscapeWrapper: MonoBehaviour
     }
     private async void StartSoundscape()
     {
-        while (!loadingManager.CanLoad(true))
-        {
-            await Task.Delay(100);
-        }
         if(currentSoundscape == null) return;
 
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING){
@@ -299,7 +298,14 @@ public class SoundscapeWrapper: MonoBehaviour
 
         Debug.Log($"[SoundscapeVR] Playing audios");
         List<AudioSource> audioSources = currentSoundscape.GetAudioSources();
+        if(audioSources.Count == 0)
+        {
+            _ = OnSoundscapeLoaded();
+            return;
+        }
 
+        while (!loadingManager.CanLoad(true))
+            await Task.Delay(100);
         loadingManager.SetToStart(audioSources.Count);
         loadingManager.SetInfo("Playing audios...");
         loadingManager.OnLoaded(() => {_ = OnSoundscapeLoaded();});
@@ -312,22 +318,11 @@ public class SoundscapeWrapper: MonoBehaviour
             StopSoundscape();
         }, timeoutSeconds: 5);
 
-        // Track preparation tasks
-        List<Task> placementTasks = new List<Task>();
-
         foreach(AudioSource src in audioSources)
         {
-            if (!soundscapeLibrary.IsAudioLoaded(src.GetAudioId()) && vrStateData.GetCurrentAudio() == AudioListeningType.BINAURAL)
-            {
-                loadingManager.Increment();
-                continue;  
-            } 
             if(!timedout) 
-            {
                 PlaceSoundscapeAudioSource(src);
-            }
         }
-        if(audioSources.Count == 0) loadingManager.EndLoading();
         timedout = false;
     }
     private async Task OnSoundscapeLoaded()

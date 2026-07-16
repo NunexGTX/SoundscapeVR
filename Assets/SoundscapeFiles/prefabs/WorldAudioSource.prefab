@@ -248,6 +248,7 @@ MonoBehaviour:
   playbackType: 0
   reaperController: {fileID: 0}
   loadingManager: {fileID: 0}
+  errorMaterial: {fileID: 2100000, guid: bfa274fe4e5a5ff429e239d47d668ce3, type: 2}
   references:
     version: 2
     RefIds: []

@@ -368,6 +368,7 @@ public class SoundscapeLibrary: MonoBehaviour
     }
     public async Task LoadAudioClipsAsync(List<Audio> audios)
     {
+        if(audios == null || audios.Count == 0) return;
         while (!loadingManager.CanLoad(true))
         {
             await Task.Delay(100); 

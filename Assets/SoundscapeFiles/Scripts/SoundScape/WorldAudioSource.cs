@@ -19,6 +19,7 @@ public class WorldAudioSource: MonoBehaviour
     public AudioListeningType playbackType;
     public ReapyControllerCommunication reaperController;
     public LoadingManager loadingManager;
+    public Material errorMaterial = null;
 
 
     public Guid GetUUID()
@@ -103,11 +104,15 @@ public class WorldAudioSource: MonoBehaviour
     {
         if(playbackType == AudioListeningType.BINAURAL)
         {
+            Debug.Log($"[SoundscapeVR] Loading audio source {audioSource.GetAudioId()}");
             UnityEngine.AudioSource src = gameObject.GetComponent<UnityEngine.AudioSource>();
             IAudioGenerator gen = await library.GetClipForAudio(audioSource.GetAudioId());
             if(gen == null)
             {
-                soundscapeWrapper.DeleteAudio(GetUUID());
+                Debug.LogWarning($"[SoundscapeVR] Tried to play audio source with no loaded audio clip...");
+                if(errorMaterial != null) ResetMaterial(errorMaterial);
+                if(incLoading && loadingManager != null) loadingManager.Increment();
+                loadingManager = null;
                 return;
             }
             src.generator = gen;

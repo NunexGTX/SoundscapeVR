@@ -82,10 +82,19 @@ public class VideoSoundscape : Soundscape
             CreateScreenAdapter(createCanvas: false);
         }
         videoPlayer.prepareCompleted += OnVideoPrepared;
-        VideoPlayer.ErrorEventHandler onError = (vp, mess) => {onVisualsFailed.Invoke();};
+        VideoPlayer.ErrorEventHandler onError = OnVideoFailed;
         videoPlayer.errorReceived += onError;
         videoPlayer.Prepare(); 
         return go;
+    }
+
+    private bool failedFlag = false;
+    private void OnVideoFailed(VideoPlayer player, String mess)
+    {
+        if(failedFlag) return;
+        failedFlag = true;
+        Debug.Log("Video player failed");
+        onVisualsFailed.Invoke();
     }
 
     private void OnVideoPrepared(VideoPlayer player)
@@ -114,13 +123,15 @@ public class VideoSoundscape : Soundscape
     public override void ClearVisualsBinding()
     {
         if(videoPlayer != null) videoPlayer.prepareCompleted -= OnVideoPrepared;
+        if(videoPlayer != null) videoPlayer.errorReceived -= OnVideoFailed;
         base.ClearVisualsBinding();
     }
 
     public override void RestartVisuals(GameObject ssVisual, VisualType visualType, float delay)
     {
         Debug.Log($"[SoundscapeVR] Restarting visuals instantly via rewinding");
-        if(ssVisual.name.Equals(NO_VIDEO_NAME)) return;
+        if(ssVisual == null || ssVisual.name.Equals(NO_VIDEO_NAME)) return;
+        if(failedFlag) return;
         VideoPlayer videoPlayer = ssVisual.GetComponent<VideoPlayer>();
         videoPlayer.time = delay; 
         if (!videoPlayer.isPlaying)

@@ -119,7 +119,7 @@ public class LoadingManager : MonoBehaviour
     }
 
     private void SetVisible(bool show){
-        Debug.Log($"[SoundscapeVR] Setting loading visibility to {show}");
+        //Debug.Log($"[SoundscapeVR] Setting loading visibility to {show}");
         image.SetActive(show);
         player.SetPlayerRotation(!show);
     }
