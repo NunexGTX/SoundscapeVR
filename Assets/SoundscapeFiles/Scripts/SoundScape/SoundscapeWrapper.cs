@@ -97,17 +97,22 @@ public class SoundscapeWrapper: MonoBehaviour
         //1. remove it
         DeleteAudio(sourceId.Value);
         //2. add it.
+        bool isAmbisonic = SoundscapeLibrary.IsAudioAmbisonic(audioSource.GetAudioId());
+        AudioEffectInstance reverbEffect;
+        if (propagate && !isAmbisonic)
+        {
+            reverbEffect = audioSource.GetEffect(AudioEffects.REVERB_EFFECT);
+            sharedReverbEffect = reverbEffect;
+        } 
         PlaceNewAudioSource(audioSource);
 
         //3. Propagate reverb effect to every other effect.
-        if(!propagate || SoundscapeLibrary.IsAudioAmbisonic(audioSource.GetAudioId())) return;
-        AudioEffectInstance reverbEffect = audioSource.GetEffect(AudioEffects.REVERB_EFFECT);
-        sharedReverbEffect = reverbEffect;
+        if(!propagate || isAmbisonic) return;
         foreach(KeyValuePair<Guid, GameObject> src in new Dictionary<Guid, GameObject>(placedAudios))
         {
             if(src.Key == sourceId) continue;
             AudioSource iteratorSource = src.Value.GetComponent<WorldAudioSource>().audioSource;
-            if(SoundscapeLibrary.IsAudioAmbisonic(iteratorSource.GetAudioId()) || iteratorSource.GetEffect(AudioEffects.REVERB_EFFECT) == null) continue;
+            if(SoundscapeLibrary.IsAudioAmbisonic(iteratorSource.GetAudioId())) continue;
             UpdateSource(src.Key, iteratorSource, propagate: false);
         }
     }
