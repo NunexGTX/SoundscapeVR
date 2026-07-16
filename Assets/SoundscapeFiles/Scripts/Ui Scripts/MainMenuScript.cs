@@ -34,6 +34,7 @@ public class UiTestClick : MonoBehaviour
         formBtn = root.Q<Button>("formBtn"); 
         ssBtn = root.Q<Button>("ssBtn"); 
         configBtn = root.Q<Button>("configBtn"); 
+        configBtn.enabledSelf = false;
         Button questBtn = root.Q<Button>("questBtn"); 
         exitBtn = root.Q<Button>("exitBtn"); 
         editBtn = root.Q<Button>("editSsBtn"); 
