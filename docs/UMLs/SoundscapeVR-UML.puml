@@ -494,6 +494,7 @@ WorldAudioSource --> "vrStateData" VrStateData
 WorldAudioSource --> "playbackType" AudioListeningType
 WorldAudioSource --> "reaperController" ReapyControllerCommunication
 WorldAudioSource --> "loadingManager" LoadingManager
+WorldAudioSource o-> "errorMaterial" Material
 class SoundscapeList {
     + GetSoundscapes() : IEnumerable<Soundscape>
     + SoundscapeList()
