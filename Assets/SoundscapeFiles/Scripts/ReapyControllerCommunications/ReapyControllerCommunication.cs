@@ -505,6 +505,14 @@ public class ReapyControllerCommunication : MonoBehaviour
         message_beeboop(json, soundUUID);
     }
 
+    public void RemoveReverb()
+    {
+        var msg = new AudioEffect {command = removeEffectCommand, EffectName = "reverb"};
+        string json = JsonUtility.ToJson(msg);
+
+        message_beeboop(json);
+    }
+
     public void HeadRotationUpdate(float[] cameraRotation)
     {
         //Translate from 0 to 360 to -180 to 180

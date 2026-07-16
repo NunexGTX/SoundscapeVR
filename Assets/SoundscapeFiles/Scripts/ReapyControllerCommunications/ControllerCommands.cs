@@ -76,6 +76,12 @@ public class AudioEffect: TrackCommand
     public string[] EffectParams;
 }
 
+public class RemoveReverb: TrackCommand
+{
+    public string EffectName;
+    public string[] EffectParams;
+}
+
 public class removeAudioEffect: TrackCommand
 {
     public string EffectName;

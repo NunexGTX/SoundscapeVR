@@ -102,6 +102,13 @@ public class SoundscapeWrapper: MonoBehaviour
         if (propagate && !isAmbisonic)
         {
             reverbEffect = audioSource.GetEffect(AudioEffects.REVERB_EFFECT);
+            if(sharedReverbEffect != null && reverbEffect == null)
+            {
+                if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)
+                {
+                    reapyController.RemoveReverb();
+                }   
+            }
             sharedReverbEffect = reverbEffect;
         } 
         PlaceNewAudioSource(audioSource);
