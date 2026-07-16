@@ -250,7 +250,7 @@ public class GoogleForm
 
         if (question["textQuestion"] != null)
             qType = question["textQuestion"]["paragraph"] != null ? FormElement.PARAGRAPH : FormElement.TEXT;
-        else if (question["scaleQuestion"] != null)
+        else if (question["scaleQuestion"] != null || question["ratingQuestion"] != null)
             qType = FormElement.SCALE;
         else if (choice != null)
             qType = choice["type"]?.ToString() ?? FormElement.RADIO;
@@ -268,15 +268,26 @@ public class GoogleForm
         }
         else if (qType == FormElement.SCALE)
         {
-            JToken scaler = question["scaleQuestion"];
-            extra.Add(scaler["low"]?.ToString()  ?? "0");
-            extra.Add(scaler["high"]?.ToString() ?? "10");
-            string lowLabel  = scaler["lowLabel"]?.ToString();
-            string highLabel = scaler["highLabel"]?.ToString();
-            if (lowLabel != null || highLabel != null)
+            if (question["scaleQuestion"] != null)
             {
-                extra.Add(lowLabel  ?? "");
-                extra.Add(highLabel ?? "");
+                JToken scaler = question["scaleQuestion"];
+                extra.Add(scaler["low"]?.ToString()  ?? "0");
+                extra.Add(scaler["high"]?.ToString() ?? "10");
+                string lowLabel  = scaler["lowLabel"]?.ToString();
+                string highLabel = scaler["highLabel"]?.ToString();
+                if (lowLabel != null || highLabel != null)
+                {
+                    extra.Add(lowLabel  ?? "");
+                    extra.Add(highLabel ?? "");
+                }
+            }
+            // >>> RATING PARSER FALLBACK <<<
+            else if (question["ratingQuestion"] != null)
+            {
+                JToken rating = question["ratingQuestion"];
+                // Ratings typically start at 1 up to the ratingIconLimit (default 5 or 10)
+                extra.Add("1"); 
+                extra.Add(rating["ratingIconLimit"]?.ToString() ?? "5");
             }
         }
 
@@ -290,7 +301,8 @@ public class GoogleForm
         string title   = item["title"]?.ToString() ?? "Untitled Grid";
         JToken cols    = group["grid"]?["columns"];
         bool shuffle   = cols?["shuffle"]?.Value<bool>() ?? false;
-        string qType   = cols?["type"]?.ToString() ?? "RADIO";
+        string rawType = cols?["type"]?.ToString() ?? "RADIO"; 
+        string qType   = rawType.ToUpper() == "CHECKBOX" ? "CHECKBOX" : "RADIO";
 
         var colOptions = new List<string>();
         foreach (JToken opt in cols?["options"] as JArray ?? new JArray())

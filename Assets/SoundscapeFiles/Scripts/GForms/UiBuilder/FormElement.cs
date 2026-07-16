@@ -14,6 +14,7 @@ public class FormElement
     public const string TEXT = "TEXT";
     public const string IMAGE = "IMAGE";
     public const string GRID_RADIO = "GRID_RADIO";
+    public const string GRID_CHECKBOX = "GRID_CHECKBOX";
     public string id;
     public string type;
     public string description;

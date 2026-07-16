@@ -472,6 +472,51 @@ public class FormScript : MonoBehaviour
                             Debug.Log($"Added row {ele.ToString()}");
                         }
                         break;
+                    case FormElement.GRID_CHECKBOX:
+                        if (extras.Count > 1)
+                        {
+                            string rowSubLabel = extras[0];
+                            List<string> gridChoices = extras.GetRange(1, extras.Count - 1);
+                            VisualElement gridContainer = formRoot.Q<VisualElement>(name: question);
+
+                            if (gridContainer == null)
+                            {
+                                // Create the main container asset if it's the first row encountered
+                                gridContainer = labelElement.Instantiate();
+                                gridContainer.name = question;
+                                gridContainer.Q<Label>("title").text = "";
+                                gridContainer.Q<Label>("description").text = question;
+                                formRoot.Add(gridContainer);
+                            }
+
+                            // Instantiate a checkbox container for this specific row
+                            VisualElement rowInstance = checkboxContainerElement.Instantiate();
+                            rowInstance.Q<Label>("questionLabel").text = rowSubLabel;
+                            
+                            List<string> prevValues = answersHolder.GetRepeatableAnswers(id);
+
+                            foreach (string choice in gridChoices)
+                            {
+                                VisualElement check = checkboxElement.Instantiate();
+                                check.Q<Label>("optionLabel").text = choice;
+                                rowInstance.Add(check);
+                                
+                                Toggle toggle = check.Q<Toggle>("Toggle");
+                                if (prevValues.Contains(choice)) toggle.value = true;
+
+                                EventCallback<ChangeEvent<bool>> gridCheckCallback = (ChangeEvent<bool> evt) => 
+                                {
+                                    answersHolder.ToggleRepeatableAnswer(id, choice, evt.newValue);
+                                };
+                                
+                                toggle.RegisterValueChangedCallback(gridCheckCallback);
+                                unbindingActions.Add(() => { toggle.UnregisterCallback(gridCheckCallback); });
+                            }
+
+                            gridContainer.Add(rowInstance);
+                            Debug.Log($"Added grid checkbox row for {id}");
+                        }
+                        break;
                     default:
                         VisualElement textThing = labelElement.Instantiate();
                         string title = id;
