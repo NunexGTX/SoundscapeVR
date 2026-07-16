@@ -208,6 +208,7 @@ class ReapyControllerCommunication {
     + DeleteTrack(soundUUID:Guid) : void
     + Reset() : void
     + AddEffectToAudio(soundUUID:Guid, audioEffectInstance:AudioEffectInstance, isAmbisonic:bool) : void
+    + RemoveReverb() : void
     + HeadRotationUpdate(cameraRotation:float[]) : void
 }
 MonoBehaviour <|-- ReapyControllerCommunication
@@ -266,6 +267,9 @@ class ResetReapyController {
 class AudioEffect {
     + EffectName : string
 }
+class RemoveReverb {
+    + EffectName : string
+}
 class removeAudioEffect {
     + EffectName : string
 }
@@ -283,6 +287,7 @@ TrackCommand <|-- DeleteTrack
 TrackCommand <|-- MuteTrack
 TrackCommand <|-- UnmuteTrack
 TrackCommand <|-- AudioEffect
+TrackCommand <|-- RemoveReverb
 TrackCommand <|-- removeAudioEffect
 class FormAnswersHolder {
     + pageCount : int = 1
