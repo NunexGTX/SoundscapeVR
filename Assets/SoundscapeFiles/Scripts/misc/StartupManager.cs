@@ -8,6 +8,8 @@ public class StartupManager : MonoBehaviour
     void Awake()
     {
         //if(true) return;
+        
+        #if UNITY_EDITOR || UNITY_STANDALONE_WIN
         string path = Path.Combine(Application.dataPath, "../startupMode.txt");
 
         if (File.Exists(path))
@@ -21,5 +23,8 @@ public class StartupManager : MonoBehaviour
         }
         
         vrStateData.IsInVr = false;
+        #elif UNITY_ANDROID
+        vrStateData.IsInVr = true;
+        #endif
     }
 }
