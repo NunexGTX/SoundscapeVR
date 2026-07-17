@@ -16,4 +16,4 @@ MonoBehaviour:
   currentVisual: 2
   currentAudio: 2
   heightOffset: 1.2137426
-  ReaperControllerIP: 10.65.13.40
+  ReaperControllerIP: 192.168.1.88

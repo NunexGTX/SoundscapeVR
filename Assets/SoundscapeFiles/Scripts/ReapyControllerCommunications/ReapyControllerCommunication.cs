@@ -28,6 +28,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     private CancellationTokenSource _cts = new CancellationTokenSource();
     private readonly SemaphoreSlim _streamLock = new SemaphoreSlim(1, 1);
     private readonly SemaphoreSlim startSoundscape_lock = new SemaphoreSlim(0,1);
+    private long startSoundscapeTimestamp = 0;
     private bool _isReconnecting = false;
     private const int MaxReconnectAttempts = 5;
     private const int ReadTimeoutMs = 3000;
@@ -35,7 +36,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     public LoadingManager loadingManager = null;
 
     private long t1_count = 0;
-    private long offset_count = 0;
+    public long offset_count = 0;
 
     //Commands
     [SerializeField]
@@ -182,6 +183,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         stream.ReadTimeout = ReadTimeoutMs;
         Debug.Log("Reaper Controller: Connected!");
         set_connection_status(connectionTypes[2]);
+        ClockSync(); //Send clock
         return true;
     }
 
@@ -229,12 +231,14 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     private void OnReaperReceive(string ReaperResponse)
     {   
-        /*
         if (ReaperResponse.Contains("clock_sync:"))
         {
             ClockSyncResult(long.Parse(ReaperResponse.Split(':')[1]));
+        } else if (ReaperResponse.Contains(startSoundscapeSuccesfullyMessage))
+        {
+            startSoundscapeTimestamp = long.Parse(ReaperResponse.Split(':')[1]);
+            startSoundscape_lock.Release();
         }
-        */
 
         //correr quando receber ack ou error de tocar uma fonte de audio
         switch (ReaperResponse.Trim())
@@ -242,9 +246,6 @@ public class ReapyControllerCommunication : MonoBehaviour
             case newTrackCreatedSuccesfullyMessage:
                 Debug.Log($"[SoundscapeVR] Acknowledged track creation - loading manager exists: {loadingManager != null}");
                 if(loadingManager != null) loadingManager.Increment();
-                break;
-            case startSoundscapeSuccesfullyMessage:
-                startSoundscape_lock.Release();
                 break;
             default:
                 Debug.Log($"[SoundscapeVR] other response gotten: {ReaperResponse}");
@@ -402,7 +403,7 @@ public class ReapyControllerCommunication : MonoBehaviour
         message_beeboop(json);
     }
 
-    public async Task StartSoundscapeLockAndLoad()
+    public async Task<long> StartSoundscapeLockAndLoad()
     {
         var msg = new StartSoundscape {command = startSoundscapeCommand, timestamp=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()};
         string json = JsonUtility.ToJson(msg);
@@ -410,6 +411,8 @@ public class ReapyControllerCommunication : MonoBehaviour
         message_beeboop(json);
 
         await startSoundscape_lock.WaitAsync();
+
+        return startSoundscapeTimestamp;
     }
 
     public void StartSoundscape()
