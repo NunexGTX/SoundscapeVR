@@ -13,7 +13,7 @@
                 </ui:RadioButtonGroup>
             </ui:VisualElement>
             <ui:VisualElement name="AudioSel" style="flex-grow: 1;">
-                <ui:RadioButtonGroup label="Audio Type&#10;" choices="No Audio,Binaural,3D Audio" value="1" class="radioStyle">
+                <ui:RadioButtonGroup label="Audio Type" choices="No Audio,Binaural,Reaper" value="1" class="radioStyle">
                     <Bindings>
                         <ui:DataBinding property="value" data-source-path="CurrentAudioChoice" data-source="project://database/Assets/SoundscapeFiles/Scripts/SavedData/VrStateData.asset?fileID=11400000&amp;guid=26e8613f074c8004192a57c57732439f&amp;type=2#VrStateData" binding-mode="TwoWay"/>
                     </Bindings>

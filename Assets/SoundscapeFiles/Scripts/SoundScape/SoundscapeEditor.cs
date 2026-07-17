@@ -121,18 +121,18 @@ public class SoundscapeEditor
             if (evt.newValue)
             {
                 staticPath.label = "2D Video Location";
-                encompassingPath.label = "3D Video Location";
+                encompassingPath.label = "360 Video Location";
             }
             else
             {
                 staticPath.label = "2D Image Location";
-                encompassingPath.label = "3D Image Location";
+                encompassingPath.label = "360 Image Location";
             }
         };
 
         videoToggle.RegisterValueChangedCallback(videoToggleCallback);
         staticPath.label = "2D Image Location";
-        encompassingPath.label = "3D Image Location";
+        encompassingPath.label = "360 Image Location";
     }
 
     public void unresgisterVideoToggleEvents()
