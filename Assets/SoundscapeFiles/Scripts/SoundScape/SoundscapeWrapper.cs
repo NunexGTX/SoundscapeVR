@@ -359,10 +359,9 @@ public class SoundscapeWrapper: MonoBehaviour
     private async Task<long> StartSoundscapeReaper()
     {
         long startTimestamp = await reapyController.StartSoundscapeLockAndLoad();
-        long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        long result = now - (startTimestamp - reapyController.offset_count);
-        Debug.Log($"[ClockDebug] now={now} startTimestamp={startTimestamp} offset={reapyController.offset_count} result={result}");
-        return result;
+        long arrival = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        return (arrival + reapyController.offset_count) - startTimestamp;
     }
 
     //function to start counting time to loop the SS.

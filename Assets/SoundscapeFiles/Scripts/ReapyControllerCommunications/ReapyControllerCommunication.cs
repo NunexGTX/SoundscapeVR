@@ -37,6 +37,9 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     private long t1_count = 0;
     public long offset_count = 0;
+    private long _bestRtt = long.MaxValue;
+    public const int ClockSyncSamples = 5;
+    public const int ClockResyncSamples = 3;
 
     //Commands
     [SerializeField]
@@ -182,8 +185,8 @@ public class ReapyControllerCommunication : MonoBehaviour
         stream = client.GetStream();
         stream.ReadTimeout = ReadTimeoutMs;
         Debug.Log("Reaper Controller: Connected!");
+        await SyncClockAsync(ClockSyncSamples);
         set_connection_status(connectionTypes[2]);
-        ClockSync(); //Send clock
         return true;
     }
 
@@ -233,7 +236,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     {   
         if (ReaperResponse.Contains("clock_sync:"))
         {
-            ClockSyncResult(long.Parse(ReaperResponse.Split(':')[1]));
+            OnClockSyncResult(long.Parse(ReaperResponse.Split(':')[1]));
         } else if (ReaperResponse.Contains(startSoundscapeSuccesfullyMessage))
         {
             startSoundscapeTimestamp = long.Parse(ReaperResponse.Split(':')[1]);
@@ -374,20 +377,42 @@ public class ReapyControllerCommunication : MonoBehaviour
     }
 
     //Command functions
-    public void ClockSync()
+
+    //Runs several fully-awaited clock_sync round trips back to back and keeps the
+    //sample with the smallest round-trip time (least asymmetric-latency error), then
+    //reports the resulting offset to the device once at the end.
+    public async Task SyncClockAsync(int samples)
+    {
+        _bestRtt = long.MaxValue;
+        for (int i = 0; i < samples; i++)
+        {
+            await ClockSyncRoundAsync();
+        }
+        SendClockOffsetToDevice();
+    }
+
+    private async Task ClockSyncRoundAsync()
     {
         t1_count = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var msg = new ClockSync {command = ClockSyncCommand, t1 = t1_count};
         string json = JsonUtility.ToJson(msg);
 
-        message_beeboop(json);
+        await SendMessageAsync(json, _cts.Token);
     }
 
-    public void ClockSyncResult(long t_rx)
+    private void OnClockSyncResult(long t_rx)
     {
         long t4 = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        offset_count = t_rx - (t1_count + (t4-t1_count)/2);
+        long rtt = t4 - t1_count;
+        if (rtt <= _bestRtt)
+        {
+            _bestRtt = rtt;
+            offset_count = t_rx - (t1_count + rtt/2);
+        }
+    }
 
+    private void SendClockOffsetToDevice()
+    {
         var msg = new ClockSyncResult {command = ClockSyncResultCommand, offset = offset_count};
         string json = JsonUtility.ToJson(msg);
 
@@ -405,6 +430,9 @@ public class ReapyControllerCommunication : MonoBehaviour
 
     public async Task<long> StartSoundscapeLockAndLoad()
     {
+        //Upate the clock sync
+        await SyncClockAsync(ClockResyncSamples);
+
         var msg = new StartSoundscape {command = startSoundscapeCommand, timestamp=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()};
         string json = JsonUtility.ToJson(msg);
 
