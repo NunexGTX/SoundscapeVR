@@ -362,7 +362,7 @@ public class SoundscapeWrapper: MonoBehaviour
         await reapyController.StartSoundscapeLockAndLoad();
         long finish = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-        return finish - start;
+        return (finish - start)/2;
     }
 
     //function to start counting time to loop the SS.
