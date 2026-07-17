@@ -346,8 +346,7 @@ public class SoundscapeWrapper: MonoBehaviour
         if(vrStateData.GetCurrentAudio() == AudioListeningType.ENCOMPASSING)
         {
             delayMs = (int) await StartSoundscapeReaper();
-            Debug.Log($"Delaying Soundcsape Video by {delayMs}ms");
-            
+            Debug.Log($"Delaying Soundscape Video by {delayMs}ms");
         }
         RestartSoundscape(delayMs/1000L);
     }

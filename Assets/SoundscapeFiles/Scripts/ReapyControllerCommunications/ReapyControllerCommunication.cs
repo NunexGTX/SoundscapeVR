@@ -228,7 +228,7 @@ public class ReapyControllerCommunication : MonoBehaviour
     }
 
     private void OnReaperReceive(string ReaperResponse)
-    {   
+    {
         /*
         if (ReaperResponse.Contains("clock_sync:"))
         {
@@ -236,15 +236,18 @@ public class ReapyControllerCommunication : MonoBehaviour
         }
         */
 
+        if (ReaperResponse.Contains(startSoundscapeSuccesfullyMessage))
+        {
+            startSoundscape_lock.Release();
+            return;
+        }
+
         //correr quando receber ack ou error de tocar uma fonte de audio
         switch (ReaperResponse.Trim())
         {
             case newTrackCreatedSuccesfullyMessage:
                 Debug.Log($"[SoundscapeVR] Acknowledged track creation - loading manager exists: {loadingManager != null}");
                 if(loadingManager != null) loadingManager.Increment();
-                break;
-            case startSoundscapeSuccesfullyMessage:
-                startSoundscape_lock.Release();
                 break;
             default:
                 Debug.Log($"[SoundscapeVR] other response gotten: {ReaperResponse}");
