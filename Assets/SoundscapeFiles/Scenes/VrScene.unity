@@ -407,7 +407,7 @@ MonoBehaviour:
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 343
-  m_WorldSpaceHeight: 414.2
+  m_WorldSpaceHeight: 476
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
