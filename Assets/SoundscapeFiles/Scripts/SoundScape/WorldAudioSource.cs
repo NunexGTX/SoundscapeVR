@@ -100,7 +100,7 @@ public class WorldAudioSource: MonoBehaviour
     }
 
     //called when playing or replaying audio source.
-    public async Task PlayAudio(bool incLoading)
+    public async Task PlayAudio(bool incLoading, bool incrementOnError = false)
     {
         if(playbackType == AudioListeningType.BINAURAL)
         {
@@ -111,7 +111,7 @@ public class WorldAudioSource: MonoBehaviour
             {
                 Debug.LogWarning($"[SoundscapeVR] Tried to play audio source with no loaded audio clip...");
                 if(errorMaterial != null) ResetMaterial(errorMaterial);
-                if(incLoading && loadingManager != null) loadingManager.Increment();
+                if(incLoading && loadingManager != null && incrementOnError) loadingManager.Increment();
                 loadingManager = null;
                 return;
             }

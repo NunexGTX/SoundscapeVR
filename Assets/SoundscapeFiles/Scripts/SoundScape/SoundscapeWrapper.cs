@@ -143,7 +143,7 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         if(currentSoundscape == null) return;
         AudioSource srcClone = sharedReverbEffect == null ? src.CloneWithoutEffect(AudioEffects.REVERB_EFFECT) : src.CloneWithEffect(sharedReverbEffect);
-        PlaceBaseSource(srcClone, debug: true);
+        PlaceBaseSource(srcClone, editMode: true);
         EditSoundscape(srcClone, add: true);
     }
     
@@ -156,7 +156,7 @@ public class SoundscapeWrapper: MonoBehaviour
     public void HideSources(){foreach(GameObject go in placedAudios.Values) go.GetComponent<MeshRenderer>().enabled = false;}
     public void ShowSources(){foreach(GameObject go in placedAudios.Values) go.GetComponent<MeshRenderer>().enabled = true;}
 
-    private void PlaceBaseSource(AudioSource src, bool debug)
+    private void PlaceBaseSource(AudioSource src, bool editMode)
     {
         if(placedAudios.ContainsKey(src.GetUUID())) return;
         GameObject go = Instantiate(audioSourceObject);
@@ -164,7 +164,7 @@ public class SoundscapeWrapper: MonoBehaviour
 
         WorldAudioSource worldSrc = go.GetComponent<WorldAudioSource>();
         worldSrc.audioSource = src;
-        worldSrc.debug = debug;
+        worldSrc.debug = editMode;
         worldSrc.soundscapeWrapper = this;
         worldSrc.library = soundscapeLibrary;
         worldSrc.playbackType = vrStateData.GetCurrentAudio();
@@ -186,7 +186,7 @@ public class SoundscapeWrapper: MonoBehaviour
         src.ApplyEffects(go);
         placedAudios.Add(worldSrc.GetUUID(), go);
         go.SetActive(true);
-        _ = worldSrc.PlayAudio(true);
+        _ = worldSrc.PlayAudio(true, editMode);
     }
 
     //called when the audio sources are already created, we just want to replay them
