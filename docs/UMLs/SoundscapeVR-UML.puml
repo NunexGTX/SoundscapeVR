@@ -406,15 +406,15 @@ enum VisualType {
     BOTH= -1,
     NONE= 0,
 }
-enum AudioSourceType {
-    BINAURAL,
-    ENCOMPASSING,
-    NONE,
-}
 enum AudioListeningType {
     BINAURAL= 1,
     ENCOMPASSING= 2,
     NONE= 0,
+}
+enum AudioSourceType {
+    BINAURAL,
+    ENCOMPASSING,
+    NONE,
 }
 abstract class Soundscape {
     + title : string
