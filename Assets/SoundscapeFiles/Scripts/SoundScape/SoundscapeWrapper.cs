@@ -408,23 +408,17 @@ public class SoundscapeWrapper: MonoBehaviour
         //SaveCurrentSoundscape();
         playerManager.SetPlayerMovement(true);
         playerManager.ShowCameraLayers();
-        if (videoPlaying)
-        {
-            if(ssVisual != null) 
-            {
-                Destroy(ssVisual);
-                ssVisual = null;
-                RenderSettings.skybox = defaultSkybox;
-                DynamicGI.UpdateEnvironment();
-            }
-            if(screen != null) 
-            {
-                currentSoundscape.DeleteScreen();
-                Destroy(screen);
-                screen = null;
-            }
-            videoPlaying = false;
-        }
+        if(ssVisual != null) 
+            Destroy(ssVisual);
+        ssVisual = null;
+        RenderSettings.skybox = defaultSkybox;
+        DynamicGI.UpdateEnvironment();
+        
+        if(screen != null) 
+            Destroy(screen);
+        currentSoundscape?.DeleteScreen();
+        screen = null;
+        videoPlaying = false;
         RemoveAudioSources();
         currentSoundscape = null;
         if(gameObject != null) StopAllCoroutines();

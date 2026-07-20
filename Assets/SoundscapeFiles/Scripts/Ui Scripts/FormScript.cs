@@ -14,6 +14,7 @@ public class FormScript : MonoBehaviour
     [SerializeField] private GameObject audioVideoMenu;
     [SerializeField] private SoundscapeWrapper ssWrapper;
     [SerializeField] private SoundscapeLibrary library;
+    [SerializeField] private VrStateData vrStateData;
     [SerializeField] private VisualTreeAsset radioButtonElement;
     [SerializeField] private VisualTreeAsset labelElement;
     [SerializeField] private VisualTreeAsset textInputElement;
@@ -521,33 +522,66 @@ public class FormScript : MonoBehaviour
                         VisualElement textThing = labelElement.Instantiate();
                         string title = id;
                         string ssName = "";
+                        
+                        int audioChoice = 0;
+                        int visualChoice = 0;
+
                         if (id.StartsWith(SoundscapeInit))
                         {
-                            ssName = title[15..];
-                            Debug.Log($"Found request for ss: {title}");
+                            string[] parts = id.Split(':');
+                            
+                            if (parts.Length >= 2)
+                            {
+                                ssName = parts[1];
+                                
+                                if (parts.Length >= 3 && int.TryParse(parts[2], out int parsedAudio))
+                                {
+                                    audioChoice = parsedAudio;
+                                }
+                                
+                                if (parts.Length >= 4 && int.TryParse(parts[3], out int parsedVisual))
+                                {
+                                    visualChoice = parsedVisual;
+                                }
+                            }
+                            
+                            Debug.Log($"Found request for ss: {ssName} (Audio: {audioChoice}, Visual: {visualChoice})");
                             title = "Soundscape";
                         }
                         
                         textThing.Q<Label>("title").text = title;
                         textThing.Q<Label>("description").text = question;
 
-                        if(id.StartsWith(SoundscapeInit)){
+                        if (id.StartsWith(SoundscapeInit))
+                        {
                             Soundscape found = library.soundscapeList.GetByTitle(ssName);
-                            if(found != null)
+                            if (found != null)
                             {
-                                Action ssButtonStart = () => ssWrapper.SetAndStartSoundscape(found);
+                                int targetAudio = audioChoice;
+                                int targetVisual = visualChoice;
+
+                                Action ssButtonStart = () =>
+                                {
+                                    vrStateData.CurrentAudioChoice = targetAudio;
+                                    vrStateData.CurrentVisualChoice = targetVisual;
+                                    Debug.Log($"Chose {targetAudio} and {targetVisual}");
+                                    ssWrapper.SetAndStartSoundscape(found);
+                                };
+                                
                                 Button btn = new()
                                 {
-                                    text = $"Start Soundscape"
+                                    text = "Start Soundscape"
                                 };
                                 btn.clicked += ssButtonStart;
                                 unbindingActions.Add(() => btn.clicked -= ssButtonStart);
                                 textThing.Add(btn);
-                            } else
+                            } 
+                            else
                             {
-                                textThing.Q<Label>("description").text += $"\nError: Could not load soundscape {title} as it does not exist.";
+                                textThing.Q<Label>("description").text += $"\nError: Could not load soundscape {ssName} as it does not exist.";
                             }
                         }
+                        
                         formRoot.Add(textThing);  
                         break;
                 }

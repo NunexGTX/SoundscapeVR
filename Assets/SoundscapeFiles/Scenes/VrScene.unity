@@ -845,6 +845,7 @@ MonoBehaviour:
   audioVideoMenu: {fileID: 86987618}
   ssWrapper: {fileID: 1891192193}
   library: {fileID: 1891192195}
+  vrStateData: {fileID: 11400000, guid: 26e8613f074c8004192a57c57732439f, type: 2}
   radioButtonElement: {fileID: 9197481963319205126, guid: dbc974f5009ff534c8c6f91d6c8ec76b, type: 3}
   labelElement: {fileID: 9197481963319205126, guid: 64c6353482c546d4ebbbcecee2e51ad9, type: 3}
   textInputElement: {fileID: 9197481963319205126, guid: c651c47c282bb3a4092c66eb5b42a7ae, type: 3}
