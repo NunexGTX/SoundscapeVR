@@ -36,37 +36,56 @@ public class FormScript : MonoBehaviour
     private Label notAllMandatory;
     private Coroutine allMandatory;
     public int disappearAllMandatoryTimeout = 5;
+    private Form form;
 
-    void OnEnable()
+    private async void OnEnable()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         formRoot = root.Q<VisualElement>("formRoot");
         returnBtn = root.Q<Button>("returnBtn");
         returnBtn.clicked += Return;
-        if(Application.internetReachability == NetworkReachability.NotReachable)
+
+        if (Application.internetReachability == NetworkReachability.NotReachable)
         {
-            
             root.Q<Label>("formTitle").text = "No internet connection. Try again later.";
             root.Q<Button>("nextBtn").visible = false;
             Debug.LogError($"[SoundscapeVR] Error: Can't load form as there is no internet!");
             return;
         }
+
+        if (form == null)
+        {
+            
+            form = await library.LoadForm();
+
+            formTitle = form.formTitle;
+            formDesc = form.description;
+            
+            if (form.questions != null)
+            {
+                formSections = SeparateElements(form.questions);
+                answersHolder = new() { pageCount = formSections.Count };
+            }
+        }
+
+        if(form == null || string.IsNullOrWhiteSpace(form.formTitle)) 
+        {
+            Debug.LogError("[SoundscapeVR] Error: Form failed to load.");
+            return;
+        }
+
+        Label title = root.Q<Label>("formTitle");
+        title.text = form.formTitle;
+        
         nextBtn = root.Q<Button>("nextBtn");
         nextBtn.clicked += NextButton;
-        Label title = root.Q<Label>("formTitle");
-        title.text = library.form.formTitle;
-        
+
+
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         formPosition = -1;
-        if(library.form == null) return;
-        if(library.form == null || string.IsNullOrWhiteSpace(library.form.formTitle)) return;
-        formSections = SeparateElements(library.form.questions);
-        formTitle = library.form.formTitle;
-        formDesc = library.form.description;
-        answersHolder = new(){pageCount = formSections.Count};
         unbindingActions = new();
     }
 
@@ -83,6 +102,7 @@ public class FormScript : MonoBehaviour
         gameObject.SetActive(false);
         audioVideoMenu?.SetActive(true);
         formPosition = -1;
+        form = null;
     }
     private void NextButton()
     {
@@ -165,7 +185,7 @@ public class FormScript : MonoBehaviour
         introduction.Q<Label>("title").text = formTitle;
         introduction.Q<Label>("description").text = "Form has been submited. Thanks for participating.";
         formRoot.Add(introduction);
-        GoogleForm.submitForm(answersHolder,library.form.formViewId);
+        GoogleForm.submitForm(answersHolder,form.formViewId);
         formPosition = -1;
         answersHolder.Clear();
     }
@@ -422,7 +442,7 @@ public class FormScript : MonoBehaviour
                     case FormElement.IMAGE:
                         VisualElement imageInstance = imageElement.Instantiate();
                         Image imageField = imageInstance.Q<Image>("image");
-                        SetImage(library.form.GetImageForQuestion(id), imageField);
+                        SetImage(form.GetImageForQuestion(id), imageField);
                         formRoot.Add(imageInstance);
                         break;
                     case FormElement.GRID_RADIO:

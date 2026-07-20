@@ -13,7 +13,7 @@ public class SoundscapeLibrary: MonoBehaviour
     private static SoundscapeLibrary INSTANCE = null;
     public AudioList audioList = new();
     public SoundscapeList soundscapeList = new();
-    public Form form = new();
+    private Form form = null;
     public LoadingManager loadingManager;
     private AudioClipCache audioClipCache = new();
     public Texture2D defaultAudioIcon;
@@ -26,13 +26,10 @@ public class SoundscapeLibrary: MonoBehaviour
         if(INSTANCE == null) INSTANCE = this;
         Debug.Log("[SoundscapeVR] Loading files...");
         //await CheckPermissions();
-        await LoadFiles(GetSoundscapeFilePath(), GetAudioFilePath(), GetFormFilePath());
+        await LoadFiles(GetSoundscapeFilePath(), GetAudioFilePath());
         
         Debug.Log("[SoundscapeVR] Files loaded. Caching assets...");
-        Task audioIconsTask = LoadAudioIcons(audioList.GetAudios(), loadingManager);
-        Task formImagesTask = LoadFormImages();
-
-        await Task.WhenAll(audioIconsTask, formImagesTask);
+        await LoadAudioIcons(audioList.GetAudios(), loadingManager);
         Debug.Log("[SoundscapeVR] All audio icons and form images cached successfully.");
     }
     public void ReplaceOrAddSoundscape(Soundscape updatedSoundscape)
@@ -283,11 +280,27 @@ public class SoundscapeLibrary: MonoBehaviour
             }
         }
     }
-    private async Task LoadFiles(string soundscapePath, string audioPath, string formPath)
+
+    public async Task<Form> LoadForm()
+    {
+        if (loadingManager.CanLoad(true))
+        {
+            await Task.Delay(100);
+        }
+        loadingManager.SetToStart(2);
+        loadingManager.SetInfo("Loading Form Data");
+        string formPath = GetFormFilePath();
+        await ReadFormFromJson(formPath);
+        loadingManager.Increment();        
+        loadingManager.SetInfo("Loading Form Images");
+        await LoadFormImages();
+        loadingManager.Increment();        
+        return form;
+    }
+    private async Task LoadFiles(string soundscapePath, string audioPath)
     {
         soundscapeList = await Task.Run(() => SoundscapeList.ReadFromJson(soundscapePath));
         audioList      = await Task.Run(() => AudioList.ReadFromJson(audioPath));
-        await ReadFormFromJson(formPath);
     }
 
     static bool HasPermissions()
