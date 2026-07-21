@@ -475,15 +475,12 @@ class AudioList {
     + {static} ReadFromJson(path:string) : AudioList
     + Print() : string
 }
-class "List`1"<T> {
-}
-AudioList --> "sounds<Audio>" "List`1"
 class WorldAudioSource {
     + debug : bool = true
     + GetUUID() : Guid
     + SetUUID(uuid:Guid) : void
     + DestroySource() : void
-    + <<async>> PlayAudio(incLoading:bool, incrementOnError:bool) : Task
+    + <<async>> PlayAudio(incLoading:bool, incrementOnError:bool, play:bool) : Task
     + SetIconEnabledState(isMuted:bool) : void
     + FlipMuteState() : void
     + IsVisible() : bool
@@ -509,6 +506,7 @@ class SoundscapeList {
     + UpdateSoundscapeData(soundscapeId:string, soundscape:Soundscape) : bool
     + RemoveSoundscape(soundscapeTitle:string) : bool
     + GetByTitle(title:string) : Soundscape
+    + SaveToFile(fullPath:string) : bool
 }
 class "List`1"<T> {
 }
