@@ -596,6 +596,7 @@ class SoundscapeLibrary {
     + {static} GetAudioFilePath() : string
     + {static} GetReaperControllerIPFilePath() : string
     + {static} GetFormFilePath() : string
+    + <<async>> LoadForm() : Task<Form>
     + <<async>> GetClipForAudio(audioId:string) : Task<IAudioGenerator>
     + <<async>> LoadAudioClipsAsync(audioIds:List<string>) : Task
     + <<async>> LoadAudioClipsAsync(audios:List<Audio>) : Task
@@ -611,7 +612,6 @@ class SoundscapeLibrary {
 MonoBehaviour <|-- SoundscapeLibrary
 SoundscapeLibrary o-> "audioList" AudioList
 SoundscapeLibrary o-> "soundscapeList" SoundscapeList
-SoundscapeLibrary o-> "form" Form
 SoundscapeLibrary --> "loadingManager" LoadingManager
 SoundscapeLibrary --> "defaultAudioIcon" Texture2D
 class AndroidStoragePermission {
