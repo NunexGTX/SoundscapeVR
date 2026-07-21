@@ -7,11 +7,10 @@ using System.Linq;
 [System.Serializable]
 public class AudioList
 {
-    public List<Audio> sounds;
+    [SerializeField] private List<Audio> sounds;
     public AudioList(){sounds = new();}
     public List<Audio> GetAudios()
     {
-        // Combines both into a single stream of Soundscape objects
         return sounds;
     }
     

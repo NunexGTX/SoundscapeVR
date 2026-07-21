@@ -100,7 +100,7 @@ public class WorldAudioSource: MonoBehaviour
     }
 
     //called when playing or replaying audio source.
-    public async Task PlayAudio(bool incLoading, bool incrementOnError = false)
+    public async Task PlayAudio(bool incLoading, bool incrementOnError = false, bool play = true)
     {
         if(playbackType == AudioListeningType.BINAURAL)
         {
@@ -126,7 +126,7 @@ public class WorldAudioSource: MonoBehaviour
             src.mute = audioSource.Mute;
             src.loop = audioSource.Loop;
             src.time = 0;
-            src.PlayDelayed(audioSource.DelaySeconds);
+            if(play) src.PlayDelayed(audioSource.DelaySeconds);
         }
         if(incLoading) loadingManager?.Increment();
         loadingManager = null;

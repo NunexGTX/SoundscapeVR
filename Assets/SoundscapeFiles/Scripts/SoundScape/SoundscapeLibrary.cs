@@ -49,20 +49,11 @@ public class SoundscapeLibrary: MonoBehaviour
 
     private bool SaveSoundscapeList()
     {
-        string json = JsonUtility.ToJson(soundscapeList, true);
-        string fullPath = GetSoundscapeFilePath();
-        
-        try
-        {
-            File.WriteAllText(fullPath, json);
-            return true;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to save soundscape JSON: {e.Message}");
-        }
-        RefreshMediaScanner(fullPath);
-        return false;
+        string path = GetSoundscapeFilePath();
+        bool success = soundscapeList.SaveToFile(path);
+        if(success) 
+            RefreshMediaScanner(path);
+        return success;
     }
 
     public AudioSource CreateSourceAt(Audio audio, Vector3 spherePosition)

@@ -104,7 +104,7 @@ public class AudioSource : ISerializationCallbackReceiver
     }
 
     //called before unity serializes the class into json.
-    //we basically want to fill in the shadow methods
+    //we basically want to fill in the shadow fields
     public void OnBeforeSerialize()
     {
         if(_audioData == null) _audioData = new();

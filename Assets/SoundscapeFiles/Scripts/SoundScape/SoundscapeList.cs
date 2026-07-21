@@ -84,4 +84,19 @@ public class SoundscapeList
         match ??= videoSoundscapes.Find(s => s.title == title);
         return match;
     }
+
+    public bool SaveToFile(string fullPath)
+    {
+        string json = JsonUtility.ToJson(this, true);        
+        try
+        {
+            File.WriteAllText(fullPath, json);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to save soundscape JSON: {e.Message}");
+        }
+        return false;
+    }
 }

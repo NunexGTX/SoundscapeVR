@@ -143,20 +143,20 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         if(currentSoundscape == null) return;
         AudioSource srcClone = sharedReverbEffect == null ? src.CloneWithoutEffect(AudioEffects.REVERB_EFFECT) : src.CloneWithEffect(sharedReverbEffect);
-        PlaceBaseSource(srcClone, editMode: true);
+        PlaceBaseSource(srcClone, editMode: true, play: true);
         EditSoundscape(srcClone, add: true);
     }
     
     private void PlaceSoundscapeAudioSource(AudioSource src)
     {
         if(currentSoundscape == null) return;
-        PlaceBaseSource(src, inEditMode);
+        PlaceBaseSource(src, inEditMode, play: false);
     }
 
     public void HideSources(){foreach(GameObject go in placedAudios.Values) go.GetComponent<MeshRenderer>().enabled = false;}
     public void ShowSources(){foreach(GameObject go in placedAudios.Values) go.GetComponent<MeshRenderer>().enabled = true;}
 
-    private void PlaceBaseSource(AudioSource src, bool editMode)
+    private void PlaceBaseSource(AudioSource src, bool editMode, bool play)
     {
         if(placedAudios.ContainsKey(src.GetUUID())) return;
         GameObject go = Instantiate(audioSourceObject);
@@ -186,7 +186,7 @@ public class SoundscapeWrapper: MonoBehaviour
         src.ApplyEffects(go);
         placedAudios.Add(worldSrc.GetUUID(), go);
         go.SetActive(true);
-        _ = worldSrc.PlayAudio(true, editMode);
+        _ = worldSrc.PlayAudio(true, incrementOnError: editMode, play);
     }
 
     //called when the audio sources are already created, we just want to replay them
