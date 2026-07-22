@@ -441,12 +441,10 @@ abstract class Soundscape {
     + {abstract} Copy() : Soundscape
     + {abstract} TryGetVisuals(visualType:VisualType, videoPlaying:Boolean) : GameObject
     + {abstract} GetSupportedVisual() : VisualType
-    + {abstract} RestartVisuals(ssVisual:GameObject, visualType:VisualType, delay:float) : void
+    + {abstract} RestartVisuals(ssVisual:GameObject, visualType:VisualType) : void
 }
 class SoundscapeWrapper {
     + inEditMode : bool <<get>> = false
-    + MarkEdited() : void
-    + SetSoundscape(ss:Soundscape) : void
     + DeleteAudio(srcObject:GameObject) : void
     + UpdateSource(srcObject:GameObject) : void
     + UpdateSource(sourceId:Guid?, audioSource:AudioSource, propagate:bool) : void
@@ -517,7 +515,7 @@ class ImageSoundscape {
     + <<override>> GetSupportedVisual() : VisualType
     + <<override>> Copy() : Soundscape
     + <<override>> TryGetVisuals(visualType:VisualType, videoPlaying:bool) : GameObject
-    + <<override>> RestartVisuals(ssVisual:GameObject, visualType:VisualType, delay:float) : void
+    + <<override>> RestartVisuals(ssVisual:GameObject, visualType:VisualType) : void
 }
 Soundscape <|-- ImageSoundscape
 class SoundscapeEditor {
@@ -579,7 +577,7 @@ class VideoSoundscape {
     + <<override>> Copy() : Soundscape
     + <<override>> TryGetVisuals(visualType:VisualType, videoPlaying:bool) : GameObject
     + <<override>> ClearVisualsBinding() : void
-    + <<override>> RestartVisuals(ssVisual:GameObject, visualType:VisualType, delay:float) : void
+    + <<override>> RestartVisuals(ssVisual:GameObject, visualType:VisualType) : void
 }
 Soundscape <|-- VideoSoundscape
 class SoundscapeLibrary {
