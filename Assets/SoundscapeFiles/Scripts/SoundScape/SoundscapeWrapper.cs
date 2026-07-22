@@ -40,17 +40,6 @@ public class SoundscapeWrapper: MonoBehaviour
     {
         leaveSoundscapeAction.action.performed -= StopSoundscape;
     }
-
-    private void SaveCurrentSoundscape()
-    {
-        if (edited && currentSoundscape != null)
-        {
-            Debug.Log("Saving Soundscape");
-            soundscapeLibrary.ReplaceOrAddSoundscape(currentSoundscape);
-            edited = false;            
-        }
-    }
-
     private void EditSoundscape(AudioSource src, bool add)
     {
         if(currentSoundscape == null) return;
@@ -60,14 +49,9 @@ public class SoundscapeWrapper: MonoBehaviour
         else
             currentSoundscape.RemoveSource(src);
         edited = true;
-        //2. go into library and save that.
-        //3. remake UI
-        //local copy and library should be synced
     }
 
-    public void MarkEdited(){edited = true;}
-
-    public void SetSoundscape(Soundscape ss)
+    private void SetSoundscape(Soundscape ss)
     {
         StopSoundscape();
         currentSoundscape = ss.Copy();
@@ -197,18 +181,18 @@ public class SoundscapeWrapper: MonoBehaviour
             _ = go.GetComponent<WorldAudioSource>().PlayAudio(false);
     }
 
-    private void RestartSoundscape(float delaySeconds  = 0)
+    private void RestartSoundscape()
     {
         try
         {        
-            if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals(), delaySeconds);
+            if(videoPlaying) currentSoundscape.RestartVisuals(ssVisual, vrStateData.GetCurrentVisuals());
         }
         catch
         {
             return;
         }
         PlayExistingSourcesFromZero();
-        StartLoopCoroutine(delaySeconds);
+        StartLoopCoroutine();
     }
 
     public async Task PrepareSoundscape(bool debug)
@@ -344,12 +328,12 @@ public class SoundscapeWrapper: MonoBehaviour
 
     //function to start counting time to loop the SS.
     //if currrentSS time is 0, this does nothing. otherwise starts the coroutine that will then call RestartSoundscape()
-    private void StartLoopCoroutine(float delaySeconds)
+    private void StartLoopCoroutine()
     {
         int time = currentSoundscape.timeSeconds;
         if(time == 0) return;
         Debug.Log($"[SoundscapeVR] Setting Soundscape to loop in {time} seconds");
-        StartCoroutine(SoundscapeCountdown(time - delaySeconds));
+        StartCoroutine(SoundscapeCountdown(time));
     }
 
     IEnumerator SoundscapeCountdown(float timeSeconds)

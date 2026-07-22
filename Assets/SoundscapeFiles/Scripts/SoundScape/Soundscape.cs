@@ -171,6 +171,6 @@ public abstract class Soundscape
     public abstract GameObject TryGetVisuals(VisualType visualType, out Boolean videoPlaying);
     [Obsolete("Este método não deve ter uso atualmente, verificar para remover.")]
     public abstract VisualType GetSupportedVisual();
-    public abstract void RestartVisuals(GameObject ssVisual, VisualType visualType, float delay = 0);
+    public abstract void RestartVisuals(GameObject ssVisual, VisualType visualType);
 
 }

@@ -18,7 +18,6 @@ public class ConfigScript : MonoBehaviour
     private IEnumerator messageClearCoroutine;
     private IEnumerator blinkCoroutine;
     private ReapyControllerCommunication reapyControllerCommunication;
-    private Toggle VRToggle;
     private Button returnBtn;
     private Button heightBtn;
 
@@ -39,10 +38,6 @@ public class ConfigScript : MonoBehaviour
 
         returnBtn.clicked += Return;
         heightBtn.clicked += CalibrateHeight;
-
-        VRToggle = root.Q<Toggle>("vrToggle");
-        VRToggle.visible = false;
-        VRToggle.enabledSelf = false;
         #if UNITY_ANDROID && !UNITY_EDITOR
         VRToggle = null; 
         #endif
@@ -52,8 +47,6 @@ public class ConfigScript : MonoBehaviour
 
     void OnDisable()
     {
-        if (VRToggle != null)
-            VRToggle.UnregisterValueChangedCallback(DoToggleVr);
         returnBtn.clicked -= Return;
         heightBtn.clicked -= CalibrateHeight;
 
