@@ -38,9 +38,6 @@ public class ConfigScript : MonoBehaviour
 
         returnBtn.clicked += Return;
         heightBtn.clicked += CalibrateHeight;
-        #if UNITY_ANDROID && !UNITY_EDITOR
-        VRToggle = null; 
-        #endif
 
         reapySetup();
     }
