@@ -127,9 +127,9 @@ public class WorldAudioSource: MonoBehaviour
             src.loop = audioSource.Loop;
             src.time = 0;
             if(play) src.PlayDelayed(audioSource.DelaySeconds);
+            if(incLoading) loadingManager?.Increment();
+            loadingManager = null;
         }
-        if(incLoading) loadingManager?.Increment();
-        loadingManager = null;
         return;
     }
 

@@ -97,7 +97,7 @@ public class ReverbEffectData: AudioEffectData
     {
         //Can only be used for reaper in this case
         if(isAmbisonic) return null;
-        return new string[] {"true", ReverbRiRs.getPresetCode(currentPreset), wet.ToString()};
+        return new string[] {"true", ReverbRiRs.getPresetCode(currentPreset), wet.ToString().Replace(',', '.')};
     }
     
 }
