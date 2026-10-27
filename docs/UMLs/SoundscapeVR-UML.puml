@@ -1,20 +1,12 @@
 @startuml
-class LoadAmbisonicWav {
-    + filePath : string
-}
-MonoBehaviour <|-- LoadAmbisonicWav
 class WorldSrcBinding {
     + SelectSelf(context:ActivateEventArgs) : void
 }
 MonoBehaviour <|-- WorldSrcBinding
-class PlayerUIScrollHandler {
-    + scrollSpeed : float = 600f
-    + threshold : float = 0.1f
-    + invertVertical : bool = false
+class LoadAmbisonicWav {
+    + filePath : string
 }
-MonoBehaviour <|-- PlayerUIScrollHandler
-PlayerUIScrollHandler --> "rightInteractor" NearFarInteractor
-PlayerUIScrollHandler --> "rightScrollAction" InputActionReference
+MonoBehaviour <|-- LoadAmbisonicWav
 class SceneSkybox {
     + RoomLayerIndex : int = 6
     + reactivateRoom() : void
@@ -24,22 +16,20 @@ MonoBehaviour <|-- SceneSkybox
 SceneSkybox --> "Instance" SceneSkybox
 SceneSkybox --> "skyboxMaterial" Material
 SceneSkybox --> "skyboxMaterial2" Material
-class PlayerManager {
-    + Start() : void
-    + EnterVR() : void
-    + ExitVR() : void
-    + JustStopPlayer(canMove:bool) : void
-    + SetPlayerMovement(canMove:bool) : void
-    + GetCurrentCamera() : Camera
-    + <<const>> HIDE_ALL : int = 0
-    + <<const>> HIDE_EDITING : int = 1
-    + <<const>> HIDE_PLACING : int = 2
-    + ShowCameraLayers(mask:int) : void
-    + HideCameraLayers(type:int) : void
-    + SetHeightOffset(height:float) : void
-    + SetUiPos() : void
+class PlayerUIScrollHandler {
+    + scrollSpeed : float = 600f
+    + threshold : float = 0.1f
+    + invertVertical : bool = false
 }
-MonoBehaviour <|-- PlayerManager
+MonoBehaviour <|-- PlayerUIScrollHandler
+PlayerUIScrollHandler --> "rightInteractor" NearFarInteractor
+PlayerUIScrollHandler --> "rightScrollAction" InputActionReference
+class QuitHandler {
+}
+MonoBehaviour <|-- QuitHandler
+class IPTools {
+    + {static} IsValidIP(ip:string) : bool
+}
 class LoadingManager {
     + SetInfo(text:string) : void
     + OnLoaded(action:Action) : void
@@ -52,18 +42,6 @@ class LoadingManager {
 }
 MonoBehaviour <|-- LoadingManager
 LoadingManager --> "player" PlayerControl
-struct SerializableVector3 {
-    + x : float
-    + y : float
-    + z : float
-    + SerializableVector3(v3:Vector3)
-    + ToVector3() : Vector3
-}
-class PlayerRaycasting {
-    + RaycastAudioSources() : GameObject
-    + RaycastSphere() : Vector3
-}
-MonoBehaviour <|-- PlayerRaycasting
 class StartupManager {
 }
 MonoBehaviour <|-- StartupManager
@@ -71,13 +49,19 @@ class VRSwitcher <<static>> {
     + {static} EnableXRCoroutine() : IEnumerator
     + {static} DisableXR() : void
 }
-class IPTools {
-    + {static} IsValidIP(ip:string) : bool
+class DistText {
+    + SetAndPlace(worldPos:Vector3) : void
 }
-class LookAtCamera {
+MonoBehaviour <|-- DistText
+DistText o-> "playerManager" PlayerManager
+class InteractorRaycasting {
 }
-MonoBehaviour <|-- LookAtCamera
-LookAtCamera --> "manager" PlayerManager
+MonoBehaviour <|-- InteractorRaycasting
+class PlayerRaycasting {
+    + RaycastAudioSources() : GameObject
+    + RaycastSphere() : Vector3
+}
+MonoBehaviour <|-- PlayerRaycasting
 class SoundscapePlayerEditor {
     + SelectAudio(audio:Audio) : bool
     + SetSphereActive(isActive:bool) : void
@@ -133,22 +117,81 @@ class PlayerControl {
 }
 MonoBehaviour <|-- PlayerControl
 PlayerControl --> "cameraTransform" Transform
-class InteractorRaycasting {
-}
-MonoBehaviour <|-- InteractorRaycasting
-class QuitHandler {
-}
-MonoBehaviour <|-- QuitHandler
 class AudioSourceClue {
     + SetAndPlace(worldPos:Vector3) : void
 }
 MonoBehaviour <|-- AudioSourceClue
 AudioSourceClue o-> "playerManager" PlayerManager
-class DistText {
-    + SetAndPlace(worldPos:Vector3) : void
+class LookAtCamera {
 }
-MonoBehaviour <|-- DistText
-DistText o-> "playerManager" PlayerManager
+MonoBehaviour <|-- LookAtCamera
+LookAtCamera --> "manager" PlayerManager
+struct SerializableVector3 {
+    + x : float
+    + y : float
+    + z : float
+    + SerializableVector3(v3:Vector3)
+    + ToVector3() : Vector3
+}
+class PlayerManager {
+    + Start() : void
+    + EnterVR() : void
+    + ExitVR() : void
+    + JustStopPlayer(canMove:bool) : void
+    + SetPlayerMovement(canMove:bool) : void
+    + GetCurrentCamera() : Camera
+    + <<const>> HIDE_ALL : int = 0
+    + <<const>> HIDE_EDITING : int = 1
+    + <<const>> HIDE_PLACING : int = 2
+    + ShowCameraLayers(mask:int) : void
+    + HideCameraLayers(type:int) : void
+    + SetHeightOffset(height:float) : void
+    + SetUiPos() : void
+}
+MonoBehaviour <|-- PlayerManager
+class ImageEncompassingDisplay {
+    + imagePath : string
+    + projectionType : string = ""
+}
+MonoBehaviour <|-- ImageEncompassingDisplay
+ImageEncompassingDisplay o-> "onImagePrepared" Action
+ImageEncompassingDisplay o-> "onImageFailed" Action
+class VideoPlayer360 {
+}
+MonoBehaviour <|-- VideoPlayer360
+VideoPlayer360 --> "Video360Material" Material
+class StaticDisplay {
+    + imagePath : string
+    + video : bool
+}
+MonoBehaviour <|-- StaticDisplay
+StaticDisplay --> "onImagePrepared" Action
+StaticDisplay --> "onLoadFailed" Action
+class FormAnswersHolder {
+    + pageCount : int = 1
+    + AreRequiredComplete() : bool
+    + AreRequiredComplete(idxLimit:int) : bool
+    + IsQuestionAnswered(qId:string) : bool
+    + GetSingleAnswer(qId:string) : string
+    + GetRepeatableAnswers(qId:string) : List<string>
+    + RegisterRequiredQuestion(sectionIdx:int, qId:string) : void
+    + AddSingleAnswer(qId:string, value:string) : void
+    + ToggleRepeatableAnswer(qId:string, value:string, toggleOn:bool) : void
+    + RemoveSingleAnswer(qId:string) : void
+    + GetAnswerList() : List<KeyValuePair<string, string>>
+    + Clear() : void
+}
+class GoogleForm {
+    + {static} submitForm(answers:FormAnswersHolder, viewFormID:string) : void
+    + <<async>> {static} FetchForm(questionnaireJson:string) : Task<Form>
+}
+class FormEntry {
+    + entryID : string
+    + questionType : string
+    + questionName : string
+    + formEntryValue(newValue:string) : void
+    + getValue() : string
+}
 class VrStateData {
     + IsInVr : bool <<get>> <<set>>
     + CurrentVisualChoice : int <<get>> <<set>>
@@ -159,28 +202,13 @@ class VrStateData {
     + GetCurrentAudio() : AudioListeningType
 }
 ScriptableObject <|-- VrStateData
-class AudioClipFlags {
-    + {static} showAllAudioClipFlags() : void
+class AndroidStoragePermission {
+    + maxPermissionTries : int = 3
+    + {static} checkManageStoragePermission() : bool
+    + RequestManageStoragePermission() : void
+    + {static} skipStoragePermissions() : void
 }
-MonoBehaviour <|-- AudioClipFlags
-class StaticDisplay {
-    + imagePath : string
-    + video : bool
-}
-MonoBehaviour <|-- StaticDisplay
-StaticDisplay --> "onImagePrepared" Action
-StaticDisplay --> "onLoadFailed" Action
-class VideoPlayer360 {
-}
-MonoBehaviour <|-- VideoPlayer360
-VideoPlayer360 --> "Video360Material" Material
-class ImageEncompassingDisplay {
-    + imagePath : string
-    + projectionType : string = ""
-}
-MonoBehaviour <|-- ImageEncompassingDisplay
-ImageEncompassingDisplay o-> "onImagePrepared" Action
-ImageEncompassingDisplay o-> "onImageFailed" Action
+MonoBehaviour <|-- AndroidStoragePermission
 class ReapyControllerCommunication {
     + EnableCommunication : bool = true
     + autoconnect : bool = true
@@ -289,44 +317,43 @@ TrackCommand <|-- UnmuteTrack
 TrackCommand <|-- AudioEffect
 TrackCommand <|-- RemoveReverb
 TrackCommand <|-- removeAudioEffect
-class FormAnswersHolder {
-    + pageCount : int = 1
-    + AreRequiredComplete() : bool
-    + AreRequiredComplete(idxLimit:int) : bool
-    + IsQuestionAnswered(qId:string) : bool
-    + GetSingleAnswer(qId:string) : string
-    + GetRepeatableAnswers(qId:string) : List<string>
-    + RegisterRequiredQuestion(sectionIdx:int, qId:string) : void
-    + AddSingleAnswer(qId:string, value:string) : void
-    + ToggleRepeatableAnswer(qId:string, value:string, toggleOn:bool) : void
-    + RemoveSingleAnswer(qId:string) : void
-    + GetAnswerList() : List<KeyValuePair<string, string>>
-    + Clear() : void
+class FormScript {
+    + <<const>> SoundscapeInit : string = "LoadSoundscape:"
+    + disappearAllMandatoryTimeout : int = 5
 }
-class FormEntry {
-    + entryID : string
-    + questionType : string
-    + questionName : string
-    + formEntryValue(newValue:string) : void
-    + getValue() : string
+MonoBehaviour <|-- FormScript
+class TextFieldFocuser {
+    + UpdateFields() : void
 }
-class GoogleForm {
-    + {static} submitForm(answers:FormAnswersHolder, viewFormID:string) : void
-    + <<async>> {static} FetchForm(questionnaireJson:string) : Task<Form>
+MonoBehaviour <|-- TextFieldFocuser
+class SoundscapeListScript {
 }
+MonoBehaviour <|-- SoundscapeListScript
 class SoundscapeScript {
 }
 MonoBehaviour <|-- SoundscapeScript
 SoundscapeScript --> "buttonTemplate" VisualTreeAsset
+class ButtonHandler {
+    + ButtonHandler(btn:Button, id:string)
+    + SetId(id:string) : void
+    + GetId() : string
+    + SetAction(newAction:System.Action) : void
+    + Clear() : void
+}
+class ConfigScript {
+    + connectionTimeout : bool = false
+    + setConnectionMessage(connectionStatus:string) : void
+}
+MonoBehaviour <|-- ConfigScript
+ConfigScript --> "playerManager" PlayerManager
 class HomeScript {
 }
 MonoBehaviour <|-- HomeScript
-class EditSoundscapeScript {
-    + Return() : void
-    + UnselectAudio() : void
+class AudioEffectScript {
+    + SetValues(data:AudioSource.AudioData) : void
 }
-MonoBehaviour <|-- EditSoundscapeScript
-EditSoundscapeScript o-> "selectedSoundscape" Soundscape
+MonoBehaviour <|-- AudioEffectScript
+AudioEffectScript o-> "editor" SoundscapePlayerEditor
 class UiTestClick {
 }
 enum MenuType {
@@ -339,83 +366,16 @@ enum MenuType {
 }
 MonoBehaviour <|-- UiTestClick
 UiTestClick +-- MenuType
-class SoundscapeListScript {
+class EditSoundscapeScript {
+    + Return() : void
+    + UnselectAudio() : void
 }
-MonoBehaviour <|-- SoundscapeListScript
-class FormScript {
-    + <<const>> SoundscapeInit : string = "LoadSoundscape:"
-    + disappearAllMandatoryTimeout : int = 5
+MonoBehaviour <|-- EditSoundscapeScript
+EditSoundscapeScript o-> "selectedSoundscape" Soundscape
+class AudioClipFlags {
+    + {static} showAllAudioClipFlags() : void
 }
-MonoBehaviour <|-- FormScript
-class AudioEffectScript {
-    + SetValues(data:AudioSource.AudioData) : void
-}
-MonoBehaviour <|-- AudioEffectScript
-AudioEffectScript o-> "editor" SoundscapePlayerEditor
-class TextFieldFocuser {
-    + UpdateFields() : void
-}
-MonoBehaviour <|-- TextFieldFocuser
-class ConfigScript {
-    + connectionTimeout : bool = false
-    + setConnectionMessage(connectionStatus:string) : void
-}
-MonoBehaviour <|-- ConfigScript
-ConfigScript --> "playerManager" PlayerManager
-class ButtonHandler {
-    + ButtonHandler(btn:Button, id:string)
-    + SetId(id:string) : void
-    + GetId() : string
-    + SetAction(newAction:System.Action) : void
-    + Clear() : void
-}
-class AudioClipCache {
-    + Clear(id:string) : void
-    + LoadedBundle(bundle:AssetBundle) : void
-    + Clear() : void
-    + IsAudioInCache(audioId:string) : bool
-    + <<async>> AddAudio(audioId:string, clip:AudioClip) : Task
-    + GetAudioClip(audioId:string) : AudioClip
-}
-class SoundscapeSceneLoad {
-    + <<const>> SoundscapeVRSceneName : string = "VrScene"
-    + {static} LoadMainScene() : void
-}
-MonoBehaviour <|-- SoundscapeSceneLoad
-class Audio {
-    + id : string
-    + name : string
-    + fileName : string
-    + imagePath : string
-    + fileType : string
-    + type : string
-    + ambisonicAssetName : string = ""
-    + SetTexture(texture:Texture2D) : void
-    + UnloadBundle() : void
-    + HasImage() : bool
-    + GetRealAudioPath() : string
-    + IsAmbisonic() : bool
-    + <<const>> TYPE_STANDARD : string = "standard"
-    + <<const>> TYPE_AMBISONIC : string = "ambisonic"
-}
-Audio o-> "bundle" AssetBundle
-Audio --> "texture2D" Texture2D
-enum VisualType {
-    STATIC= 1,
-    ENCOMPASSING= 2,
-    BOTH= -1,
-    NONE= 0,
-}
-enum AudioListeningType {
-    BINAURAL= 1,
-    ENCOMPASSING= 2,
-    NONE= 0,
-}
-enum AudioSourceType {
-    BINAURAL,
-    ENCOMPASSING,
-    NONE,
-}
+MonoBehaviour <|-- AudioClipFlags
 abstract class Soundscape {
     + title : string
     + timeSeconds : int = 90
@@ -443,6 +403,46 @@ abstract class Soundscape {
     + {abstract} GetSupportedVisual() : VisualType
     + {abstract} RestartVisuals(ssVisual:GameObject, visualType:VisualType) : void
 }
+class WorldAudioSource {
+    + debug : bool = true
+    + GetUUID() : Guid
+    + SetUUID(uuid:Guid) : void
+    + DestroySource() : void
+    + <<async>> PlayAudio(incLoading:bool, incrementOnError:bool, play:bool) : Task
+    + SetIconEnabledState(isMuted:bool) : void
+    + FlipMuteState() : void
+    + IsVisible() : bool
+    + PasteDataFrom(copiedAudioSource:AudioSource) : void
+    + ResetMaterial(defaultMaterial:Material) : void
+}
+MonoBehaviour <|-- WorldAudioSource
+WorldAudioSource --> "audioSource" AudioSource
+WorldAudioSource --> "soundscapeWrapper" SoundscapeWrapper
+WorldAudioSource --> "canvas" GameObject
+WorldAudioSource --> "library" SoundscapeLibrary
+WorldAudioSource --> "vrStateData" VrStateData
+WorldAudioSource --> "playbackType" AudioListeningType
+WorldAudioSource --> "reaperController" ReapyControllerCommunication
+WorldAudioSource --> "loadingManager" LoadingManager
+WorldAudioSource o-> "errorMaterial" Material
+class Audio {
+    + id : string
+    + name : string
+    + fileName : string
+    + imagePath : string
+    + fileType : string
+    + type : string
+    + ambisonicAssetName : string = ""
+    + SetTexture(texture:Texture2D) : void
+    + UnloadBundle() : void
+    + HasImage() : bool
+    + GetRealAudioPath() : string
+    + IsAmbisonic() : bool
+    + <<const>> TYPE_STANDARD : string = "standard"
+    + <<const>> TYPE_AMBISONIC : string = "ambisonic"
+}
+Audio o-> "bundle" AssetBundle
+Audio --> "texture2D" Texture2D
 class SoundscapeWrapper {
     + inEditMode : bool <<get>> = false
     + DeleteAudio(srcObject:GameObject) : void
@@ -466,50 +466,6 @@ SoundscapeWrapper --> "audioSourceObject" GameObject
 SoundscapeWrapper --> "soundscapeLibrary" SoundscapeLibrary
 SoundscapeWrapper --> "reapyController" ReapyControllerCommunication
 SoundscapeWrapper --> "untargetableSoundSourceLayer" LayerMask
-class AudioList {
-    + AudioList()
-    + GetAudios() : List<Audio>
-    + TryGetAudioById(audioId:string) : Audio
-    + {static} ReadFromJson(path:string) : AudioList
-    + Print() : string
-}
-class WorldAudioSource {
-    + debug : bool = true
-    + GetUUID() : Guid
-    + SetUUID(uuid:Guid) : void
-    + DestroySource() : void
-    + <<async>> PlayAudio(incLoading:bool, incrementOnError:bool, play:bool) : Task
-    + SetIconEnabledState(isMuted:bool) : void
-    + FlipMuteState() : void
-    + IsVisible() : bool
-    + PasteDataFrom(copiedAudioSource:AudioSource) : void
-    + ResetMaterial(defaultMaterial:Material) : void
-}
-MonoBehaviour <|-- WorldAudioSource
-WorldAudioSource --> "audioSource" AudioSource
-WorldAudioSource --> "soundscapeWrapper" SoundscapeWrapper
-WorldAudioSource --> "canvas" GameObject
-WorldAudioSource --> "library" SoundscapeLibrary
-WorldAudioSource --> "vrStateData" VrStateData
-WorldAudioSource --> "playbackType" AudioListeningType
-WorldAudioSource --> "reaperController" ReapyControllerCommunication
-WorldAudioSource --> "loadingManager" LoadingManager
-WorldAudioSource o-> "errorMaterial" Material
-class SoundscapeList {
-    + GetSoundscapes() : IEnumerable<Soundscape>
-    + SoundscapeList()
-    + {static} ReadFromJson(path:string) : SoundscapeList
-    + Print() : string
-    + ReplaceOrAddSoundscape(soundscape:Soundscape) : void
-    + UpdateSoundscapeData(soundscapeId:string, soundscape:Soundscape) : bool
-    + RemoveSoundscape(soundscapeTitle:string) : bool
-    + GetByTitle(title:string) : Soundscape
-    + SaveToFile(fullPath:string) : bool
-}
-class "List`1"<T> {
-}
-SoundscapeList o-> "videoSoundscapes<VideoSoundscape>" "List`1"
-SoundscapeList o-> "imageSoundscapes<ImageSoundscape>" "List`1"
 class ImageSoundscape {
     + ImageSoundscape(title:string, time:int, staticPath:string, encompassingPath:string, projectionType:string, loop:bool)
     + <<override>> GetSupportedVisual() : VisualType
@@ -518,15 +474,28 @@ class ImageSoundscape {
     + <<override>> RestartVisuals(ssVisual:GameObject, visualType:VisualType) : void
 }
 Soundscape <|-- ImageSoundscape
-class SoundscapeEditor {
-    + SoundscapeEditor(foldout:VisualElement, ssWrapper:SoundscapeWrapper, library:SoundscapeLibrary)
-    + RunOnCreate(action:Action<Soundscape>) : SoundscapeEditor
-    + RunOnDestroy(action:Action<string>) : SoundscapeEditor
-    + UnbindButtons() : void
-    + SetData(soundscape:Soundscape) : void
-    + ClearFields(clearLabel:bool) : void
-    + unresgisterVideoToggleEvents() : void
-    + CollectUiValues() : Soundscape
+enum VisualType {
+    STATIC= 1,
+    ENCOMPASSING= 2,
+    BOTH= -1,
+    NONE= 0,
+}
+enum AudioListeningType {
+    BINAURAL= 1,
+    ENCOMPASSING= 2,
+    NONE= 0,
+}
+enum AudioSourceType {
+    BINAURAL,
+    ENCOMPASSING,
+    NONE,
+}
+class AudioList {
+    + AudioList()
+    + GetAudios() : List<Audio>
+    + TryGetAudioById(audioId:string) : Audio
+    + {static} ReadFromJson(path:string) : AudioList
+    + Print() : string
 }
 class IsExternalInit <<static>> {
 }
@@ -571,15 +540,6 @@ AudioSource --> "AudioEffects<AudioEffectInstance>" "List`1"
 AudioSource +-- AudioData
 AudioData o-> "effectInstances<AudioEffectInstance>" "List`1"
 AudioData o-> "effectInstances<AudioEffectInstance>" "List`1"
-class VideoSoundscape {
-    + VideoSoundscape(title:string, time:int, staticPath:string, encompassingPath:string, projectionType:string, loop:bool)
-    + <<override>> GetSupportedVisual() : VisualType
-    + <<override>> Copy() : Soundscape
-    + <<override>> TryGetVisuals(visualType:VisualType, videoPlaying:bool) : GameObject
-    + <<override>> ClearVisualsBinding() : void
-    + <<override>> RestartVisuals(ssVisual:GameObject, visualType:VisualType) : void
-}
-Soundscape <|-- VideoSoundscape
 class SoundscapeLibrary {
     + ReplaceOrAddSoundscape(updatedSoundscape:Soundscape) : void
     + UpdateSoundscapeData(soundscapeId:string, updatedSoundscape:Soundscape) : void
@@ -610,19 +570,53 @@ SoundscapeLibrary o-> "audioList" AudioList
 SoundscapeLibrary o-> "soundscapeList" SoundscapeList
 SoundscapeLibrary --> "loadingManager" LoadingManager
 SoundscapeLibrary --> "defaultAudioIcon" Texture2D
-class AndroidStoragePermission {
-    + maxPermissionTries : int = 3
-    + {static} checkManageStoragePermission() : bool
-    + RequestManageStoragePermission() : void
-    + {static} skipStoragePermissions() : void
+class SoundscapeList {
+    + GetSoundscapes() : IEnumerable<Soundscape>
+    + SoundscapeList()
+    + {static} ReadFromJson(path:string) : SoundscapeList
+    + Print() : string
+    + ReplaceOrAddSoundscape(soundscape:Soundscape) : void
+    + UpdateSoundscapeData(soundscapeId:string, soundscape:Soundscape) : bool
+    + RemoveSoundscape(soundscapeTitle:string) : bool
+    + GetByTitle(title:string) : Soundscape
+    + SaveToFile(fullPath:string) : bool
 }
-MonoBehaviour <|-- AndroidStoragePermission
-class ReverbRiRs {
-    + {static} getPresetCode(preset:ReverbEffectData.ReverbPresets) : string
+class "List`1"<T> {
 }
-class "Dictionary`2"<T1,T2> {
+SoundscapeList o-> "videoSoundscapes<VideoSoundscape>" "List`1"
+SoundscapeList o-> "imageSoundscapes<ImageSoundscape>" "List`1"
+class AudioClipCache {
+    + Clear(id:string) : void
+    + LoadedBundle(bundle:AssetBundle) : void
+    + Clear() : void
+    + IsAudioInCache(audioId:string) : bool
+    + <<async>> AddAudio(audioId:string, clip:AudioClip) : Task
+    + GetAudioClip(audioId:string) : AudioClip
 }
-ReverbRiRs o-> "ReaperReverbPresets<ReverbEffectData.ReverbPresets,string>" "Dictionary`2"
+class VideoSoundscape {
+    + VideoSoundscape(title:string, time:int, staticPath:string, encompassingPath:string, projectionType:string, loop:bool)
+    + <<override>> GetSupportedVisual() : VisualType
+    + <<override>> Copy() : Soundscape
+    + <<override>> TryGetVisuals(visualType:VisualType, videoPlaying:bool) : GameObject
+    + <<override>> ClearVisualsBinding() : void
+    + <<override>> RestartVisuals(ssVisual:GameObject, visualType:VisualType) : void
+}
+Soundscape <|-- VideoSoundscape
+class SoundscapeSceneLoad {
+    + <<const>> SoundscapeVRSceneName : string = "VrScene"
+    + {static} LoadMainScene() : void
+}
+MonoBehaviour <|-- SoundscapeSceneLoad
+class SoundscapeEditor {
+    + SoundscapeEditor(foldout:VisualElement, ssWrapper:SoundscapeWrapper, library:SoundscapeLibrary)
+    + RunOnCreate(action:Action<Soundscape>) : SoundscapeEditor
+    + RunOnDestroy(action:Action<string>) : SoundscapeEditor
+    + UnbindButtons() : void
+    + SetData(soundscape:Soundscape) : void
+    + ClearFields(clearLabel:bool) : void
+    + unresgisterVideoToggleEvents() : void
+    + CollectUiValues() : Soundscape
+}
 class Form {
     + formTitle : string = ""
     + formViewId : string = ""
@@ -658,24 +652,23 @@ class FormElement {
 class "List`1"<T> {
 }
 FormElement --> "extra<string>" "List`1"
-class OcclusionEffectData {
-    + occlusion_value : float = 1f
-    + occlusion_low_freq : float = 1f
-    + occlusion_mid_freq : float = 1f
-    + occlusion_high_freq : float = 1f
-    + frequency_dependent : bool = false
-    + <<const>> minOcclusion : float = 0f
-    + <<const>> maxOcclusion : float = 1f
-    + OcclusionEffectData(frequencyDependent:bool, occlusionValue:float, lowFreqOcc:float, midFreqOcc:float, highFreqOcc:float)
-    + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
-    + <<override>> ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
-    + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
-    + <<override>> CollectFromUI(root:VisualElement, isAmbisonic:bool) : AudioEffectData
-    + <<override>> ApplyDefaultUI(root:VisualElement, isAmbisonic:bool) : void
-    + <<override>> ApplyValuesToUI(root:VisualElement) : void
-    + <<override>> GetTrackParams(isAmbisonic:bool) : string[]
+class ReverbRiRs {
+    + {static} getPresetCode(preset:ReverbEffectData.ReverbPresets) : string
 }
-AudioEffectData <|-- OcclusionEffectData
+class "Dictionary`2"<T1,T2> {
+}
+ReverbRiRs o-> "ReaperReverbPresets<ReverbEffectData.ReverbPresets,string>" "Dictionary`2"
+abstract class AudioEffectData {
+    + effectId : string
+    + {abstract} CopyValues(other:AudioEffectData) : AudioEffectData
+    + {abstract} ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
+    + WithId(effectId:string) : AudioEffectData
+    + {abstract} GetTrackParams(isAmbisonic:bool) : string[]
+    + {abstract} IsEffectAppliedInUI(root:VisualElement) : bool
+    + {abstract} CollectFromUI(root:VisualElement, isAmbisonic:bool) : AudioEffectData
+    + {abstract} ApplyDefaultUI(root:VisualElement, isAmbisonic:bool) : void
+    + {abstract} ApplyValuesToUI(root:VisualElement) : void
+}
 class AudioEffects {
     + {static} GetAudioEffectData(effectId:string) : AudioEffectData
     + {static} GetEffects() : List<AudioEffectData>
@@ -690,6 +683,23 @@ class AudioEffectInstance {
     + ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
 }
 AudioEffectInstance --> "effectData" AudioEffectData
+class HighLowPassEffectData {
+    + lowPassFreq : int
+    + highPassFreq : int
+    + <<const>> minLowPassFreq : int = 1000
+    + <<const>> maxLowPassFreq : int = 22000
+    + <<const>> minHighPassFreq : int = 0
+    + <<const>> maxHighPassFreq : int = 1000
+    + HighLowPassEffectData(lowPassFreq:int, highPassFreq:int)
+    + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
+    + <<override>> ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
+    + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
+    + <<override>> CollectFromUI(root:VisualElement, isAmbisonic:bool) : AudioEffectData
+    + <<override>> ApplyDefaultUI(root:VisualElement, isAmbisonic:bool) : void
+    + <<override>> ApplyValuesToUI(root:VisualElement) : void
+    + <<override>> GetTrackParams(isAmbisonic:bool) : string[]
+}
+AudioEffectData <|-- HighLowPassEffectData
 class ReverbEffectData {
     + wet : float = 0.2f
     + getPresetNames() : List<string>
@@ -710,25 +720,15 @@ enum ReverbPresets {
 AudioEffectData <|-- ReverbEffectData
 ReverbEffectData o-> "currentPreset" ReverbPresets
 ReverbEffectData +-- ReverbPresets
-abstract class AudioEffectData {
-    + effectId : string
-    + {abstract} CopyValues(other:AudioEffectData) : AudioEffectData
-    + {abstract} ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
-    + WithId(effectId:string) : AudioEffectData
-    + {abstract} GetTrackParams(isAmbisonic:bool) : string[]
-    + {abstract} IsEffectAppliedInUI(root:VisualElement) : bool
-    + {abstract} CollectFromUI(root:VisualElement, isAmbisonic:bool) : AudioEffectData
-    + {abstract} ApplyDefaultUI(root:VisualElement, isAmbisonic:bool) : void
-    + {abstract} ApplyValuesToUI(root:VisualElement) : void
-}
-class HighLowPassEffectData {
-    + lowPassFreq : int
-    + highPassFreq : int
-    + <<const>> minLowPassFreq : int = 1000
-    + <<const>> maxLowPassFreq : int = 22000
-    + <<const>> minHighPassFreq : int = 0
-    + <<const>> maxHighPassFreq : int = 1000
-    + HighLowPassEffectData(lowPassFreq:int, highPassFreq:int)
+class OcclusionEffectData {
+    + occlusion_value : float = 1f
+    + occlusion_low_freq : float = 1f
+    + occlusion_mid_freq : float = 1f
+    + occlusion_high_freq : float = 1f
+    + frequency_dependent : bool = false
+    + <<const>> minOcclusion : float = 0f
+    + <<const>> maxOcclusion : float = 1f
+    + OcclusionEffectData(frequencyDependent:bool, occlusionValue:float, lowFreqOcc:float, midFreqOcc:float, highFreqOcc:float)
     + <<override>> CopyValues(other:AudioEffectData) : AudioEffectData
     + <<override>> ApplyEffectToSource(audioClipObject:GameObject, isAmbisonic:bool) : void
     + <<override>> IsEffectAppliedInUI(root:VisualElement) : bool
@@ -737,7 +737,7 @@ class HighLowPassEffectData {
     + <<override>> ApplyValuesToUI(root:VisualElement) : void
     + <<override>> GetTrackParams(isAmbisonic:bool) : string[]
 }
-AudioEffectData <|-- HighLowPassEffectData
+AudioEffectData <|-- OcclusionEffectData
 class EchoEffectData {
     + delay_ms : int = 500
     + decay_ratio : float = 0.5f
