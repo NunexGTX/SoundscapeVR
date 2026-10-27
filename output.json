@@ -1,0 +1,48 @@
+{
+    "sounds": [
+        {
+            "id": "market_busy",
+            "name": "Market Busy",
+            "fileName": "mods/project",
+            "fileType": "wav",
+            "type": "ambisonic",
+            "imagePath": "market_full.jpg",
+            "ambisonicAssetName": "market_busy.wav"
+        },
+        {
+            "id": "market_empty",
+            "name": "Market Empty",
+            "fileName": "mods/project",
+            "fileType": "wav",
+            "type": "ambisonic",
+            "imagePath": "market.png",
+            "ambisonicAssetName": "market_empty.wav"
+        },
+        {
+            "id": "picc_empty",
+            "name": "Picc Empty",
+            "fileName": "mods/project",
+            "fileType": "wav",
+            "type": "ambisonic",
+            "imagePath": "",
+            "ambisonicAssetName": "picc_empty.wav"
+        },
+        {
+            "id": "picc_busy",
+            "name": "Picc Busy",
+            "fileName": "mods/project",
+            "fileType": "wav",
+            "type": "ambisonic",
+            "imagePath": "",
+            "ambisonicAssetName": "picc_busy.wav"
+        },
+        {
+            "id": "bird_chirp",
+            "name": "Bird Chirps",
+            "fileName": "bird_chirp.wav",
+            "fileType": "wav",
+            "type": "standard",
+            "imagePath": "person.jpg"
+        }
+    ]
+}
